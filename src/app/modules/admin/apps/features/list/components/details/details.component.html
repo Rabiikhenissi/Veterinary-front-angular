@@ -1,0 +1,242 @@
+@if (feature) {
+    <div
+        class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <form class="w-full" #myForm="ngForm" ngForm="ngForm">
+            <!-- Header -->
+            <div class="flex flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
+                <div class=" flex gap-2 w-1/4 text-4xl font-extrabold text-white ">
+                    <span>{{ 'Details' | transloco }}</span>
+                    <span class="hidden sm:flex">{{ 'Feature' | transloco }}</span>
+                </div>
+                <div class="flex w-3/4 items-center justify-end">
+                    <!-- clear project button -->
+                    <button
+                        class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                        mat-stroked-button
+                        type="button"
+                        (click)="deleteFeature()"
+                    >
+                        <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
+                    </button>
+                    <!-- save project button -->
+                    <button
+                        class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+                        mat-stroked-button
+                        type="submit"
+                        (click)="updateFeature()"
+                    >
+                        <span class="ml-2 mr-1">{{ 'Update' | transloco }}</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Main -->
+            <div class="flex flex-col flex-auto h-[calc(100vh-8rem)] bg-gray-100  overflow-y-auto">
+                <div class="flex flex-col mb-6 w-full">
+                    <div class="grid sm:grid-cols-9 gap-6 p-3">
+                        <!-- code -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'code' | transloco }}</mat-label>
+                                <input [(ngModel)]="feature.code" matInput name="code" type="text" readonly />
+                            </mat-form-field>
+                            @if ( myForm.controls['code'] && (myForm.controls['code'].dirty || myForm.submitted) &&
+                            myForm.controls['code'].hasError('required') ) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                        </div>
+                        <!-- title -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'title' | transloco }}</mat-label>
+                                <input [(ngModel)]="feature.title" matInput name="title" type="text" readonly />
+                            </mat-form-field>
+                            @if ( myForm.controls['title'] && (myForm.controls['title'].dirty || myForm.submitted)
+                            && myForm.controls['title'].hasError('required') ) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                        </div>
+                        <!-- type -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'type' | transloco }}</mat-label>
+                                <mat-select
+                                    placeholder="select type"
+                                    (selectionChange)="feature.type = selectValueType.value"
+                                    [value]="feature.type"
+                                    [(ngModel)]="feature.type"
+                                    name="type"
+                                    #selectValueType
+                                    disabled
+                                >
+                                    <mat-select-trigger>
+                                        @if (feature.type) {
+                                            <div class="font-medium items-center flex flex-row">
+                    <span class=" block">
+                      {{ feature.type }}
+                    </span>
+                                            </div>
+                                        }
+                                    </mat-select-trigger>
+                                    @for (item of listFeatureType; track item) {
+                                        <mat-option [value]="item.key">
+                                            <div class="font-medium items-center flex flex-row">
+                    <span class="">
+                      {{ item.value }}
+                    </span>
+                                            </div>
+                                        </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                            @if ( myForm.controls['type'] && (myForm.controls['type'].dirty || myForm.submitted) &&
+                            myForm.controls['type'].hasError('required') ) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                        </div>
+                        <!-- Feature parents -->
+                        @if(feature.featuresIdParent){
+                            <div class="sm:col-span-3">
+                                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                    <mat-label class="capitalize">{{ 'feature parents' | transloco }}</mat-label>
+                                    <input
+                                        matInput
+                                        placeholder="select parent"
+                                        [(ngModel)]="feature.featuresIdParent.title"
+                                        name="parent" readonly
+                                    />
+                                </mat-form-field>
+                            </div>
+                        }
+                        <!-- status -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'status' | transloco }}</mat-label>
+                                <mat-select
+                                    placeholder="select type"
+                                    (selectionChange)="feature.status = selectValueCurrency.value"
+                                    [value]="feature.status"
+                                    [(ngModel)]="feature.status"
+                                    name="status"
+                                    #selectValueCurrency
+                                    disabled
+                                >
+                                    <mat-select-trigger>
+                                        @if (feature.status) {
+                                            <div class="font-medium items-center flex flex-row">
+                    <span class="block">
+                      {{ feature.status }}
+                    </span>
+                                            </div>
+                                        }
+                                    </mat-select-trigger>
+                                    @for (item of listFeatureStatus; track item) {
+                                        <mat-option [value]="item.key">
+                                            <div class="font-medium items-center flex flex-row">
+                    <span class="block">
+                      {{ item.value }}
+                    </span>
+                                            </div>
+                                        </mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+                            @if ( myForm.controls['status'] && (myForm.controls['status'].dirty || myForm.submitted)
+                            && myForm.controls['status'].hasError('required') ) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                        </div>
+                        <!-- Ordre -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'ordre' | transloco }}</mat-label>
+                                <input [(ngModel)]="feature.order" matInput name="ordre" type="number" readonly />
+                            </mat-form-field>
+                        </div>
+                        <!-- subtitle -->
+                        @if (feature.type === FeatureType.group) {
+                            <div class="sm:col-span-3">
+                                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                    <mat-label class="capitalize">{{ 'Subtitle' | transloco }}</mat-label>
+                                    <input [(ngModel)]="feature.subtitle" matInput name="subtitle" type="text" readonly />
+                                </mat-form-field>
+                            </div>
+                        }
+                        <!-- Link -->
+                        @if (feature.type !== FeatureType.group) {
+                            <div class="sm:col-span-3">
+                                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                    <mat-label class="capitalize">{{ 'link' | transloco }}</mat-label>
+                                    <input [(ngModel)]="feature.link" matInput name="link" type="text" readonly />
+                                </mat-form-field>
+                            </div>
+                        }
+                        <!-- Divider -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'Divider' | transloco }}</mat-label>
+                                <mat-select placeholder="select divider" [(ngModel)]="divider" disabled name="divider">
+                                    @if (feature.divider) {
+                                        <mat-option [value]="null">
+                                            <div class="font-medium items-center flex flex-row">
+                                                <span class="block"> {{ '-- None --' | transloco }} </span>
+                                            </div>
+                                        </mat-option>
+                                    }
+                                    <mat-option value="true">
+                                        {{ 'with divider' | transloco }}
+                                    </mat-option>
+                                    <mat-option value="false">
+                                        {{ 'without divider' | transloco }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'icon' | transloco }}</mat-label>
+                                <mat-select name="icon" placeholder="select icon" disabled [(ngModel)]="feature.icon">
+                                    <mat-select-trigger>
+                                        @if (feature.icon) {
+                                            <div class="font-medium items-center flex flex-row">
+                    <span class="w-7 shadow rounded-sm overflow-hidden mr-1">
+                      <mat-icon class="icon-size-6">{{ feature.icon }}</mat-icon>
+                    </span>
+                                                <span class=" block"> {{ feature.icon }} </span>
+                                            </div>
+                                        }
+                                    </mat-select-trigger>
+
+                                    @if (!feature.icon) {
+                                        <mat-option [value]="null">
+                                            <div class="font-medium items-center flex flex-row">
+                                                <span class="block"> {{ '-- None --' | transloco }} </span>
+                                            </div>
+                                        </mat-option>
+                                    } @for (item of filteredListIcons ; track item) {
+                                    <mat-option [value]="item.label">
+                                        <div class="font-medium items-center flex flex-row">
+                    <span class="w-9 shadow rounded-sm overflow-hidden mr-1">
+                      <mat-icon class="icon-size-7 mr-1">{{ item.label }}</mat-icon>
+                    </span>
+                                            <span class=" block"> {{ item.label }} </span>
+                                        </div>
+                                    </mat-option>
+                                }
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+}

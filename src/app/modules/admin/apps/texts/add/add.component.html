@@ -1,0 +1,113 @@
+<div
+    class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+>
+    <form class="w-full" #myForm="ngForm" ngForm="ngForm">
+    <!-- Header -->
+     <div class="flex flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
+          <div class=" flex gap-2   w-1/4 text-4xl font-extrabold text-white ">
+              <span>{{ 'Add' | transloco }}</span>
+              <span class="hidden sm:flex">{{ 'Text' | transloco }}</span>
+          </div>
+          <div class="flex  w-3/4 items-center justify-end">
+              <!-- clear project button -->
+              <button
+                  class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                  mat-stroked-button
+                  type="button"
+                  (click)="resetForm(myForm, $event)"
+              >
+                  <span class="ml-2 mr-1">{{ 'Clear' | transloco }}</span>
+              </button>
+              <!-- cancel project button -->
+              <button
+                  class="mr-2 text-amber-500 hover:bg-amber-500 hover:text-gray-900 transition-all duration-400"
+                  mat-stroked-button
+                  (click)="cancelForm(myForm)"
+              >
+                  <span class="ml-2 mr-1">{{ 'Cancel' | transloco }}</span>
+              </button>
+              <!-- save project button -->
+              <button
+                  class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+                  mat-stroked-button
+                  type="submit"
+                  (click)="addOne(myForm)"
+              >
+                  <span class="ml-2 mr-1">{{ 'Save' | transloco }}</span>
+              </button>
+          </div>
+      </div>
+    <!-- Main -->
+    <div class="flex flex-col flex-auto h-[calc(100vh-8rem)] bg-gray-100  overflow-y-auto">
+      <div class="flex flex-col mb-6 w-full">
+        <div class="grid sm:grid-cols-9 gap-6 p-3">
+            <!-- key -->
+            <div class="sm:col-span-3">
+            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+              <mat-label class="capitalize">{{ 'key' | transloco }}</mat-label>
+              <input [(ngModel)]="text.key" matInput name="key" type="text" required />
+            </mat-form-field>
+            @if ( myForm.controls['key'] && (myForm.controls['key'].dirty || myForm.submitted) &&
+            myForm.controls['key'].hasError('required') ) {
+            <mat-error>
+              {{ 'This field is required' | transloco }}
+            </mat-error>
+            }
+          </div>
+            <!-- en -->
+            <div class="sm:col-span-9">
+                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                    <mat-label class="capitalize">{{ 'english' | transloco }}</mat-label>
+                    <textarea [(ngModel)]="text.en" matInput name="en" type="text" required  ></textarea>
+                </mat-form-field>
+                @if ( myForm.controls['en'] && (myForm.controls['en'].dirty || myForm.submitted) &&
+                myForm.controls['en'].hasError('required') ) {
+                    <mat-error>
+                        {{ 'This field is required' | transloco }}
+                    </mat-error>
+                }
+            </div>
+            <!-- fr -->
+            <div class="sm:col-span-9">
+                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                    <mat-label class="capitalize">{{ 'french' | transloco }}</mat-label>
+                    <textarea [(ngModel)]="text.fr" matInput name="fr" type="text" required  ></textarea>
+                </mat-form-field>
+                @if ( myForm.controls['fr'] && (myForm.controls['fr'].dirty || myForm.submitted) &&
+                myForm.controls['fr'].hasError('required') ) {
+                    <mat-error>
+                        {{ 'This field is required' | transloco }}
+                    </mat-error>
+                }
+            </div>
+            <!-- es -->
+            <div class="sm:col-span-9">
+                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                    <mat-label class="capitalize">{{ 'espagnol' | transloco }}</mat-label>
+                    <textarea [(ngModel)]="text.es" matInput name="es" type="text" required  ></textarea>
+                </mat-form-field>
+                @if ( myForm.controls['es'] && (myForm.controls['es'].dirty || myForm.submitted) &&
+                myForm.controls['es'].hasError('required') ) {
+                    <mat-error>
+                        {{ 'This field is required' | transloco }}
+                    </mat-error>
+                }
+            </div>
+            <!-- ar -->
+            <div class="sm:col-span-9" dir="rtl">
+                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                    <mat-label class="capitalize">{{ 'ar' | transloco }}</mat-label>
+                    <textarea [(ngModel)]="text.ar" matInput name="ar" type="text" required  ></textarea>
+                </mat-form-field>
+                @if ( myForm.controls['ar'] && (myForm.controls['ar'].dirty || myForm.submitted) &&
+                myForm.controls['ar'].hasError('required') ) {
+                    <mat-error>
+                        {{ 'This field is required' | transloco }}
+                    </mat-error>
+                }
+            </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

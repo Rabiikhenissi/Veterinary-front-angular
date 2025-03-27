@@ -1,0 +1,20 @@
+.row-grid {
+  /* default: under '400px' */
+  grid-template-columns: 30px auto 30px;
+  /* xs: '400px' */
+  @screen xs {
+    grid-template-columns: 30px auto 30px;
+  }
+  /* sm: '600px' */
+  @screen sm {
+    grid-template-columns: 30px auto 30px;
+  }
+  /* md: '960px' */
+  @screen md {
+    grid-template-columns: 30px auto 30px;
+  }
+  /* xs: '1280px' */
+  @screen lg {
+    grid-template-columns: 30px auto 30px;
+  }
+}

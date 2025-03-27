@@ -1,0 +1,121 @@
+<div
+  class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+>
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
+      <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white ">{{ 'Users' | transloco }}</div>
+      <div class="flex w-full md:w-3/4 items-start md:items-center justify-between">
+         <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript md:mt-5 w-3/4">
+              <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:search'"></mat-icon>
+              <input
+                  matInput
+                  [(ngModel)]="filterSearch"
+                  (ngModelChange)="updateSearch()"
+                  [autocomplete]="'off'"
+                  placeholder="{{ 'Search' | transloco }}"
+              />
+         </mat-form-field>
+         <button
+             class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+             mat-stroked-button
+             (click)="addOne()">
+            <span class="mx-1.5 block">{{ 'Add' | transloco }}</span>
+         </button>
+      </div>
+  </div>
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-18">
+            @if (displayedList?.data?.length > 0) {
+            <!-- Header -->
+            <div class="row-grid grid z-10 top-0 shadow items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+              <div class="hidden sm:flex">N°</div>
+              <div class="flex">{{ 'name' | transloco }}</div>
+              <div class="flex">{{ 'email' | transloco }}</div>
+              <div class="hidden sm:flex ">{{ 'group' | transloco }}</div>
+              <!--<div class="hidden sm:flex ">{{ 'company' | transloco }}</div>-->
+              <div class="flex ">
+                  <button mat-icon-button (click)="openFilter = true">
+                      <mat-icon
+                          class="icon-size-5"
+                          [svgIcon]="'feather:filter'"></mat-icon>
+                  </button>
+              </div>
+            </div>
+            <div class="flex-1 overflow-hidden sm:overflow-y-auto">
+              <div class="flex-1 sm:grid sm:flex-0">
+                <!-- Rows -->
+                <ng-container>
+                  @for (row of displayedList?.data; track row) {
+                  <div class="row-grid grid items-center gap-4 py-1  px-4 md:px-6 border-b" (click)="isScreenSmall ? openShow(row) : null" >
+                    <div class="hidden sm:flex">{{ $index + 1 }}</div>
+                    <div class="truncate">{{ row.name }}</div>
+                    <div class="truncate">{{ row.email }}</div>
+                    <div class="hidden sm:flex truncate">{{ row.groupsId?.label }}</div>
+                   <!-- <div class="hidden sm:flex truncate">{{ this.getCompany(row.companyId) }}</div>-->
+
+                    <div class="flex">
+                      <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
+                        <mat-icon
+                          class="icon-size-5"
+                          [svgIcon]="'heroicons_solid:ellipsis-vertical'"
+                        ></mat-icon>
+
+                      </button>
+                      <mat-menu #budgetMenu="matMenu">
+                        <button mat-menu-item class="flex justify-between" (click)="openShow(row)">
+                          <span class="ml-2 mr-1  block">{{ 'Show' | transloco }}</span>
+                          <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
+                        </button>
+                        <button mat-menu-item class="flex justify-between" (click)="openEdit(row)">
+                          <span class="ml-2 mr-1  block">{{ 'Edit' | transloco }}</span>
+                          <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                        </button>
+                        <button
+                          mat-menu-item
+                          class="flex justify-between"
+                          (click)="deleteOne(row)"
+                        >
+                          <span class="ml-2 mr-1 block">{{ 'Delete' | transloco }}</span>
+                          <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </div>
+                  }
+                </ng-container>
+              </div>
+            </div>
+            <mat-paginator
+              class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+              [showFirstLastButtons]="true"
+              (page)="pageChanged($event)"
+              [length]="displayedList?.total"
+              [pageSize]="currentSize"
+              [pageSizeOptions]="[5, 10, 20, 50, 100]"
+            ></mat-paginator>
+            }
+        </div>
+    </div>
+    <!-- Filter -->
+    <div class="h-[calc(100vh-11rem)] md:h-[calc(100vh-7.5rem)] absolute top-28 md:top-14 right-0 flex flex-col justify-start items-center  z-99 bg-gray-400 transition-all duration-500" [class.w-full]="openFilter" [class.w-0]="!openFilter">
+     @if(openFilter)   {
+         <div class="text-white text-2xl font-bold uppercase flex items-center py-2 gap-2">
+
+             <button mat-stroked-button (click)="getList()" >
+                 <span>Activate filters</span>
+             </button>
+             <button mat-icon-button (click)="openFilter = false" >
+                <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+             </button>
+         </div>
+         <div class="w-full grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+            <div class="border  w-full rounded-md p-2">
+            </div>
+            <div class="border  w-full rounded-md p-2">
+            </div>
+
+         </div>
+     }
+    </div>
+</div>

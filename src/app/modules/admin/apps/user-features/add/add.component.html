@@ -1,0 +1,308 @@
+<div class="flex flex-col flex-1 bg-card dark:bg-transparent">
+  <form class="w-full" #myForm="ngForm" ngForm="ngForm">
+    <!-- Header -->
+    <div class="relative flex flex-col flex-0 sm:justify-between py-3 px-3 border-b">
+      <!-- Loader -->
+      @if (isLoading) {
+      <div class="absolute inset-x-0 bottom-0">
+        <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+      </div>
+      }
+      <!-- Title -->
+      <div class="hidden md:flex text-3xl font-extrabold tracking-tight">
+        {{ 'Users Features' | transloco }}
+      </div>
+      <!-- Actions -->
+      <div class="flex flex-shrink-0 w-full items-center md:mt-3 sm:mt-0">
+        <div class="w-3/4 sm:w-2/3 flex flex-row">
+          <!-- clear project button -->
+          <button
+            class="mr-2 text-red-500"
+            mat-flat-button
+            type="button"
+            (click)="resetForm(myForm, $event)"
+          >
+            <span class="ml-2 mr-1">{{ 'Clear' | transloco }}</span>
+          </button>
+        </div>
+        <div class="flex justify-end w-1/4 sm:w-1/3 ml-1 sm:ml-0">
+          <!-- cancel project button -->
+          <button class="mr-2" mat-flat-button (click)="cancelForm(myForm)">
+            <span class="ml-2 mr-1">{{ 'Cancel' | transloco }}</span>
+          </button>
+          <!-- save project button -->
+          <button
+            class="mr-2"
+            mat-flat-button
+            [color]="'primary'"
+            type="submit"
+            (click)="createGroup(myForm)"
+          >
+            <span class="ml-2 mr-1">{{ 'Save' | transloco }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-1 flex-col flex-auto overflow-hidden sm:overflow-y-auto">
+      <div class="flex justify-center mb-6 w-full m-2">
+        <div class="w-5/6 sm:w-1/2 md:w-1/3">
+          <div class="">{{ 'User' | transloco }}</div>
+          <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+            <mat-select
+              placeholder="select user"
+              [value]="user"
+              [(ngModel)]="user"
+              name="user"
+              required
+            >
+              <mat-select-trigger>
+                <div class="font-medium items-center flex flex-row">
+                  <span class=""> {{ user?.name }} ({{ user?.email }}) </span>
+                </div>
+              </mat-select-trigger>
+              <mat-option>
+                <ngx-mat-select-search
+                  [formControl]="userFilterControl"
+                  placeholder="Filter"
+                  noEntriesFoundLabel="{{ 'No Users Found' | transloco }}"
+                ></ngx-mat-select-search>
+              </mat-option>
+
+              <mat-option [value]="null">
+                <div class="font-medium items-center flex flex-row">
+                  <span class="sm:block"> {{ '-- None --' | transloco }} </span>
+                </div>
+              </mat-option>
+              @for (item of filteredListUsers | async; track item) {
+              <mat-option [value]="item">
+                <div class="font-medium items-center flex flex-row">
+                  <span class=""> {{ item.name }}({{ item.email }})</span>
+                </div>
+              </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if ( myForm.controls['user'] && (myForm.controls['user'].dirty || myForm.submitted) &&
+          myForm.controls['user'].hasError('required') ) {
+          <mat-error>
+            {{ 'This field is required' | transloco }}
+          </mat-error>
+          }
+        </div>
+      </div>
+      <div class="flex flex-col mb-6 w-full bg-gray-100">
+        <div class="flex text-2xl font-extrabold tracking-tight m-4">
+          <span class="mt-1"> {{ 'Users features' | transloco }} </span>
+          <button class="mx-4" mat-flat-button type="button" (click)="grantAll($event)">
+            <span class="">{{ 'Grant all' | transloco }}</span>
+          </button>
+          <button class="" mat-flat-button type="button" color="accent" (click)="revokeAll($event)">
+            <span class="">{{ 'Revoke all' | transloco }}</span>
+          </button>
+        </div>
+        <div class="grid grid-cols-10 gap-6 m-1 p-1">
+          <div class="col-span-2 flex justify-center items-center">{{ 'Feature' | transloco }}</div>
+          <div class="col-span-1 flex justify-center cursor-pointer" (click)="activate('list')">
+            <button
+              #tooltip="matTooltip"
+              mat-flat-button
+              matTooltip="{{ (type[0] ? 'deactivate all' : 'activate all') | transloco }}"
+              matTooltipHideDelay="500"
+              [matTooltipPosition]="'above'"
+              class="example-button"
+            >
+              {{ 'List' | transloco }}
+            </button>
+          </div>
+          <div class="col-span-1 flex justify-center cursor-pointer" (click)="activate('create')">
+            <button
+              #tooltip="matTooltip"
+              mat-flat-button
+              matTooltip="{{ (type[1] ? 'deactivate all' : 'activate all') | transloco }}"
+              matTooltipHideDelay="500"
+              [matTooltipPosition]="'above'"
+              class="example-button"
+            >
+              {{ 'Create' | transloco }}
+            </button>
+          </div>
+          <div class="col-span-1 flex justify-center cursor-pointer" (click)="activate('read')">
+            <button
+              #tooltip="matTooltip"
+              mat-flat-button
+              matTooltip="{{ (type[2] ? 'deactivate all' : 'activate all') | transloco }}"
+              matTooltipHideDelay="500"
+              [matTooltipPosition]="'above'"
+              class="example-button"
+            >
+              {{ 'Read' | transloco }}
+            </button>
+          </div>
+          <div class="col-span-1 flex justify-center cursor-pointer" (click)="activate('update')">
+            <button
+              #tooltip="matTooltip"
+              mat-flat-button
+              matTooltip="{{ (type[3] ? 'deactivate all' : 'activate all') | transloco }}"
+              matTooltipHideDelay="500"
+              [matTooltipPosition]="'above'"
+              class="example-button"
+            >
+              {{ 'Update' | transloco }}
+            </button>
+          </div>
+          <div class="col-span-1 flex justify-center cursor-pointer" (click)="activate('delete')">
+            <button
+              #tooltip="matTooltip"
+              mat-flat-button
+              matTooltip="{{ (type[4] ? 'deactivate all' : 'activate all') | transloco }}"
+              matTooltipHideDelay="500"
+              [matTooltipPosition]="'above'"
+              class="example-button"
+            >
+              {{ 'Delete' | transloco }}
+            </button>
+          </div>
+          <div class="col-span-1 flex justify-center cursor-pointer" (click)="activate('status')">
+            <button
+              #tooltip="matTooltip"
+              mat-flat-button
+              matTooltip="{{ (type[5] ? 'deactivate all' : 'activate all') | transloco }}"
+              matTooltipHideDelay="500"
+              [matTooltipPosition]="'above'"
+              class="example-button"
+            >
+              {{ 'Status' | transloco }}
+            </button>
+          </div>
+          <div class="col-span-1 flex justify-center items-center">{{ 'Default' | transloco }}</div>
+          <div class="col-span-1 flex justify-center"></div>
+        </div>
+
+        @if (filteredList) {
+        <div class="grid grid-cols-1 min-w-full gap-1 min-w-full bg-white">
+          @for ( item of groupFeature; track trackByFn(index, item); let index = $index; let last =
+          $last) {
+          <div class="grid grid-cols-10 gap-6 m-1 p-1 bg-gray-100">
+            <div class="col-span-2">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                <mat-select
+                  placeholder="select feature"
+                  (selectionChange)="addRow(index, selectValue.value); checkDefault(index)"
+                  [(ngModel)]="groupFeature[index].featuresId"
+                  name="featuresId{{ index }}"
+                  #selectValue
+                >
+                  <mat-select-trigger>
+                    @if (featureId[index]) {
+                    <div class="font-medium items-center flex flex-row">
+                      <span class="">
+                        {{ featureId[index].title }}
+                      </span>
+                    </div>
+                    }
+                  </mat-select-trigger>
+                  @for (item of filteredList[index]; track item) {
+                  <mat-option [value]="item" [disabled]="featureId.includes(item)">
+                    <div class="font-medium items-center flex flex-row">
+                      <span class=""> {{ item.title }}</span>
+                    </div>
+                  </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-slide-toggle
+                [disabled]="!featureId[index]"
+                name="list{{ index }}"
+                [(ngModel)]="groupFeature[index].list"
+                (click)="testActivate('list')"
+              ></mat-slide-toggle>
+              }
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-slide-toggle
+                [disabled]="!featureId[index]"
+                name="create{{ index }}"
+                [(ngModel)]="groupFeature[index].create"
+                (click)="testActivate('create')"
+              ></mat-slide-toggle>
+              }
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-slide-toggle
+                [disabled]="!featureId[index]"
+                name="read{{ index }}"
+                [(ngModel)]="groupFeature[index].read"
+                (click)="testActivate('read')"
+              ></mat-slide-toggle>
+              }
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-slide-toggle
+                [disabled]="!featureId[index]"
+                name="update{{ index }}"
+                [(ngModel)]="groupFeature[index].update"
+                (click)="testActivate('update')"
+              ></mat-slide-toggle>
+              }
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-slide-toggle
+                [disabled]="!featureId[index]"
+                name="delete{{ index }}"
+                [(ngModel)]="groupFeature[index].delete"
+                (click)="testActivate('delete')"
+              ></mat-slide-toggle>
+              }
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-slide-toggle
+                [disabled]="!featureId[index]"
+                name="status{{ index }}"
+                [(ngModel)]="groupFeature[index].status"
+                (ngModelChange)="testActivate('status'); checkDefault(index)"
+              ></mat-slide-toggle>
+              }
+            </div>
+            <div class="col-span-1 flex justify-center mt-3">
+              @if (groupFeature[index]) {
+              <mat-radio-button
+                (change)="default(index)"
+                [checked]="groupFeature[index].defaultFeature"
+                [disabled]="
+                  !groupFeature[index].featuresId ||
+                  !groupFeature[index].featuresId.link ||
+                  !groupFeature[index].status
+                "
+                required
+              ></mat-radio-button>
+              }
+            </div>
+            <div class="col-span-1 flex justify-end">
+              <button
+                [disabled]="last && !featureId[index]"
+                mat-icon-button
+                class="mr-2"
+                type="button"
+                (click)="deleteRow(index)"
+              >
+                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+  </form>
+</div>

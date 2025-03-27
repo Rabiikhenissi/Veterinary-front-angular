@@ -1,0 +1,136 @@
+<div
+  class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+>
+  <!-- Header -->
+  <div class="relative flex flex-col flex-0 sm:justify-between py-3 px-3 border-b">
+    <!-- Loader -->
+    @if (isLoading) {
+    <div class="absolute inset-x-0 bottom-0">
+      <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+    </div>
+    }
+    <!-- Title -->
+    <div class="hidden sm:flex text-3xl font-extrabold">{{ 'Users Features' | transloco }}</div>
+    <!-- Actions -->
+    <div class="flex flex-shrink-0 w-full items-center md:mt-4 sm:mt-0">
+      <div class="w-3/4 sm:w-2/3 flex flex-row">
+        <!-- Search -->
+        <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded w-3/4">
+          <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+          <input
+            matInput
+            [(ngModel)]="searchFilter"
+            (ngModelChange)="updateSearch()"
+            [autocomplete]="'off'"
+            placeholder="{{ 'Search' | transloco }}"
+          />
+        </mat-form-field>
+        <!-- Refresh projects list -->
+        <div class="w-1/4">
+          <button class="ml-2 bg-gray-300" mat-flat-button (click)="getList()">
+            <mat-icon svgIcon="heroicons_outline:refresh"></mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="flex justify-end w-1/4 sm:w-1/3 sm:ml-0">
+        <!-- Add project button -->
+        <button class="" mat-flat-button [color]="'primary'" (click)="addUser()">
+          <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+          <span class="mx-1.5 hidden sm:block">{{ 'Add' | transloco }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="flex flex-auto overflow-hidden">
+    <!-- projects list -->
+    <div class="flex flex-col flex-auto sm:mb-18">
+      <ng-container>
+        @if (displayedList?.data?.length > 0) {
+        <!-- Header -->
+        <div
+          class="group-grid grid z-10 top-0 shadow items-center gap-4 py-4 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+          matSort
+          matSortDisableClear
+        >
+          <div
+            class="flex cursor-pointer"
+            [mat-sort-header]="'code'"
+            (click)="updateSort('sortCode')"
+          >
+            <span class="capitalize">{{ 'code' | transloco }}</span>
+          </div>
+          <div
+            class="flex cursor-pointer"
+            [mat-sort-header]="'name'"
+            (click)="updateSort('sortName')"
+          >
+            <span class="capitalize">{{ 'name' | transloco }}</span>
+          </div>
+          <div
+            class="flex cursor-pointer"
+            [mat-sort-header]="'email'"
+            (click)="updateSort('sortEmail')"
+          >
+            <span class="capitalize">{{ 'email' | transloco }}</span>
+          </div>
+          <div class="hidden sm:flex"></div>
+        </div>
+        <div class="flex-1 overflow-hidden sm:overflow-y-auto">
+          <div class="flex-1 sm:grid sm:flex-0">
+            <!-- Rows -->
+            <ng-container>
+              @for (user of displayedList?.data; track user) {
+              <div
+                class="group-grid grid items-center gap-4 py-4 px-4 md:px-6 border-b"
+                (click)="isScreenSmall ? openShow(user) : null"
+              >
+                <div class="truncate">{{ user.code }}</div>
+                <div class="truncate">{{ user.name }}</div>
+                <div class="truncate">{{ user.email }}</div>
+                <div class="hidden sm:flex">
+                  <button class="mr-1" mat-icon-button [matMenuTriggerFor]="budgetMenu">
+                    <mat-icon
+                      class="icon-size-5"
+                      [svgIcon]="'heroicons_solid:dots-vertical'"
+                    ></mat-icon>
+                  </button>
+                  <mat-menu #budgetMenu="matMenu">
+                    <button mat-menu-item class="flex justify-between" (click)="openShow(user)">
+                      <span class="ml-2 mr-1 hidden sm:block">{{ 'Show' | transloco }}</span>
+                      <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
+                    </button>
+                    <button mat-menu-item class="flex justify-between" (click)="openEdit(user)">
+                      <span class="ml-2 mr-1 hidden sm:block">{{ 'Edit' | transloco }}</span>
+                      <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                    </button>
+                    <button mat-menu-item class="flex justify-between" (click)="deleteUser(user)">
+                      <span class="ml-2 mr-1 hidden sm:block">{{ 'Delete' | transloco }}</span>
+                      <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                    </button>
+                  </mat-menu>
+                </div>
+              </div>
+              }
+            </ng-container>
+          </div>
+        </div>
+        <mat-paginator
+          class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+          [showFirstLastButtons]="true"
+          (page)="pageChanged($event)"
+          showFirstLastButtons
+          [length]="displayedList?.total"
+          [pageSize]="currentSize"
+          [pageSizeOptions]="[5, 10, 20, 50, 100]"
+        ></mat-paginator>
+        } @else {
+        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+          {{ (isLoading ? 'Loading...' : 'There are no elements !') | transloco }}
+        </div>
+        }
+      </ng-container>
+    </div>
+  </div>
+</div>

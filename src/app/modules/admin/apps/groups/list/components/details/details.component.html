@@ -1,0 +1,178 @@
+@if (group) {
+    <div
+        class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    >
+        <form class="w-full" #myForm="ngForm" ngForm="ngForm">
+            <!-- Header -->
+            <div class="flex flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
+                <div class=" flex gap-2 w-1/4 text-4xl font-extrabold text-white ">
+                    <span>{{ 'Details' | transloco }}</span>
+                    <span class="hidden sm:flex">{{ 'Group' | transloco }}</span>
+                </div>
+                <div class="flex w-3/4 items-center justify-end">
+                    <!-- clear project button -->
+                    <button
+                        class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                        mat-stroked-button
+                        type="button"
+                        (click)="deleteOne()"
+                    >
+                        <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
+                    </button>
+                    <!-- save project button -->
+                    <button
+                        class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+                        mat-stroked-button
+                        type="submit"
+                        (click)="updateOne()"
+                    >
+                        <span class="ml-2 mr-1">{{ 'Update' | transloco }}</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Main -->
+            <div class="flex flex-col flex-auto h-[calc(100vh-8rem)] bg-gray-100  overflow-y-auto p-2">
+                <div class="flex flex-col mb-6 w-full">
+                    <div class="flex text-2xl font-extrabold tracking-tight m-4">
+                        <span class="mt-1"> {{ 'Group' | transloco }} </span>
+                    </div>
+                    <div class="grid sm:grid-cols-9 gap-6 p-3">
+                        <!-- code -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'code' | transloco }}</mat-label>
+                                <input [(ngModel)]="group.code" matInput name="code" type="text" readonly />
+                            </mat-form-field>
+                            @if ( myForm.controls['code'] && (myForm.controls['code'].dirty || myForm.submitted) &&
+                            myForm.controls['code'].hasError('required') ) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                        </div>
+                        <!-- label -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'label' | transloco }}</mat-label>
+                                <input [(ngModel)]="group.label" matInput name="label" type="text" readonly />
+                            </mat-form-field>
+                            @if ( myForm.controls['label'] && (myForm.controls['label'].dirty || myForm.submitted)
+                            && myForm.controls['label'].hasError('required') ) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full border p-2 ">
+                    <div class="flex text-2xl font-extrabold tracking-tight m-4">
+                        <span class="mt-1"> {{ 'Group features' | transloco }} </span>
+                    </div>
+                    <div class="grid grid-cols-10 gap-6 m-1 p-1">
+                        <div class="col-span-2 flex justify-center">{{ 'Feature' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'List' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'Create' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'Read' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'Update' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'Delete' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'Status' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center">{{ 'Default' | transloco }}</div>
+                        <div class="col-span-1 flex justify-center"></div>
+                    </div>
+                    <div class="grid grid-cols-1 min-w-full gap-1 bg-white ">
+                        @for (item of groupFeature; track item; let index = $index; let last = $last) {
+                            <div class="grid grid-cols-10 gap-6 m-1 " [class.border-b]="!last">
+                                <div class="col-span-2">
+                                    <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                        <mat-select
+                                            placeholder="{{ 'select feature' | transloco }}"
+                                            [value]="featureId[index]"
+                                            [disabled]="true"
+                                        >
+                                            <mat-select-trigger>
+                                                @if (featureId[index]) {
+                                                    <div class="font-medium items-center flex flex-row">
+                      <span class="">
+                        {{ featureId[index].title }}
+                      </span>
+                                                    </div>
+                                                }
+                                            </mat-select-trigger>
+                                            {{ groupFeature[index].featuresId.title }}
+
+                                            <mat-option [value]="null">
+                                                <div class="font-medium items-center flex flex-row">
+                                                    <span> {{ '-- None --' | transloco }} </span>
+                                                </div>
+                                            </mat-option>
+                                            @for (item of featureId; track item) {
+                                                <mat-option [value]="item" [disabled]="featureId.includes(item)">
+                                                    <div class="font-medium items-center flex flex-row">
+                                                        <span class=""> {{ item.title }}</span>
+                                                    </div>
+                                                </mat-option>
+                                            }
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-slide-toggle
+                                        disabled
+                                        name="list{{ index }}"
+                                        [(ngModel)]="groupFeature[index].list"
+                                    ></mat-slide-toggle>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-slide-toggle
+                                        disabled
+                                        name="create{{ index }}"
+                                        [(ngModel)]="groupFeature[index].create"
+                                    ></mat-slide-toggle>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-slide-toggle
+                                        disabled
+                                        name="read{{ index }}"
+                                        [(ngModel)]="groupFeature[index].read"
+                                    ></mat-slide-toggle>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-slide-toggle
+                                        disabled
+                                        name="update{{ index }}"
+                                        [(ngModel)]="groupFeature[index].update"
+                                    ></mat-slide-toggle>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-slide-toggle
+                                        disabled
+                                        name="delete{{ index }}"
+                                        [(ngModel)]="groupFeature[index].delete"
+                                    ></mat-slide-toggle>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-slide-toggle
+                                        disabled
+                                        name="status{{ index }}"
+                                        [(ngModel)]="groupFeature[index].status"
+                                    ></mat-slide-toggle>
+                                </div>
+                                <div class="col-span-1 flex justify-center mt-3">
+                                    <mat-radio-button
+                                        name="default-feature{{ index }}"
+                                        [value]="groupFeature[index].defaultFeature"
+                                        [checked]="groupFeature[index].defaultFeature"
+                                        [disabled]="true"
+                                    ></mat-radio-button>
+                                </div>
+                                <div class="col-span-1 flex justify-end">
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+}
