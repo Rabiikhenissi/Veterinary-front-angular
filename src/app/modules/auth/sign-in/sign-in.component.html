@@ -127,7 +127,8 @@
           <button
             class="flex-auto"
             type="button"
-            mat-stroked-button>
+            mat-stroked-button
+            (click)="signInWithFacebook()">
             <mat-icon
               class="icon-size-5"
             [svgIcon]="'feather:facebook'"></mat-icon>
@@ -135,15 +136,17 @@
           <button
             class="flex-auto"
             type="button"
-            mat-stroked-button>
+            mat-stroked-button
+            (click)="signInWithGoogle()">
             <mat-icon
               class="icon-size-5"
-            [svgIcon]="'feather:twitter'"></mat-icon>
+            [svgIcon]="'feather:chrome'"></mat-icon>
           </button>
           <button
             class="flex-auto"
             type="button"
-            mat-stroked-button>
+            mat-stroked-button
+            (click)="signInWithGithub()">
             <mat-icon
               class="icon-size-5"
             [svgIcon]="'feather:github'"></mat-icon>
