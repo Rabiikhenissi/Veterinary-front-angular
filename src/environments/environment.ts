@@ -1,6 +1,14 @@
 export const environment = {
   production: false,
   api: '/api',
+  firebaseConfig: {
+    apiKey: 'AIzaSyDQEnprjRwG3u6KkwQy4OraWfErXgXyxpA',
+    authDomain: 'zoovana-7db24.firebaseapp.com',
+    projectId: 'zoovana-7db24',
+    storageBucket: 'zoovana-7db24.appspot.com',
+    messagingSenderId: '444131825893',
+    appId: '1:444131825893:web:a5fec2ba22ffc5b10e9c0c',
+  },
 };
 
 /*

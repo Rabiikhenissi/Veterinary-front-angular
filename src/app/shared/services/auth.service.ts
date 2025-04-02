@@ -5,7 +5,8 @@ import { switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { environment } from '../../../environments/environment';
 import {AuthUtils} from "../../core/auth/auth.utils";
-
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 @Injectable({
     providedIn: 'root',
 })
@@ -14,7 +15,8 @@ export class AuthService {
     private _authenticated = false;
     _httpClient = inject(HttpClient)
     _userService= inject(UserService)
-
+    private app = initializeApp(environment.firebaseConfig); // Initialize Firebase app
+    private auth = getAuth(this.app); // Get Firebase auth instance
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
@@ -120,4 +122,74 @@ export class AuthService {
         }
         return of(true);
     }
+
+ /**
+     * Sign in with google
+     */
+ signInWithGoogle(): Observable<any> {
+    const provider = new GoogleAuthProvider();
+    return new Observable(observer => {
+        signInWithPopup(this.auth, provider)
+            .then(async result => {
+                const user = result.user;
+                if (!user) return;
+
+                const firebaseToken = await user.getIdToken();
+                this._httpClient.post<{ token: string }>(`${this.endpointAuth}/loginFire`, { firebaseToken })
+                    .subscribe({
+                        next: (response) => {
+                            if (!response.token) {
+                                observer.error(new Error('Invalid response from server.'));
+                                return;
+                            }
+                            this.accessToken = response.token;
+                            this._authenticated = true;
+                            observer.next(user);
+                        },
+                        error: error => observer.error(error),
+                    });
+            })
+            .catch(error => observer.error(error));
+    });
+}
+    
+ /**
+     * Sign in with facebook
+     */      signInWithFacebook(): Observable<any> {
+        const provider = new FacebookAuthProvider();
+        return new Observable(observer => {
+          signInWithPopup(this.auth, provider)
+            .then(result => {
+              const user = result.user;
+              if (user) {
+                user.getIdToken().then(token => {
+                  this.accessToken = token;
+                  this._authenticated = true;
+                  observer.next(user);
+                });
+              }
+            })
+            .catch(error => observer.error(error));
+        });
+      }
+    
+ /**
+     * Sign in with github
+     */      signInWithGithub(): Observable<any> {
+        const provider = new GithubAuthProvider();
+        return new Observable(observer => {
+          signInWithPopup(this.auth, provider)
+            .then(result => {
+              const user = result.user;
+              if (user) {
+                user.getIdToken().then(token => {
+                  this.accessToken = token;
+                  this._authenticated = true;
+                  observer.next(user);
+                });
+              }
+            })
+            .catch(error => observer.error(error));
+        });
+      }
 }
