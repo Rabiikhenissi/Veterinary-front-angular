@@ -143,14 +143,24 @@ export const appRoutes: Route[] = [
                         loadChildren: () => import('app/modules/admin/apps/pages/pages.routing'),
                     },
                     {
-                        // canActivate: [IsAuthorizedGuard],
-                        // canActivateChild: [IsAuthorizedGuard],
+                         canActivate: [IsAuthorizedGuard],
+                         canActivateChild: [IsAuthorizedGuard],
                         path:'calendar',
                         data: {
                             breadcrumb: 'Calendar',
                             feature: FeatureCodes.calendar,
                         },
                         loadChildren: () => import('app/modules/client/apps/calendar/calendar.routing'),
+                    },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path: 'profile',
+                        data: {
+                            breadcrumb: 'Profile',
+                            feature: FeatureCodes.profile,
+                        },
+                        loadChildren: () => import('app/modules/client/apps/profile/profile.routing'),
                     }
                     
                 ],

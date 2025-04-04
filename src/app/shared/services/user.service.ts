@@ -199,4 +199,14 @@ export class UserService {
     }
     return false;
   }
+
+  updateProfileIcon(userId: string, icon: string): Observable<User> {
+    return this.http.patch<User>(`${this.endpointAuth}/${userId}`, {
+      user: { icon }
+    }).pipe(
+      tap((updatedUser) => {
+        this._user.next(updatedUser); // Update local state
+      })
+    );
+  }
 }
