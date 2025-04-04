@@ -1,0 +1,41 @@
+.swal2-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .swal2-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .swal2-confirm, .swal2-cancel {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .swal2-confirm {
+    color: #fff;
+    background-color: #007bff; /* Confirm button color */
+    border: none;
+  }
+  
+  .swal2-cancel {
+    color: #fff;
+    background-color: #dc3545; /* Cancel button color */
+    border: none;
+  }
+  
+  .swal2-confirm:hover {
+    background-color: #0056b3; /* Darker blue on hover for confirm */
+  }
+  
+  .swal2-cancel:hover {
+    background-color: #c82333; /* Darker red on hover for cancel */
+  }
+  
+  .swal2-popup {
+    background-color: #f4f4f9; /* Light background for modal */
+  }
