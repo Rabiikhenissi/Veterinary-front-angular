@@ -28,7 +28,7 @@ export class AddComponent {
       this._petService.createOne(newPet).subscribe({
         next: () => {
           console.log('Pet added successfully!');
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/home/profile']);
         },
         error: (error) => {
           console.error('Error adding pet:', error);

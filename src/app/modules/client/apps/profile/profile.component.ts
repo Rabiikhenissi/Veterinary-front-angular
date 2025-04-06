@@ -31,9 +31,11 @@ export class ProfileComponent {
         this.user.id = results._id;
         this.selectedAvatar = results.avatar || this.avatars[0];
         this.user.pets = results.petId 
+        console.log(results);
       },
       error: (err) => console.error(err),
     });
+    
   }
 
   // saveProfile(): void {
