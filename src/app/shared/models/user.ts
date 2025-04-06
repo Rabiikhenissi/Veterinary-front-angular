@@ -1,5 +1,6 @@
 import { Group } from './group';
 import {Company} from "./company";
+import { Pet } from './pet';
 
 export class User {
   id?: string;
@@ -12,6 +13,7 @@ export class User {
   phone?: string;
   password?: string;
   groupsId?: Group;
+  petId?:Pet[];
 }
 
 export class ResToken {

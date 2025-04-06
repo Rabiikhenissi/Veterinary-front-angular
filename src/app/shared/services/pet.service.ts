@@ -4,49 +4,49 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pagination } from '../models/pagination';
-import { Animal } from '../models/animal';
+import { Pet } from '../models/pet';
 @Injectable({
   providedIn: 'root',
 })
-export class AnimalService {
-  endpoint = `${environment.api}/animals`; // API endpoint for animals
+export class PetService {
+  endpoint = `${environment.api}/pets`; // API endpoint for pets
   http = inject(HttpClient);
 
-  // Get list of animals
+  // Get list of pets
   getList(
     limit: string,
     page: string,
     search: string
-  ): Observable<Pagination<Animal>> {
+  ): Observable<Pagination<Pet>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
     searchParams = searchParams.append('page', page);
     if (search) {
       searchParams = searchParams.append('search', search);
     }
-    return this.http.get<Pagination<Animal>>(`${this.endpoint}`, { params: searchParams });
+    return this.http.get<Pagination<Pet>>(`${this.endpoint}`, { params: searchParams });
   }
 
-  // Get all animals 
+  // Get all pets 
 
 
-  // Delete an animal 
+  // Delete an pet 
   deleteOne(id: string): Observable<null> {
     return this.http.delete<null>(`${this.endpoint}/${id}`);
   }
 
-  // Get an animal 
-  getOne(id: string): Observable<Animal> {
-    return this.http.get<Animal>(`${this.endpoint}/${id}`);
+  // Get an pet 
+  getOne(id: string): Observable<Pet> {
+    return this.http.get<Pet>(`${this.endpoint}/${id}`);
   }
 
-  // Create a new animal
-  createOne(animal: Animal): Observable<null> {
-    return this.http.post<null>(`${this.endpoint}`, { animal });
+  // Create a new pet
+  createOne(pet: Pet): Observable<null> {
+    return this.http.post<null>(`${this.endpoint}`, { pet });
   }
 
-  // Update an existing animal
-  updateOne(animal: Animal): Observable<null> {
-    return this.http.patch<null>(`${this.endpoint}/${animal._id}`, { animal });
+  // Update an existing pet
+  updateOne(pet: Pet): Observable<null> {
+    return this.http.patch<null>(`${this.endpoint}/${pet._id}`, { pet });
   }
 }
