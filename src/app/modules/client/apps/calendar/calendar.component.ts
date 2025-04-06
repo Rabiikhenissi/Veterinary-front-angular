@@ -25,7 +25,7 @@ import listPlugin from '@fullcalendar/list';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { Appointment } from 'app/shared/models/appointment';
 import { Router } from '@angular/router';
-import { AnimalService } from 'app/shared/services/animal.service';
+import { PetService } from 'app/shared/services/pet.service';
 
 @Component({
     selector: 'app-calendar',
@@ -36,16 +36,16 @@ import { AnimalService } from 'app/shared/services/animal.service';
 export class CalendarComponent implements OnInit {
     eventGuid: number = 0;
     @ViewChild(FullCalendarComponent) calendarComponent!: FullCalendarComponent;
-    animals: any[] = [];
+    pets: any[] = [];
     constructor(
         private _appointmentService: AppointmentService,
         private _router: Router,
-        private _animalService: AnimalService
+        private _petService: PetService
     ) {}
 
     ngOnInit(): void {
         this.loadAppointments();
-        this.loadAnimals();
+        this.loadPets();
     }
 
     TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
@@ -123,38 +123,38 @@ export class CalendarComponent implements OnInit {
         const endDate = selectInfo.endStr;
 
         Swal.fire({
-            title: 'Select an Animal',
+            title: 'Select an Pet',
             input: 'select',
-            inputOptions: this.animals.reduce((acc, animal) => {
-                acc[animal._id] = `${animal.name} (${animal.species})`;
+            inputOptions: this.pets.reduce((acc, pet) => {
+                acc[pet._id] = `${pet.name} (${pet.species})`;
                 return acc;
             }, {}),
-            inputPlaceholder: 'Choose an animal...',
+            inputPlaceholder: 'Choose an pet...',
             showCancelButton: true,
             cancelButtonColor: '#FF5733',
             confirmButtonColor: '#4CAF50',
             inputValidator: (value) => {
                 if (!value) {
-                    return 'You need to select an animal!';
+                    return 'You need to select an pet!';
                 }
             },
         }).then((result) => {
             if (result.isConfirmed) {
-                const selectedAnimalId = result.value;
-                const animal = this.animals.find(
-                    (animal) => animal._id === selectedAnimalId
+                const selectedPetId = result.value;
+                const pet = this.pets.find(
+                    (pet) => pet._id === selectedPetId
                 );
 
-                if (animal) {
+                if (pet) {
                     const appointment: Appointment = {
                         userId: {
-                            _id: animal.ownerId._id,
-                            name: animal.ownerId._id,
+                            _id: pet.ownerId._id,
+                            name: pet.ownerId._id,
                         },
-                        animalId: {
-                            _id: animal._id,
-                            name: animal.name,
-                            species: animal.species,
+                        petId: {
+                            _id: pet._id,
+                            name: pet.name,
+                            species: pet.species,
                         },
                         companyId: '62c2c6ba6b473700112d5c26',
                         date: startDate.split('T')[0],
@@ -209,17 +209,17 @@ export class CalendarComponent implements OnInit {
         this.currentEvents.set(events);
         this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
     }
-    loadAnimals(): void {
-        this._animalService.getList('10', '1', '').subscribe(
+    loadPets(): void {
+        this._petService.getList('10', '1', '').subscribe(
             (response) => {
-                this.animals = response.data;
-                console.log('Animals loaded:', this.animals);
+                this.pets = response.data;
+                console.log('Pets loaded:', this.pets);
             },
             (error) => {
-                console.error('Error loading animals:', error);
+                console.error('Error loading pets:', error);
                 console.log(
                     'Error!',
-                    'There was an error loading the animals.',
+                    'There was an error loading the pets.',
                     'error'
                 );
             }
@@ -239,7 +239,7 @@ export class CalendarComponent implements OnInit {
                 const events: EventInput[] = appointments.map(
                     (appointment: Appointment) => ({
                         id: appointment._id,
-                        title: ` Mr. ${appointment.userId.name} with ${appointment.animalId.name} (${appointment.animalId.species})`,
+                        title: ` Mr. ${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`,
                         start:
                             new Date(appointment.date)
                                 .toISOString()

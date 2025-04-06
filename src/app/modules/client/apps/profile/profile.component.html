@@ -1,35 +1,68 @@
-<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl text-center">
-    <!-- Icône de profil -->
-    <div class="flex justify-center">
-        <img [src]="user.icon || selectedIcon" alt="Profile Icon"
-            class="w-20 h-20 rounded-full border-4 border-gray-300 bg-gray-100 p-2">
-    </div>
+<div class="max-w-xl mx-auto p-6 relative">
+  <!-- Edit Profile Button -->
+  <button (click)="editProfile()"
+    class="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm">
+    Edit Profile
+  </button>
 
-    <!-- Sélection d'icône -->
-    <div class="mt-4">
-        <label class="block text-gray-700 font-medium">choose an icon</label>
-        <div class="flex justify-center space-x-4 mt-2">
-            @for (icon of icons; track $index) {
-            <img  [src]="icon" alt="Icon" (click)="selectIcon(icon)"
-                class="w-12 h-12 cursor-pointer rounded-full border-2 border-gray-200 hover:border-blue-500 transition">
-            }</div>
-    </div>
+  <!-- Profile Avatar -->
+  <div class="flex justify-center mb-4">
+    <img [src]="selectedAvatar" 
+         alt="User Avatar" 
+         class="w-24 h-24 rounded-full shadow-lg border-2 border-gray-300 object-cover" />
+  </div>
 
-    
-
-    <!-- Nom et Email -->
-    <h2 class="mt-4 text-2xl font-semibold text-gray-800">{{ user.name }}</h2>
+  <!-- User Info -->
+  <div class="text-center mb-6">
+    <h2 class="text-2xl font-semibold">{{ user.name }}</h2>
     <p class="text-gray-600">{{ user.email }}</p>
+  </div>
 
-    <!-- Bouton de sauvegarde -->
-    <button (click)="saveProfile()"
-        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200">
-        save
-    </button>
+  <!-- Logout Button -->
+  <button (click)="logout()"
+    class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200">
+    Sign out
+  </button>
 
-    <!-- Bouton de déconnexion -->
-    <button (click)="logout()"
-        class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200">
-        sign out
-    </button>
+  <!-- Pets Section -->
+  <div class="mt-6 w-80">
+    <!-- My Pets title + Add Button -->
+    <div class="flex justify-between items-center mb-2">
+      <h3 class="text-xl font-bold">My Pets:</h3>
+      <button (click)="addNewPet()"
+        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm">
+        Add New
+      </button>
+    </div>
+
+    <ul class="space-y-4">
+      @for (pet of user.pets; track $index) {
+      <li class="flex items-center justify-between p-4 bg-white shadow rounded-lg">
+        <!-- Pet Info -->
+        <div class="flex items-center">
+          <img [src]="pet.icon" alt="{{ pet.name }}" class="w-12 h-12 rounded-full mr-4">
+          <div>
+            <p class="font-medium text-lg">{{ pet.name }}</p>
+            <p class="text-sm text-gray-500">
+              {{ pet.species }} - Born: {{ pet.birthDate | date : "shortDate" }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-2">
+          <button 
+            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
+            (click)="viewPetDetails(pet._id)">
+            View
+          </button>
+          <button 
+            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm"
+            (click)="editPet(pet._id)">
+            Edit
+          </button>
+        </div>
+      </li>}
+    </ul>
+  </div>
 </div>
