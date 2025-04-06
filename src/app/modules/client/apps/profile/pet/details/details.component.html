@@ -1,1 +1,16 @@
-<p>details works!</p>
+
+@if (!loading && pet) {
+<div class="max-w-md mx-auto mt-6 p-6 bg-white rounded-lg shadow-md" >
+    <h2 class="text-2xl font-bold mb-4">{{ pet.name }}</h2>
+    @if (pet.icon) {
+    <img  [src]="pet.icon" alt="Pet icon" class="w-32 h-32 object-cover rounded-full mx-auto mb-4" />
+    }
+    <div class="mb-2"><strong>Species:</strong> {{ pet.species }}</div>
+    <div class="mb-2"><strong>Birth Date:</strong> {{ pet.birthDate | date }}</div>
+    <div class="mb-2"><strong>Owner:</strong> {{ pet.ownerId?.name }} ({{ pet.ownerId?.email }})</div>
+  </div>}
+  
+  <ng-template #loadingTemplate>
+    <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
+  </ng-template>
+  

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AddComponent } from './add/add.component';
 import { DetailsComponent } from './details/details.component';
-import { EditComponent } from '../edit/edit.component';
+import { EditComponent } from './edit/edit.component';
 
 const routes: Routes = [
     
@@ -21,7 +21,7 @@ const routes: Routes = [
               },
               {
                 path:"edit",
-                component:EditComponent,
+                component: EditComponent,
                 data:{breadcrumb: 'edit'},
               }
           ],
