@@ -51,7 +51,6 @@ export class ProfileComponent {
   // }
 
   logout(): void {
-    this.authService.signOut();
     this.router.navigate(['/sign-out']);
   }
   selectAvatar(avatar: string): void {
