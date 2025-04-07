@@ -51,11 +51,11 @@ export class CalendarComponent implements OnInit {
     ngOnInit(): void {
         this.loadAppointments();
         this.loadPets();
+        
     }
 
     TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
 
-  
 
     calendarVisible = signal(true);
     calendarOptions: CalendarOptions = {
@@ -88,7 +88,7 @@ export class CalendarComponent implements OnInit {
 
         displayEventTime: false,
         contentHeight: 'auto',
-        
+
     };
 
     currentEvents = signal<EventApi[]>([]);

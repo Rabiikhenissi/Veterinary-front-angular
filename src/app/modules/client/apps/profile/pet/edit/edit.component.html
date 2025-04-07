@@ -1,1 +1,36 @@
-<p>edit works!</p>
+<div class="max-w-md mx-auto mt-6 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-4">Edit Pet</h2>
+  
+    <form [formGroup]="petForm" (ngSubmit)="onSubmit()">
+      <div class="mb-4">
+        <label class="block font-semibold">Name</label>
+        <input type="text" formControlName="name"
+               class="w-full px-3 py-2 border rounded" />
+      </div>
+  
+      <div class="mb-4">
+        <label class="block font-semibold">Species</label>
+        <input type="text" formControlName="species"
+               class="w-full px-3 py-2 border rounded" />
+      </div>
+  
+      <div class="mb-4">
+        <label class="block font-semibold">Birth Date</label>
+        <input type="date" formControlName="birthDate"
+               class="w-full px-3 py-2 border rounded" />
+      </div>
+  
+      <div class="mb-4">
+        <label class="block font-semibold">Icon URL</label>
+        <input type="text" formControlName="icon"
+               class="w-full px-3 py-2 border rounded" />
+      </div>
+  
+      <button type="submit"
+              class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+              [disabled]="petForm.invalid">
+        Save Changes
+      </button>
+    </form>
+  </div>
+  
