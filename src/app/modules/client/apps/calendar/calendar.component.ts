@@ -77,8 +77,8 @@ export class CalendarComponent implements OnInit {
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
         // Set slot duration
-        slotDuration: '01:00', // 1-hour slots
-        slotLabelInterval: '01:00', // Label every hour
+        slotDuration: '0:30', // 1-hour slots
+        slotLabelInterval: '0:30', // Label every hour
         slotLabelFormat: {
             hour: '2-digit',
             minute: '2-digit',
@@ -87,7 +87,14 @@ export class CalendarComponent implements OnInit {
         allDaySlot: false,
 
         displayEventTime: false,
-        contentHeight: 'auto',
+        height: 'auto', // fallback
+        expandRows: true, // makes grid stretch vertically
+        aspectRatio: 1.35, // helps adjust calendar shape
+        contentHeight: 'auto', // for auto height
+        
+        validRange: {
+            start: this.TODAY_STR,
+        },
 
     };
 
@@ -236,7 +243,7 @@ export class CalendarComponent implements OnInit {
                     const endHour = (parseInt(appointment.time.split(':')[0]) + 1).toString().padStart(2, '0');
                     const endTime = `${startDate}T${endHour}:00`;
     
-                    if (appointment.userId._id !== currentUserId) {
+                    if (appointment.userId?._id !== currentUserId) {
                         return {
                             start: startTime,
                             end: endTime,

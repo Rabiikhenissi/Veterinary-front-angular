@@ -1,41 +1,50 @@
-<div class="max-w-md mx-auto mt-6 p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4">Add a New Pet</h2>
-  
-    <form [formGroup]="petForm" (ngSubmit)="onSubmit()">
-      <div class="mb-4">
-        <label class="block font-semibold">Name</label>
-        <input type="text" formControlName="name"
-               class="w-full px-3 py-2 border rounded" />
+<div class="w-full max-w-4xl mx-auto mt-6 p-6 bg-green-50 rounded-2xl shadow-lg border border-green-200 mb-10">
+  <h2 class="text-2xl font-bold mb-6 text-center text-green-700">Add a New Pet</h2>
+
+  <form [formGroup]="petForm" (ngSubmit)="onSubmit()">
+    <!-- Name -->
+    <div class="mb-4">
+      <label class="block font-semibold text-green-900">Name</label>
+      <input 
+        type="text" 
+        formControlName="name"
+        class="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+      />
+    </div>
+
+    <!-- Birth Date -->
+    <div class="mb-4">
+      <label class="block font-semibold text-green-900">Birth Date</label>
+      <input 
+        type="date" 
+        formControlName="birthDate"
+        class="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+      />
+    </div>
+
+    <!-- Select Species -->
+    <div class="mb-6">
+      <label class="block font-semibold text-green-900 mb-3">Select a Species</label>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
+        @for (item of icons; track $index) {
+        <div
+          class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
+          [class.border-green-500]="petForm.value.icon === item.icon"
+          (click)="selectIcon(item)"
+        >
+          <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
+          <span class="text-sm font-medium text-green-700">{{ item.label }}</span>
+        </div>}
       </div>
-  
-   
-  
-      <div class="mb-4">
-        <label class="block font-semibold">Birth Date</label>
-        <input type="date" formControlName="birthDate"
-               class="w-full px-3 py-2 border rounded" />
-      </div>
-  
-      <div class="mb-4">
-        <label class="block font-semibold mb-2">Select a Species</label>
-        <div class="grid grid-cols-3 gap-4">
-          <div
-            *ngFor="let item of icons"
-            class="flex flex-col items-center cursor-pointer p-2 rounded-lg border-2 transition-all"
-            [class.border-blue-500]="petForm.value.icon === item.icon"
-            (click)="selectIcon(item)"
-          >
-            <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1" />
-            <span class="text-sm font-medium">{{ item.label }}</span>
-          </div>
-        </div>
-      </div>
-  
-      <button type="submit"
-              class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-              [disabled]="petForm.invalid">
-        Add Pet
-      </button>
-    </form>
-  </div>
-  
+    </div>
+
+    <!-- Submit -->
+    <button
+      type="submit"
+      class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-md transition-all duration-500 ease-in-out shadow disabled:opacity-50"
+      [disabled]="petForm.invalid"
+    >
+      ➕ Add Pet
+    </button>
+  </form>
+</div>

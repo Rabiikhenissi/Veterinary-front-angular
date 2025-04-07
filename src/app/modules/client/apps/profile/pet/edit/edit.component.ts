@@ -12,13 +12,28 @@ export class EditComponent {
   _petService = inject(PetService);
   route = inject(ActivatedRoute);
   petId!: string;
-
+  
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
       name: ['', Validators.required],
       species: ['', Validators.required],
       birthDate: ['', Validators.required],
       icon: [''],
+    });
+  }
+  icons = [
+    { icon: 'assets/images/avatars/pets/dog.png', label: 'Dog' },
+    { icon: 'assets/images/avatars/pets/cat.png', label: 'Cat' },
+    { icon: 'assets/images/avatars/pets/rabbit.png', label: 'Rabbit' },
+    { icon: 'assets/images/avatars/pets/fish.png', label: 'Fish' },
+    { icon: 'assets/images/avatars/pets/turtle.png', label: 'Turtle' },
+    { icon: 'assets/images/avatars/pets/monkey.png', label: 'Monkey' },
+  ];
+
+  selectIcon(iconData: { icon: string; label: string }) {
+    this.petForm.patchValue({
+      icon: iconData.icon,
+      species: iconData.label,
     });
   }
 
@@ -32,6 +47,7 @@ export class EditComponent {
         console.error('Error loading pet:', err);
       },
     });
+    
   }
 
   onSubmit() {
@@ -43,6 +59,7 @@ export class EditComponent {
           console.log('Pet updated successfully!');
           console.log('Updated pet:', updatedPet);
           this.router.navigate(['/home/profile']);
+          console.log(this.petForm.value);
         },
         error: (err) => {
           console.error('Error updating pet:', err);

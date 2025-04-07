@@ -16,7 +16,7 @@ export default [
               
               
                 {
-                  path: 'edit',
+                  path: ':id/edit',
                   component: EditComponent,
                   data:{breadcrumb: 'edit'},
                 }
