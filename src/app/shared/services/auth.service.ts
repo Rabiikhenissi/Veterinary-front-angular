@@ -17,6 +17,8 @@ export class AuthService {
     _userService= inject(UserService)
     private app = initializeApp(environment.firebaseConfig); // Initialize Firebase app
     private auth = getAuth(this.app); // Get Firebase auth instance
+    connectedUser: any; // Variable to store connected user
+    connectedUserId: string; // Variable to store connected user ID
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
@@ -50,6 +52,11 @@ export class AuthService {
         });
     }
 
+
+
+
+    
+
     /**
      * Reset password
      *
@@ -76,8 +83,13 @@ export class AuthService {
                 switchMap((response: any) => {
                     // Store the access token in the local storage
                     this.accessToken = response;
-                    const connectedUser = this._userService.decodeToken(response);
-                    // @ts-ignore
+                 const connectedUser = this._userService.decodeToken(response);
+                 this.connectedUser = connectedUser;
+                 console.log(this.connectedUser.id);
+                 localStorage.setItem('connectedUserId', this.connectedUser.id);
+                 console.log('localStorage', localStorage.getItem('connectedUserId'));
+                 
+                 // @ts-ignore
                     this._userService._defaultLink.next(connectedUser?.defaultLink);
                     this._authenticated = true;
                     // Return a new observable with the response

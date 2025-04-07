@@ -59,6 +59,7 @@
               "src/styles/tailwind.scss",
               "./node_modules/@syncfusion/ej2-material-theme/styles/material.css",
               "node_modules/sweetalert2/dist/sweetalert2.min.css"
+              
 
             ],
             "scripts": [],

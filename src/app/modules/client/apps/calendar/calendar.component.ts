@@ -25,23 +25,28 @@ import listPlugin from '@fullcalendar/list';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { Appointment } from 'app/shared/models/appointment';
 import { Router } from '@angular/router';
+import { AuthService } from 'app/shared/services/auth.service';
+import { UserService } from 'app/shared/services/user.service';
+
 import { PetService } from 'app/shared/services/pet.service';
 
 @Component({
     selector: 'app-calendar',
     imports: [FullCalendarModule],
     templateUrl: './calendar.component.html',
-    styleUrls: ['./calendar.component.css'],
+
 })
 export class CalendarComponent implements OnInit {
     eventGuid: number = 0;
     @ViewChild(FullCalendarComponent) calendarComponent!: FullCalendarComponent;
+    _router= inject(Router);
+    _authService= inject(AuthService);
+    _petService= inject(PetService);
+    _appointmentService= inject(AppointmentService);
+    _userService= inject(UserService);
+    
     pets: any[] = [];
-    constructor(
-        private _appointmentService: AppointmentService,
-        private _router: Router,
-        private _petService: PetService
-    ) {}
+    
 
     ngOnInit(): void {
         this.loadAppointments();
@@ -89,7 +94,6 @@ export class CalendarComponent implements OnInit {
         select: this.handleDateSelect.bind(this),
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
-
         // Set slot duration
         slotDuration: '01:00', // 1-hour slots
         slotLabelInterval: '01:00', // Label every hour
@@ -98,8 +102,10 @@ export class CalendarComponent implements OnInit {
             minute: '2-digit',
             hour12: false, // Use 24-hour format
         },
-
+        
+        displayEventTime: false,
         contentHeight: 'auto',
+        
     };
 
     currentEvents = signal<EventApi[]>([]);
@@ -116,7 +122,11 @@ export class CalendarComponent implements OnInit {
     //     weekends: !options.weekends,
     //   }));
     // }
-
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.calendarComponent.getApi().updateSize();
+        }, 100); // Adjust delay as necessary (100ms here)
+    }
     handleDateSelect(selectInfo: DateSelectArg) {
         const calendarApi = selectInfo.view.calendar;
         const startDate = selectInfo.startStr;
@@ -226,45 +236,58 @@ export class CalendarComponent implements OnInit {
         );
     }
 
+ 
     loadAppointments(): void {
-        console.log('Loading appointments...');
-
+        const currentUserId = localStorage.getItem('connectedUserId'); 
+ console.log("test",localStorage.getItem('connectedUserId'));
         this._appointmentService.getAppointments('10', '1', '').subscribe(
             (response) => {
                 console.log('Appointments fetched successfully:', response);
-
+    
                 const appointments = response.data;
-                console.log(' Appointments:', appointments);
-
-                const events: EventInput[] = appointments.map(
-                    (appointment: Appointment) => ({
+                console.log('Appointments:', appointments);
+    
+                const events: EventInput[] = appointments.map((appointment: Appointment) => {
+                    const startDate = new Date(appointment.date).toISOString().split('T')[0];
+                    const startTime = `${startDate}T${appointment.time}`;
+                    const endHour = (parseInt(appointment.time.split(':')[0]) + 1).toString().padStart(2, '0');
+                    const endTime = `${startDate}T${endHour}:00`;
+    
+                    if (appointment.userId._id !== currentUserId) {
+                        return {
+                            start: startTime,
+                            end: endTime,
+                            display: 'background',
+                            backgroundColor: 'grey' 
+                        };
+                    }
+    if(appointment.status === 'pending') {
+                    return {
                         id: appointment._id,
-                        title: ` Mr. ${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`,
-                        start:
-                            new Date(appointment.date)
-                                .toISOString()
-                                .replace(/T.*$/, '') +
-                            'T' +
-                            appointment.time, // Format the start time
-                        end:
-                            new Date(appointment.date)
-                                .toISOString()
-                                .replace(/T.*$/, '') +
-                            'T' +
-                            (
-                                parseInt(appointment.time.split(':')[0]) + 1
-                            ).toString() +
-                            ':00', // Add 1 hour to the start time for the end time
-                        allDay: false, // You can adjust this based on your requirement
-                    })
-                );
+                        title: `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`,
+                        start: startTime,
+                        end: endTime,
+                        allDay: false,
+                        color: '#fbbf24', 
+                    };
+                }
+                return {
+                    id: appointment._id,
+                    title: `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`,
+                    start: startTime,
+                    end: endTime,
+                    allDay: false,
+                    color: 'green', 
+                };}
+                );    
+                const calendarApi = this.calendarComponent.getApi();
+                calendarApi.removeAllEvents();
+                calendarApi.addEventSource(events);
+                calendarApi.updateSize();
 
-                console.log('Mapped Events:', events); // Log mapped events to check the transformation
-
-                this.updateCalendarEvents(events);
             },
             (error) => {
-                console.error('Error fetching appointments:', error); // Log any error
+                console.error('Error fetching appointments:', error);
             }
         );
     }
