@@ -160,7 +160,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Profile',
                             feature: FeatureCodes.profile,
                         },
-                        loadChildren: () => import('app/modules/client/apps/profile/profile.routing'),
+                        loadChildren: () => import('app/modules/client/apps/profile/profile.routes'),
                     }
                     
                 ],
