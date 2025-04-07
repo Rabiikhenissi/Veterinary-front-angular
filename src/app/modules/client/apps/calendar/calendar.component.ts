@@ -55,25 +55,7 @@ export class CalendarComponent implements OnInit {
 
     TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
 
-    INITIAL_EVENTS: EventInput[] = [
-        {
-            id: '1',
-            title: 'All-day event',
-            start: this.TODAY_STR,
-        },
-        {
-            id: '2',
-            title: 'Timed event',
-            start: this.TODAY_STR + 'T00:00:00',
-            end: this.TODAY_STR + 'T03:00:00',
-        },
-        {
-            id: '3',
-            title: 'Timed event',
-            start: this.TODAY_STR + 'T12:00:00',
-            end: this.TODAY_STR + 'T15:00:00',
-        },
-    ];
+  
 
     calendarVisible = signal(true);
     calendarOptions: CalendarOptions = {
@@ -102,7 +84,8 @@ export class CalendarComponent implements OnInit {
             minute: '2-digit',
             hour12: false, // Use 24-hour format
         },
-        
+        allDaySlot: false,
+
         displayEventTime: false,
         contentHeight: 'auto',
         
