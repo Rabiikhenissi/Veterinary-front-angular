@@ -29,6 +29,7 @@ import { AuthService } from 'app/shared/services/auth.service';
 import { UserService } from 'app/shared/services/user.service';
 
 import { PetService } from 'app/shared/services/pet.service';
+import { CompanyService } from 'app/shared/services/company.service';
 
 @Component({
     selector: 'app-calendar',
@@ -43,18 +44,54 @@ export class CalendarComponent implements OnInit {
     _petService = inject(PetService);
     _appointmentService = inject(AppointmentService);
     _userService = inject(UserService);
-
+_companyService = inject(CompanyService);
     pets: any[] = [];
-
+companyDate: string = '';
+calendarFirstDate: string = '';
+userType: string = '';
+CalendarOptions!: CalendarOptions;
     ngOnInit(): void {
         this.loadAppointments();
         this.loadPets();
-    }
+        this.userType = localStorage.getItem('connectedUserType');
+        const connectedUserCompany = localStorage.getItem('connectedUserCompany');
+        console.log('connectedUserCompany', connectedUserCompany);//mrigla
+this._companyService.getOne("62ce922f7a551b00113183a8").subscribe({
+    next: (company) => {
+        console.log('Company:', company);
+        this.companyDate = company.firstCalendarDay;
+        console.log('companyDate', this.companyDate);
+        console.log('type of companyDate', typeof this.companyDate);
+        if (this.userType !== 'external') {
+            console.log(this.userType);
+            this.calendarFirstDate = this.companyDate;
+            console.log("date", this.calendarFirstDate);
+            
+            
+        }
+        else {
+            this.calendarFirstDate = new Date().toISOString().replace(/T.*$/, '');;
+            console.log('calendarFirstDate', this.calendarFirstDate);
+            
+        }
+        this.initializeCalendarOptions(); 
+
+    },
+error: (error) => {
+    console.error('Error fetching company:', error);
+}
+});
+this.initializeCalendarOptions(); 
+
+    }   
+
 
     TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
-
+  
     calendarVisible = signal(true);
-    calendarOptions: CalendarOptions = {
+    initializeCalendarOptions(): void {
+        console.log('calendarFirstDate in initializeCalendarOptions:', this.calendarFirstDate); // Log here to check if it's set
+    this.CalendarOptions = {
         plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
         headerToolbar: {
             left: 'prev,next today',
@@ -89,7 +126,7 @@ export class CalendarComponent implements OnInit {
         contentHeight: 'auto', // for auto height
 
         validRange: {
-            start: this.TODAY_STR,
+            start: this.calendarFirstDate, 
         },
         ///fixing the colored slots position
         eventDidMount: (info) => {
@@ -101,7 +138,7 @@ export class CalendarComponent implements OnInit {
                 info.el.style.marginLeft = leftPosition;
             }
         },
-    };
+    }; }
 
     currentEvents = signal<EventApi[]>([]);
 
@@ -259,6 +296,7 @@ export class CalendarComponent implements OnInit {
         console.log('test', localStorage.getItem('connectedUserId'));
         const connectedUserType = localStorage.getItem('connectedUserType');
         console.log('test', localStorage.getItem('connectedUserType'));
+       
 
         this._appointmentService.getAppointments('10', '1', '').subscribe(
             (response) => {
