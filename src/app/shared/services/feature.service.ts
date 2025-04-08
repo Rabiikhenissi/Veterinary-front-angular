@@ -14,7 +14,7 @@ export class FeatureService {
   // get features
   getFeatures(
       limit: string,
-      page: string,
+      page: string, 
       search: string,
       filterType:string,
       filterStatus:string,

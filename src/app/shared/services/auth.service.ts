@@ -88,6 +88,8 @@ export class AuthService {
                  console.log(this.connectedUser);
                  localStorage.setItem('connectedUserId', this.connectedUser.id);
                  localStorage.setItem('connectedUserType', this.connectedUser.type);
+                 localStorage.setItem('connectedUserCompany', this.connectedUser.companyId);
+            
                  
                  // @ts-ignore
                     this._userService._defaultLink.next(connectedUser?.defaultLink);
