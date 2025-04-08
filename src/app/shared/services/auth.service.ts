@@ -85,9 +85,9 @@ export class AuthService {
                     this.accessToken = response;
                  const connectedUser = this._userService.decodeToken(response);
                  this.connectedUser = connectedUser;
-                 console.log(this.connectedUser.id);
+                 console.log(this.connectedUser);
                  localStorage.setItem('connectedUserId', this.connectedUser.id);
-                 console.log('localStorage', localStorage.getItem('connectedUserId'));
+                 localStorage.setItem('connectedUserType', this.connectedUser.type);
                  
                  // @ts-ignore
                     this._userService._defaultLink.next(connectedUser?.defaultLink);

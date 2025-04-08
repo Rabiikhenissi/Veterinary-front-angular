@@ -1,0 +1,72 @@
+simple-snack-bar {
+  justify-content: center !important;
+}
+
+.mat-snack-bar-custom-alert-success {
+  border: 2px solid green !important;
+  background-color: white !important;
+  color: green !important;
+  mat-icon{
+    color: green !important;
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.mat-snack-bar-custom-alert-error {
+  border: 2px solid red !important;
+  background-color: white !important;
+  color: red !important;
+  mat-icon{
+    color: red !important;
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.mat-snack-bar-custom-alert-warning {
+  border: 2px solid #DF8C32FF !important;
+  background-color: white !important;
+  color: #DF8C32FF !important;
+  mat-icon{
+    color: #DF8C32FF !important;
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.mat-snack-bar-custom-alert-info {
+  border: 2px solid #DBEDF2FF !important;
+  background-color: #55667CFF !important;
+  color: #DBEDF2FF !important;
+  mat-icon{
+    color: #DBEDF2FF !important;
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .fc .fc-event {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .custom-event-text {
+    font-size: 14px;  /* Adjust text size */
+    font-weight: bold;  /* Optionally, make the text bold */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;  /* Ensure the text is vertically centered */
+    color: white;  /* Set text color */
+}
+}

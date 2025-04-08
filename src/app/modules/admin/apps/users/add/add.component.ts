@@ -20,6 +20,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { Company } from 'app/shared/models/company';
 import { FilterOptions } from 'app/shared/models/filter-options';
 import { Pagination } from 'app/shared/models/pagination';
+import { SnackBarService } from 'app/shared/services/snack-bar.service';
 
 @Component({
   selector: 'app-details',
@@ -48,6 +49,7 @@ export class AddComponent implements OnInit{
     _fuseConfirmationService= inject(FuseConfirmationService);
     _route= inject(ActivatedRoute);
     _loadingService = inject(LoadingService)
+    _snackBarService = inject(SnackBarService);
     //********* DECLARE CLASSES/ENUMS ***********//
     user = new User();
     listGroups: Group[] = [];
@@ -108,8 +110,16 @@ export class AddComponent implements OnInit{
     if (myForm.valid) {
       console.log(this.user);
       
-        this._userService.addUser(this.user).subscribe(() => {
+        this._userService.addUser(this.user).subscribe({
+          next: (result) => {
             this._router.navigate([`../`], { relativeTo: this._route }).then();
+          },
+          error: () => {
+            this._snackBarService.openSnackBar(
+              'Error creating user',
+            );
+            this._loadingService.hide();
+          },
         })
     }
   }
