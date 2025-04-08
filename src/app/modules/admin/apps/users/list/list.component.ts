@@ -17,7 +17,9 @@ import { UserService } from 'app/shared/services/user.service';
 import {User} from "../../../../../shared/models/user";
 import { CompanyService } from 'app/shared/services/company.service';
 import { Company } from 'app/shared/models/company';
-
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -35,6 +37,7 @@ import { Company } from 'app/shared/models/company';
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
+        FeaturesDirective
     ],
 })
 export class ListComponent implements OnInit {
@@ -54,6 +57,8 @@ export class ListComponent implements OnInit {
   typingTimer;
   doneTypingInterval = 500;
   isScreenSmall: boolean;
+  featureCodes = FeatureCodes;
+  featureActions = FeatureActions;
   //************* FILTERS *****************//
   openFilter = false;
   filterType: string[] = [];

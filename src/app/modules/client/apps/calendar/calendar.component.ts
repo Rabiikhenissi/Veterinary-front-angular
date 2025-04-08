@@ -34,28 +34,24 @@ import { PetService } from 'app/shared/services/pet.service';
     selector: 'app-calendar',
     imports: [FullCalendarModule],
     templateUrl: './calendar.component.html',
-
 })
 export class CalendarComponent implements OnInit {
     eventGuid: number = 0;
     @ViewChild(FullCalendarComponent) calendarComponent!: FullCalendarComponent;
-    _router= inject(Router);
-    _authService= inject(AuthService);
-    _petService= inject(PetService);
-    _appointmentService= inject(AppointmentService);
-    _userService= inject(UserService);
-    
+    _router = inject(Router);
+    _authService = inject(AuthService);
+    _petService = inject(PetService);
+    _appointmentService = inject(AppointmentService);
+    _userService = inject(UserService);
+
     pets: any[] = [];
-    
 
     ngOnInit(): void {
         this.loadAppointments();
         this.loadPets();
-        
     }
 
     TODAY_STR = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
-
 
     calendarVisible = signal(true);
     calendarOptions: CalendarOptions = {
@@ -91,11 +87,20 @@ export class CalendarComponent implements OnInit {
         expandRows: true, // makes grid stretch vertically
         aspectRatio: 1.35, // helps adjust calendar shape
         contentHeight: 'auto', // for auto height
-        
+
         validRange: {
             start: this.TODAY_STR,
         },
-
+        ///fixing the colored slots position
+        eventDidMount: (info) => {
+            const event = info.event;
+            if (event.backgroundColor && event.backgroundColor !== 'grey') {
+                const width = '104%';
+                info.el.style.width = width;
+                const leftPosition = '-1%';
+                info.el.style.marginLeft = leftPosition;
+            }
+        },
     };
 
     currentEvents = signal<EventApi[]>([]);
@@ -121,29 +126,52 @@ export class CalendarComponent implements OnInit {
         const calendarApi = selectInfo.view.calendar;
         const startDate = selectInfo.startStr;
         const endDate = selectInfo.endStr;
+        const Blocked = calendarApi.getEvents().some((event) => {
+            if (event.display !== 'background') return false;
+        
+            const eventStart = new Date(event.startStr).getTime();
+            const eventEnd = new Date(event.endStr).getTime();
+            const selectStart = new Date(startDate).getTime();
+            const selectEnd = new Date(endDate).getTime();
+        
+            // Check for time overlap
+            return (
+                (selectStart >= eventStart && selectStart < eventEnd) ||
+                (selectEnd > eventStart && selectEnd <= eventEnd) ||
+                (selectStart <= eventStart && selectEnd >= eventEnd)
+            );
+        });
+        if (Blocked) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Time Unavailable',
+                text: 'This time  is not available for appointments.',
+                confirmButtonColor: '#f87171',
+            });
 
+            calendarApi.unselect();
+            return;
+        }
         Swal.fire({
-            title: 'Select an Pet',
+            title: 'Select a Pet',
             input: 'select',
             inputOptions: this.pets.reduce((acc, pet) => {
                 acc[pet._id] = `${pet.name} (${pet.species})`;
                 return acc;
             }, {}),
-            inputPlaceholder: 'Choose an pet...',
+            inputPlaceholder: 'Choose a pet...',
             showCancelButton: true,
             cancelButtonColor: '#FF5733',
             confirmButtonColor: '#4CAF50',
             inputValidator: (value) => {
                 if (!value) {
-                    return 'You need to select an pet!';
+                    return 'You need to select a pet!';
                 }
             },
         }).then((result) => {
             if (result.isConfirmed) {
                 const selectedPetId = result.value;
-                const pet = this.pets.find(
-                    (pet) => pet._id === selectedPetId
-                );
+                const pet = this.pets.find((pet) => pet._id === selectedPetId);
 
                 if (pet) {
                     const appointment: Appointment = {
@@ -170,8 +198,8 @@ export class CalendarComponent implements OnInit {
                                     title: 'Appointment created!',
                                     text: 'Your appointment has been added.Waiting for confirmation.',
                                     icon: 'success',
-                                    confirmButtonText: 'OK', 
-                                    confirmButtonColor: '#28a745', 
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#28a745',
                                 }).then(() => {
                                     calendarApi.removeAllEvents();
                                     this.loadAppointments();
@@ -226,55 +254,102 @@ export class CalendarComponent implements OnInit {
         );
     }
 
- 
     loadAppointments(): void {
-        const currentUserId = localStorage.getItem('connectedUserId'); 
- console.log("test",localStorage.getItem('connectedUserId'));
+        const currentUserId = localStorage.getItem('connectedUserId');
+        console.log('test', localStorage.getItem('connectedUserId'));
+        const connectedUserType = localStorage.getItem('connectedUserType');
+        console.log('test', localStorage.getItem('connectedUserType'));
+
         this._appointmentService.getAppointments('10', '1', '').subscribe(
             (response) => {
                 console.log('Appointments fetched successfully:', response);
-    
+
                 const appointments = response.data;
                 console.log('Appointments:', appointments);
-    
-                const events: EventInput[] = appointments.map((appointment: Appointment) => {
-                    const startDate = new Date(appointment.date).toISOString().split('T')[0];
-                    const startTime = `${startDate}T${appointment.time}`;
-                    const endHour = (parseInt(appointment.time.split(':')[0]) + 1).toString().padStart(2, '0');
-                    const endTime = `${startDate}T${endHour}:00`;
-    
-                    if (appointment.userId?._id !== currentUserId) {
-                        return {
-                            start: startTime,
-                            end: endTime,
-                            display: 'background',
-                            backgroundColor: 'grey' 
-                        };
+
+                const events: EventInput[] = appointments.flatMap((appointment: Appointment) => {
+                        const startDate = new Date(appointment.date)
+                            .toISOString()
+                            .split('T')[0];
+                            const startDateTime = new Date(`${startDate}T${appointment.time}`);
+                            const endDateTime = new Date(startDateTime);
+                            endDateTime.setHours(endDateTime.getHours() + 1);
+                        const gapStart = new Date(endDateTime);
+                        const gapEnd = new Date(gapStart);
+                        gapEnd.setMinutes(gapEnd.getMinutes() + 30);
+                        if (
+                            appointment.userId?._id !== currentUserId &&
+                            connectedUserType === 'external'
+                        ) {
+                            
+                            return [
+                                {
+                                    start: startDateTime.toISOString(),
+                                    end: endDateTime.toISOString(),
+                                    display: 'background',
+                                    editable: false,
+                                    backgroundColor: 'grey',
+                                },
+                                {
+                                    start: gapStart.toISOString(),
+                                    end: gapEnd.toISOString(),
+                                    display: 'background',
+                                    editable: false,
+                                    backgroundColor: 'grey',
+                                },
+                            ];
+                        }
+                        // secretary view
+                        let title = `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`;
+
+                        if (appointment.status === 'pending') {
+                            // client view
+                            if (connectedUserType === 'external') {
+                                title = `${appointment.petId.name} (${appointment.petId.species})`;
+                            }
+
+                           
+        return [
+            {
+                id: appointment._id,
+                title: title,
+                start: startDateTime.toISOString(),
+                end: endDateTime.toISOString(),
+                allDay: false,
+                color: '#fbbf24',
+            },
+            {
+                start: gapStart.toISOString(),
+                end: gapEnd.toISOString(),
+                display: 'background',
+                editable: false,
+                backgroundColor: 'grey',
+            }
+        ];
+                        }
+                        return [
+                            {
+                                id: appointment._id,
+                                title: title,
+                                start: startDateTime.toISOString(),
+                                    end: endDateTime.toISOString(),
+                                allDay: false,
+                                color: 'green',
+                            },
+                            {
+                                start: gapStart.toISOString(),
+                                end: gapEnd.toISOString(),
+                                display: 'background',
+                                editable: false,
+                                backgroundColor: 'grey',
+                            }
+                        ];
                     }
-    if(appointment.status === 'pending') {
-                    return {
-                        id: appointment._id,
-                        title: `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`,
-                        start: startTime,
-                        end: endTime,
-                        allDay: false,
-                        color: '#fbbf24', 
-                    };
-                }
-                return {
-                    id: appointment._id,
-                    title: `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`,
-                    start: startTime,
-                    end: endTime,
-                    allDay: false,
-                    color: 'green', 
-                };}
-                );    
+                );
                 const calendarApi = this.calendarComponent.getApi();
                 calendarApi.removeAllEvents();
                 calendarApi.addEventSource(events);
                 calendarApi.updateSize();
-
             },
             (error) => {
                 console.error('Error fetching appointments:', error);
