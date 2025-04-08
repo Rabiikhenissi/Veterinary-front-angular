@@ -147,6 +147,7 @@ export class UserService {
     return this.http.get<User>(`${this.endpointAuth}/${id}`);
   }
   updateOne(user: User): Observable<User> {
+    console.log(user);
     return this.http.patch<User>(`${this.endpointAuth}/${user._id}`, { user });
   }
   enableAccount(id: string): Observable<User> {

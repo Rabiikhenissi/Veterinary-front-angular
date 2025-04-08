@@ -31,7 +31,6 @@ export class ProfileComponent {
         this.user.id = results._id;
         this.selectedAvatar = results.avatar || this.avatars[0];
         this.user.pets = results.petId 
-        console.log(results);
       },
       error: (err) => console.error(err),
     });
@@ -58,7 +57,7 @@ export class ProfileComponent {
   }
 
   editProfile() {
-    this.router.navigate([`edit`], { relativeTo: this.route });
+    this.router.navigate([this.user.id,`edit`], { relativeTo: this.route });
   }
   
   addNewPet() {
