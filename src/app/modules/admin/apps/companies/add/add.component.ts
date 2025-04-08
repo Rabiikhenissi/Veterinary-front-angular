@@ -1,16 +1,29 @@
-import {Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import { NgForm, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Company } from '../../../../../shared/models/company';
 import { fuseAnimations } from '../../../../../../@fuse/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '../../../../../../@fuse/services/confirmation';
 import { CompanyService } from '../../../../../shared/services/company.service';
-import { MatInput } from '@angular/material/input';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatFormField, MatLabel, MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatButton } from '@angular/material/button';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {LoadingService} from "../../../../../shared/services/loading.service";
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 
+export const MY_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY', // Parsing format for input
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY', // Display format for input
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 @Component({
   selector: 'app-details',
   templateUrl: './add.component.html',
@@ -25,7 +38,15 @@ import {LoadingService} from "../../../../../shared/services/loading.service";
         MatError,
         ReactiveFormsModule,
         TranslocoPipe,
+        MatFormFieldModule, MatInputModule, MatDatepickerModule
+        
     ],
+    providers: [
+      { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+      { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale set to 'en-GB' for dd/mm/yyyy
+      provideNativeDateAdapter(), // Ensure proper native date handling
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddComponent {
     //********* INJECT SERVICES ***********//
@@ -39,10 +60,16 @@ export class AddComponent {
 
   addOne(myForm: NgForm): void {
     if (myForm.valid) {
+      this.company.firstCalendarDay = this.addOneDay(this.company.firstCalendarDay);
         this._companyService.createOne(this.company).subscribe(() => {
             this._router.navigate([`../`], { relativeTo: this._route }).then();
         })
     }
+  }
+  addOneDay(date: string): string {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + 1); 
+    return newDate.toISOString().split('T')[0]; 
   }
   resetForm(myForm: NgForm, event) {
     event.stopPropagation();

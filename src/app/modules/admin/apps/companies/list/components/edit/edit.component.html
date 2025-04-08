@@ -68,6 +68,19 @@
                                 </mat-error>
                             }
                         </div>
+                         <!-- date -->
+        
+                         <div class="sm:col-span-3">
+                            <mat-form-field>
+                                <mat-label>{{ 'firstCalendarDay' | transloco }}</mat-label>
+                                <input [(ngModel)]="company.firstCalendarDay" matInput name="firstCalendarDay" matInput [matDatepicker]="picker" required>
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                            <mat-error *ngIf="myForm.controls['firstCalendarDay']?.hasError('required') && (myForm.controls['firstCalendarDay'].dirty || myForm.submitted)">
+                                {{ 'This field is required' | transloco }}
+                            </mat-error>
+                        </div>
                     </div>
                 </div>
             </div>
