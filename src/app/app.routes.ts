@@ -161,6 +161,17 @@ export const appRoutes: Route[] = [
                             feature: FeatureCodes.profile,
                         },
                         loadChildren: () => import('app/modules/client/apps/profile/profile.routes'),
+                    },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path: 'clients',
+                        data: {
+                            breadcrumb: 'Clients',
+                            feature: FeatureCodes.clients,
+                        },
+                        loadChildren: () => import('app/modules/client/apps/clients/clients.routes'),
+                        
                     }
                     
                 ],

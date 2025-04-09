@@ -1,0 +1,38 @@
+@if (!loading && pet) {
+    <div class="max-w-5xl w-full mx-auto mt-8 mb-16 p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
+      <h2 class="text-3xl font-bold mb-6 text-green-800 text-center">{{ pet.name }}</h2>
+    
+      @if (pet.icon) {
+      <div class="flex justify-center mb-6">
+        <img [src]="pet.icon" alt="Pet icon" class="w-36 h-36 rounded-full border-4 border-green-300 object-cover shadow" />
+      </div>
+      }
+    
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-green-700 text-lg">
+        <div>
+          <strong class="block text-green-800 mb-1">Species:</strong>
+          <span>{{ pet.species }}</span>
+        </div>
+    
+        <div>
+          <strong class="block text-green-800 mb-1">Birth Date:</strong>
+          <span>{{ pet.birthDate | date }}</span>
+        </div>
+    
+        <div>
+            <strong class="block text-green-800 mb-1">Owner name:</strong>
+            <span>{{ pet.ownerId.name }}</span>
+          </div>
+          <div>
+            <strong class="block text-green-800 mb-1">Owner email:</strong>
+            <span>{{ pet.ownerId.email }}</span>
+          </div>
+          
+      </div>
+    </div>
+    }
+    
+    <ng-template #loadingTemplate>
+      <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
+    </ng-template>
+    
