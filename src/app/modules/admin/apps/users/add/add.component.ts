@@ -53,7 +53,7 @@ export class AddComponent implements OnInit{
     //********* DECLARE CLASSES/ENUMS ***********//
     user = new User();
     listGroups: Group[] = [];
-    listCompany: Group[] = [];
+    listCompany: Company[] = [];
     filterOptions: FilterOptions = new FilterOptions();
       currentSize = 10;
       currentPage = 1;

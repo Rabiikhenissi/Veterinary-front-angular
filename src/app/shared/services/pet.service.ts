@@ -37,7 +37,7 @@ export class PetService {
 
   // Get an pet 
   getOne(id: string): Observable<Pet> {
-    return this.http.get<Pet>(`${this.endpoint}/${id}`);
+    return this.http.get<Pet>(`${this.endpoint}/${id}`,);
   }
 
   // Create a new pet
@@ -48,5 +48,9 @@ export class PetService {
   // Update an existing pet
   updateOne(pet: Pet): Observable<null> {
     return this.http.patch<null>(`${this.endpoint}/${pet._id}`, { pet });
+  }
+  getClientPet(petId:string, id:string): Observable<Pet> {
+    return this.http.get<Pet>(`${this.endpoint}/${petId}/${id}`, {
+    });
   }
 }
