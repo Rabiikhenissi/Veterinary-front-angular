@@ -105,14 +105,25 @@ export class AddComponent implements OnInit {
     }
     addOne(myForm: NgForm): void {
         if (myForm.valid) {
-            console.log(this.user);
+            this.user.type="external"
             let connectedUser: any = this._authService._userService.decodeToken(
                 this._authService.accessToken
             );
             this._userService.getOne(connectedUser.id).subscribe({
                 next: (results) => {
-                    this.user.companyId = results;
-                    
+                    this.user.companyId = results.companyId;
+                    console.log(this.user)
+                    this._userService.addUser(this.user).subscribe({
+                        next: (result) => {
+                            this._router
+                                .navigate([`../`], { relativeTo: this._route })
+                                .then();
+                        },
+                        error: () => {
+                            this._snackBarService.openSnackBar('Error creating user');
+                            this._loadingService.hide();
+                        },
+                    });
                 },
                 error: (err) => console.error(err),
             });
@@ -121,18 +132,7 @@ export class AddComponent implements OnInit {
               code: 'client',
               label: 'Client'
             };
-            console.log(this.user.companyId);
-            this._userService.addUser(this.user).subscribe({
-                next: (result) => {
-                    this._router
-                        .navigate([`../`], { relativeTo: this._route })
-                        .then();
-                },
-                error: () => {
-                    this._snackBarService.openSnackBar('Error creating user');
-                    this._loadingService.hide();
-                },
-            });
+            
         }
     }
     resetForm(myForm: NgForm, event) {

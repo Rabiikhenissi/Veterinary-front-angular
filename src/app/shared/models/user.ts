@@ -14,6 +14,7 @@ export class User {
   password?: string;
   groupsId?: Group;
   petId?:Pet[];
+  type?:string;
 }
 
 export class ResToken {

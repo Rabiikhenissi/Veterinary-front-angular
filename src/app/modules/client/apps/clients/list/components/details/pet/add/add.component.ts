@@ -46,7 +46,7 @@ userId:string;
   onSubmit() {
     if (this.petForm.valid) {
       this.petForm.patchValue({ ownerId: this.userId });
-      this._petService.createOne(this.petForm.value).subscribe({
+      this._petService.createOneSecretary(this.petForm.value).subscribe({
         next: () => {
           console.log('Pet added successfully!');
           console.log(this.petForm.value);

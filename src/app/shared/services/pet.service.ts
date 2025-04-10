@@ -42,9 +42,13 @@ export class PetService {
 
   // Create a new pet
   createOne(pet: Pet): Observable<null> {
-    return this.http.post<null>(`${this.endpoint}`, { pet });
+    return this.http.post<null>(`${this.endpoint}/create`, { pet });
   }
 
+  //create a new pet from secretary
+  createOneSecretary(pet: Pet): Observable<null> {
+    return this.http.post<null>(`${this.endpoint}`, { pet });
+  }
   // Update an existing pet
   updateOne(pet: Pet): Observable<null> {
     return this.http.patch<null>(`${this.endpoint}/${pet._id}`, { pet });
