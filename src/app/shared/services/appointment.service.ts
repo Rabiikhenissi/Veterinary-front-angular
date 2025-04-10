@@ -4,7 +4,7 @@ import {  Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Pagination } from '../models/pagination';
-import { Appointment } from '../models/appointment';
+import { Appointment, Appointment2 } from '../models/appointment';
 @Injectable({
   providedIn: 'root',
 })
@@ -38,11 +38,11 @@ export class AppointmentService {
     return this.http.post<Appointment>(`${this.endpoint}`, appointment);
   }
 
-  updateAppointment(appointment: Appointment): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.endpoint}/${appointment._id}`, appointment);
+  updateAppointment(appointment: Appointment2): Observable<Appointment2> {
+    return this.http.patch<Appointment2>(`${this.endpoint}/${appointment._id}`, {appointment});
   }
-
-  deleteAppointment(id: string): Observable<null> {
-    return this.http.delete<null>(`${this.endpoint}/${id}`);
+  archiveAppointment(id: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.endpoint}/archive/${id}`, {});
   }
+  
 }
