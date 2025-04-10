@@ -23,13 +23,15 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { AppointmentService } from 'app/shared/services/appointment.service';
-import { Appointment } from 'app/shared/models/appointment';
-import { Router } from '@angular/router';
+import { Appointment, Appointment2 } from 'app/shared/models/appointment';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'app/shared/services/auth.service';
 import { UserService } from 'app/shared/services/user.service';
 
 import { PetService } from 'app/shared/services/pet.service';
 import { CompanyService } from 'app/shared/services/company.service';
+import { User } from 'app/shared/models/user';
+import { Pet } from 'app/shared/models/pet';
 
 @Component({
     selector: 'app-calendar',
@@ -45,6 +47,7 @@ export class CalendarComponent implements OnInit {
     _appointmentService = inject(AppointmentService);
     _userService = inject(UserService);
 _companyService = inject(CompanyService);
+_route= inject(ActivatedRoute);
     pets: any[] = [];
 companyDate: string = '';
 calendarFirstDate: string = '';
@@ -56,7 +59,7 @@ CalendarOptions!: CalendarOptions;
         this.userType = localStorage.getItem('connectedUserType');
         const connectedUserCompany = localStorage.getItem('connectedUserCompany');
         console.log('connectedUserCompany', connectedUserCompany);//mrigla
-this._companyService.getOne("62ce922f7a551b00113183a8").subscribe({
+this._companyService.getOne(connectedUserCompany).subscribe({
     next: (company) => {
         console.log('Company:', company);
         this.companyDate = company.firstCalendarDay;
@@ -109,6 +112,7 @@ this.initializeCalendarOptions();
         select: this.handleDateSelect.bind(this),
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
+        eventDrop: this.handleEventDrop.bind(this),
         // Set slot duration
         slotDuration: '0:30', // 1-hour slots
         slotLabelInterval: '0:30', // Label every hour
@@ -189,6 +193,7 @@ this.initializeCalendarOptions();
             calendarApi.unselect();
             return;
         }
+        if(this.userType === 'external') {
         Swal.fire({
             title: 'Select a Pet',
             input: 'select',
@@ -220,8 +225,9 @@ this.initializeCalendarOptions();
                             _id: pet._id,
                             name: pet.name,
                             species: pet.species,
+                            icon: pet.icon,
                         },
-                        companyId: '62c2c6ba6b473700112d5c26',
+                        companyId: localStorage.getItem('connectedUserCompany'),
                         date: startDate.split('T')[0],
                         time: startDate.split('T')[1],
                         status: 'pending',
@@ -258,15 +264,34 @@ this.initializeCalendarOptions();
             }
         });
 
-        calendarApi.unselect();
+        calendarApi.unselect();}
+        /////for internal users
+        else if (this.userType === 'internal') {
+            const [selectedDate, selectedTime] = startDate.split('T');
+            console.log('Selected date:', selectedDate);
+            console.log('Selected time:', selectedTime);
+            
+            this._router.navigate(['add'], {
+              relativeTo: this._route,
+              queryParams: {
+                date: selectedDate,
+                time: selectedTime
+              }
+            }).then();
+          }
     }
     handleEventClick(clickInfo: EventClickArg) {
-        if (
-            confirm(
-                `Are you sure you want to delete the event '${clickInfo.event.title}'`
-            )
-        ) {
-            clickInfo.event.remove();
+        if (this.userType === 'external') {
+            return; 
+        }
+        const appointmentId = clickInfo.event.id;
+        console.log('Clicked appointment ID:', appointmentId);
+        
+        if (appointmentId) {
+            this._router.navigate([`${appointmentId}`], { relativeTo: this._route }).then();
+             } 
+            else {
+            console.warn('No appointment ID found in event');
         }
     }
 
@@ -397,5 +422,45 @@ this.initializeCalendarOptions();
     updateCalendarEvents(events: EventInput[]): void {
         const calendarApi = this.calendarComponent.getApi();
         calendarApi.addEventSource(events); // Add events to FullCalendar
+    }
+
+    handleEventDrop(dropInfo: any) {
+        const updatedStart = dropInfo.event.startStr;
+        const updatedEnd = dropInfo.event.endStr;
+        const appointmentId = dropInfo.event.id;
+        
+        console.log('Updated start date:', updatedStart);
+        console.log('Updated end date:', updatedEnd);
+    
+        this._appointmentService.getAppointment(appointmentId).subscribe({
+            next: (appointment) => {
+               
+                console.log('Fetched Appointment:', appointment);
+                
+                const updatedAppointment = {
+                    ...appointment,
+                    userId: appointment.userId._id,    
+                    petId: appointment.petId._id,      
+                    companyId: appointment.companyId,  
+                    date: updatedStart.split('T')[0],  
+                    time: updatedStart.split('T')[1],  
+                           
+                };
+    
+                console.log('Updated Appointment:', updatedAppointment);
+                    this._appointmentService.updateAppointment(updatedAppointment).subscribe({
+                    next: () => {
+                            this.loadAppointments();  
+                    
+                    },
+                    error: (err) => {
+                        console.error('Error updating appointment:', err);
+                    },
+                });
+            },
+            error: (err) => {
+                console.error('Error fetching appointment:', err);
+            }
+        });
     }
 }

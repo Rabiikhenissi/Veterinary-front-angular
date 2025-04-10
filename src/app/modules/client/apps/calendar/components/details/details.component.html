@@ -1,0 +1,73 @@
+@if(appointment && pet){
+    <div class="max-w-6xl w-full mx-auto p-8 relative bg-green-50 rounded-xl shadow-lg border border-green-100">
+      <!-- Edit Button -->
+      <button (click)="editAppointment()" 
+        class="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm shadow">
+        ✏️ Edit Appointment
+      </button>
+  
+      <div class="flex flex-col md:flex-row items-start md:items-center gap-8">
+        <img 
+          [src]="pet.icon"
+          alt="{{ pet.name }}" 
+          class="w-40 h-40 rounded-xl object-cover shadow-lg border-4 border-green-300" />
+  
+        <div class="flex-1">
+          <h2 class="text-3xl font-bold text-green-800 mb-4">
+            {{ pet.name }}’s Appointment
+          </h2>
+          <p class="text-xl text-gray-700 mb-2">
+              <span class="font-semibold text-green-700">Date:</span> {{ appointment.date | date: 'dd MMM yyyy' }} 
+              at {{ this.getFormattedTime(appointment.time) }}
+          </p>
+  
+          <p class="text-xl text-gray-700 mb-2">
+            <span class="font-semibold text-green-700">Species:</span> {{ appointment.petId?.species }}
+          </p>
+  
+          <p class="text-xl text-gray-700 mb-2" *ngIf="pet.birthDate">
+            <span class="font-semibold text-green-700">Birth Date:</span> {{ pet.birthDate | date: 'dd MMM yyyy' }}
+          </p>
+  
+          <hr class="my-6 border-green-200"/>
+  
+          <p class="text-xl text-gray-800 mb-2">
+            <span class="font-semibold text-green-700">Client:</span> {{ appointment.userId?.name }}
+          </p>
+  
+          <!-- Status Section with Conditional Styling -->
+          <p [ngClass]="{
+            'text-yellow-600 font-semibold': appointment.status === 'pending',
+            'text-green-600 font-semibold': appointment.status === 'confirmed',
+            'text-red-600 font-semibold': appointment.status === 'canceled'
+          }" class="text-xl mb-4">
+            <span class="font-semibold text-green-700">Status:</span> {{ appointment.status }}
+          </p>
+  
+          <!-- Change Status Button (Conditional) -->
+          <div class="flex gap-4">
+            <button *ngIf="appointment.status === 'pending'" 
+              (click)="confirmAppointment()" 
+              class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
+              <!-- Icon for Confirm -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" class="h-5 w-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Confirm Appointment</span>
+            </button>
+            <!-- Cancel Appointment Button -->
+          <button *ngIf="appointment.status !== 'canceled'" 
+          (click)="cancelAppointment()" 
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
+          <!-- Icon for Cancel -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" class="h-5 w-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span>Cancel Appointment</span>
+        </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  

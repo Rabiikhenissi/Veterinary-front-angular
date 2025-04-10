@@ -209,5 +209,10 @@ export class UserService {
         this._user.next(updatedUser); // Update local state
       })
     );
+    
+  }
+  getExternalUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.endpointAuth}/external`)
+
   }
 }
