@@ -112,7 +112,11 @@ export class AddComponent implements OnInit {
             this._userService.getOne(connectedUser.id).subscribe({
                 next: (results) => {
                     this.user.companyId = results.companyId;
-                    console.log(this.user)
+                    this.user.groupsId = {
+                        _id: '67edbe0231071ebeaf1eda2e', // Replace with actual Client group ID
+                        code: 'client',
+                        label: 'Client'
+                      };
                     this._userService.addUser(this.user).subscribe({
                         next: (result) => {
                             this._router
@@ -127,11 +131,7 @@ export class AddComponent implements OnInit {
                 },
                 error: (err) => console.error(err),
             });
-            this.user.groupsId = {
-              _id: '67edbe0231071ebeaf1eda2e', // Replace with actual Client group ID
-              code: 'client',
-              label: 'Client'
-            };
+           
             
         }
     }

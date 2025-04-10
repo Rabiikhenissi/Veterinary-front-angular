@@ -19,6 +19,7 @@ export class EditComponent {
       _id: [''],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
       avatar: [''],
     });
   }
