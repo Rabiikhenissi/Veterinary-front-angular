@@ -44,3 +44,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+#sign in form
+./src/app/sign-in-form/sign-in-form.component.ts

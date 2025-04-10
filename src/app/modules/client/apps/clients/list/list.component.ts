@@ -109,13 +109,13 @@ authService= inject(AuthService);
         this.currentPage.toString(),
         this.filterSearch,
       )
-      .subscribe({
+      .subscribe({ 
         
           next: results => {
             
 
             const filteredUsers = results.data.filter(user => 
-              user.groupsId?.code === 'client' &&
+              user.type === 'external' &&
               user.companyId==this.connectedUser.companyId
             );
             console.log('filteredUsers', filteredUsers);
