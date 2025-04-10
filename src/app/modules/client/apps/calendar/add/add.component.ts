@@ -90,7 +90,7 @@ selectedTime: string = '';
       companyId,
       date: this.appointmentForm.value.date,
       time: this.appointmentForm.value.time,
-      status: 'pending',
+      status: 'confirmed',
     };
 
     console.log('Payload:', payload);

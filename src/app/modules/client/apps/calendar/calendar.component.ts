@@ -113,6 +113,17 @@ this.initializeCalendarOptions();
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
         eventDrop: this.handleEventDrop.bind(this),
+        businessHours: [
+            {
+                daysOfWeek: [ 1, 2, 3, 4 ],
+                startTime: '08:00', // 8am
+                endTime:'18:00'
+            },
+            {
+                daysOfWeek: [ 5 ,6], // Thursday, Friday
+                startTime: '10:00', // 10am
+                endTime: '16:00' // 4pm
+              }],
         // Set slot duration
         slotDuration: '0:30', // 1-hour slots
         slotLabelInterval: '0:30', // Label every hour

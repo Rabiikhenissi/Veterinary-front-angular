@@ -109,7 +109,7 @@ export class AddComponent implements OnInit{
   addOne(myForm: NgForm): void {
     if (myForm.valid) {
       console.log(this.user);
-      
+      this.user.type="internal"
         this._userService.addUser(this.user).subscribe({
           next: (result) => {
             this._router.navigate([`../`], { relativeTo: this._route }).then();
