@@ -311,7 +311,7 @@ this.initializeCalendarOptions();
         this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
     }
     loadPets(): void {
-        this._petService.getList('10', '1', '').subscribe(
+        this._petService.getList('10', '1', '',localStorage.getItem('connectedUserId')).subscribe(
             (response) => {
                 this.pets = response.data;
                 console.log('Pets loaded:', this.pets);

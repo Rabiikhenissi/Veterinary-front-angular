@@ -1,26 +1,41 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Pet } from 'app/shared/models/pet';
 import { AuthService } from 'app/shared/services/auth.service';
+import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({
   selector: 'app-details',
-  imports: [DatePipe],
+  imports: [DatePipe,MatPaginator],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
 export class DetailsComponent {
 
-  user = { id:"string",name: '', email: '',avatar:"" , phone:"", pets: [] };
+  user = { id:"string",name: '', email: '',avatar:"" , phone:""};
+  userPets: Pet[] = [];
   selectedAvatar = '';
   avatars = [
     'assets/images/avatars/male.png',
     'assets/images/avatars/female.png',
   ];
-  constructor(private _userService:UserService, private router: Router,private route: ActivatedRoute) {}
-  
+  _authService= inject(AuthService);
+    _userService= inject(UserService);
+    router= inject(Router);
+    route= inject(ActivatedRoute);
+    _petService= inject(PetService);
+    currentSize = 10;
+    currentPage = 1;
+    openFilter = false;
+    filterType: string[] = [];
+    filterStatus: string[] = [];
+    filterSearch: string;
+    total = 0;
 
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
     this.user.id= this.route.snapshot.paramMap.get('id');
     this._userService.getOne(this.user.id).subscribe({
@@ -29,7 +44,7 @@ export class DetailsComponent {
         this.user.email = results.email;
         this.user.phone = results.phone;
         this.selectedAvatar = results.avatar || this.avatars[0];
-        this.user.pets = results.petId 
+        this.getList()
       },
       error: (err) => console.error(err),
     });
@@ -37,7 +52,18 @@ export class DetailsComponent {
 
     
   }
-
+pageChanged(event: PageEvent ): void {
+      let { pageIndex } = event;
+      const { pageSize } = event;
+      pageIndex++;
+      if (pageSize !== this.currentSize) {
+        pageIndex = 1;
+        this.paginator.firstPage();
+      }
+      this.currentSize = pageSize;
+      this.currentPage = pageIndex;
+      this.getList();
+    }
   // saveProfile(): void {
     
   //   this.userService.updateMyAvatar( this.user.id,this.user.avatar ).subscribe({
@@ -72,4 +98,21 @@ export class DetailsComponent {
   editPet(petId: string) {
     this.router.navigate([`pet`,petId,`edit`], { relativeTo: this.route });
   }
+
+  getList(): void {
+    this._petService.getList(
+      this.currentSize.toString(),
+      this.currentPage.toString(),
+      this.filterSearch || '',
+      this.user.id
+    ).subscribe({
+      next: results => {
+        this.userPets = results.data;
+        this.total = results.total; // 👈 à afficher dans le paginator
+        console.log('User pets:', this.userPets);
+      },
+      error: err => console.error(err)
+    });
+  }
+
 }
