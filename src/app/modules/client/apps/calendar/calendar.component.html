@@ -1,5 +1,5 @@
 <div class="calendar-wrapper">
-  <div class="full-calendar-container">
+  <div class="full-calendar-container" [ngStyle]="{'min-height': '1000px'}">
     <full-calendar [options]="CalendarOptions">
       <ng-template #eventContent let-arg>
         <b>{{ arg.timeText }}</b>

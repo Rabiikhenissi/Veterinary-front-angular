@@ -75,21 +75,41 @@ simple-snack-bar {
   height: 100vh;
 }
 
-.calendar-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
 
-.full-calendar-container {
-  display: flex;
-  flex-direction: column;
-  height: 847px;  /* Ensure the container takes up the full available space */
-}
+
 
 .fc {
   flex: 1;  /* Allow the calendar to grow and fill the available space */
-  height: auto;  /* Ensure the height is flexible */
+  height: 100%;  /* Ensure the height is flexible */
   min-height: 0;
-  min-height: 600px; /* Prevent minimum height restrictions */
+  min-height: 1000px; /* Prevent minimum height restrictions */
+}
+:host ::ng-deep .fc {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
+:host ::ng-deep .fc-view-harness {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+:host ::ng-deep .fc-scroller-harness,
+:host ::ng-deep .fc-timegrid-body {
+  flex: 1;
+  height: 100% !important;
+  overflow-y: auto;
+}.calendar-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 10000%;
+}
+
+::ng-deep .fc {
+  flex: 1;
+  width: 100% !important;
+  max-width: 100% !important;
 }
