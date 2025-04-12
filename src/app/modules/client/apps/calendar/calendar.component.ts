@@ -32,10 +32,11 @@ import { PetService } from 'app/shared/services/pet.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { User } from 'app/shared/models/user';
 import { Pet } from 'app/shared/models/pet';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule],
+    imports: [FullCalendarModule,CommonModule],
     templateUrl: './calendar.component.html',
     styleUrls: ['./calendar.component.scss'],})
 export class CalendarComponent implements OnInit {
@@ -105,7 +106,6 @@ this.initializeCalendarOptions();
         initialDate: this.TODAY_STR,
         weekends: true,
         editable: true,
-        expandRows: false, 
         height: 'auto',
                 selectable: true,
         selectMirror: true,
@@ -138,10 +138,10 @@ this.initializeCalendarOptions();
             hour12: false, 
         },
         allDaySlot: false,
-
+        expandRows: true,
         displayEventTime: false,
         aspectRatio: 1.35, 
-        contentHeight: 'auto', 
+        contentHeight: 1, 
         validRange: {
             start: this.calendarFirstDate, 
         },
