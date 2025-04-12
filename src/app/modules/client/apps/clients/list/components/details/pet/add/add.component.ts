@@ -50,7 +50,7 @@ userId:string;
         next: () => {
           console.log('Pet added successfully!');
           console.log(this.petForm.value);
-          this.router.navigate(['../..', { relativeTo: this.router }]);
+          this.router.navigate(['../..'], { relativeTo: this.route });
           
         },
         error: (error) => {

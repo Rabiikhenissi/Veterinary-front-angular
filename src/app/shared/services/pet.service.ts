@@ -17,7 +17,9 @@ export class PetService {
     limit: string,
     page: string,
     search: string,
+
     userId?: string
+
   ): Observable<Pagination<Pet>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
