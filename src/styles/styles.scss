@@ -69,4 +69,27 @@ simple-snack-bar {
     height: 100%;  /* Ensure the text is vertically centered */
     color: white;  /* Set text color */
 }
+}:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.calendar-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.full-calendar-container {
+  display: flex;
+  flex-direction: column;
+  height: 847px;  /* Ensure the container takes up the full available space */
+}
+
+.fc {
+  flex: 1;  /* Allow the calendar to grow and fill the available space */
+  height: auto;  /* Ensure the height is flexible */
+  min-height: 0;
+  min-height: 600px; /* Prevent minimum height restrictions */
 }
