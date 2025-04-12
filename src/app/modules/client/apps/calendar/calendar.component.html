@@ -1,16 +1,10 @@
-
-<div class='demo-app'>
-
-    <div class='demo-app-main'>
-     
-        <full-calendar  [options]='CalendarOptions'>
-          <ng-template #eventContent let-arg>
-            <b>{{ arg.timeText }}</b>
-            <i>{{ arg.event.title }}</i>
-          </ng-template>
-        </full-calendar>
-      
-      
-    </div>
-  
+<div class="calendar-wrapper">
+  <div class="full-calendar-container">
+    <full-calendar [options]="CalendarOptions">
+      <ng-template #eventContent let-arg>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </ng-template>
+    </full-calendar>
   </div>
+</div>

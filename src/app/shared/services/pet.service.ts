@@ -16,11 +16,13 @@ export class PetService {
   getList(
     limit: string,
     page: string,
-    search: string
+    search: string,
+    userId?: string
   ): Observable<Pagination<Pet>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
     searchParams = searchParams.append('page', page);
+    searchParams = searchParams.append('userId', userId);
     if (search) {
       searchParams = searchParams.append('search', search);
     }

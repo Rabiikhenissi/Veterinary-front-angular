@@ -37,7 +37,7 @@ import { Pet } from 'app/shared/models/pet';
     selector: 'app-calendar',
     imports: [FullCalendarModule],
     templateUrl: './calendar.component.html',
-})
+    styleUrls: ['./calendar.component.scss'],})
 export class CalendarComponent implements OnInit {
     eventGuid: number = 0;
     @ViewChild(FullCalendarComponent) calendarComponent!: FullCalendarComponent;
@@ -105,41 +105,43 @@ this.initializeCalendarOptions();
         initialDate: this.TODAY_STR,
         weekends: true,
         editable: true,
-        selectable: true,
+        expandRows: false, 
+        height: 'auto',
+                selectable: true,
         selectMirror: true,
         dayMaxEvents: true,
         fixedWeekCount: false,
+        eventOverlap: false,
+        slotMinTime: '06:00:00',
+        slotMaxTime: '22:30:00',
         select: this.handleDateSelect.bind(this),
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
         eventDrop: this.handleEventDrop.bind(this),
         businessHours: [
             {
-                daysOfWeek: [ 1, 2, 3, 4 ],
+                daysOfWeek: [ 1, 2, 3, 4,5 ],
                 startTime: '08:00', // 8am
                 endTime:'18:00'
             },
             {
-                daysOfWeek: [ 5 ,6], // Thursday, Friday
+                daysOfWeek: [ 6], 
                 startTime: '10:00', // 10am
                 endTime: '16:00' // 4pm
               }],
         // Set slot duration
-        slotDuration: '0:30', // 1-hour slots
-        slotLabelInterval: '0:30', // Label every hour
+        slotDuration: '0:30',
+        slotLabelInterval: '0:30', 
         slotLabelFormat: {
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false, // Use 24-hour format
+            hour12: false, 
         },
         allDaySlot: false,
 
         displayEventTime: false,
-        height: 'auto', // fallback
-        expandRows: true, // makes grid stretch vertically
-        aspectRatio: 1.35, // helps adjust calendar shape
-        contentHeight: 'auto', // for auto height
-
+        aspectRatio: 1.35, 
+        contentHeight: 'auto', 
         validRange: {
             start: this.calendarFirstDate, 
         },
@@ -171,13 +173,27 @@ this.initializeCalendarOptions();
     // }
     ngAfterViewInit(): void {
         setTimeout(() => {
-            this.calendarComponent.getApi().updateSize();
-        }, 100); // Adjust delay as necessary (100ms here)
+            const container = document.querySelector('.full-calendar-container') as HTMLElement;
+            const calendarApi = this.calendarComponent.getApi();
+        
+            if (container && calendarApi) {
+                const height = container.clientHeight;
+                console.log('Container Height:', height);
+                
+                // Set the calendar's height to match the container's height
+                calendarApi.setOption('height', height); 
+                calendarApi.updateSize(); // Update calendar size
+                
+                console.log('Updated Calendar Height:', calendarApi.getOption('height'));
+            }
+        }, 300); // Ensure that this happens after the calendar has been rendered
     }
     handleDateSelect(selectInfo: DateSelectArg) {
         const calendarApi = selectInfo.view.calendar;
         const startDate = selectInfo.startStr;
         const endDate = selectInfo.endStr;
+        const selectStart = new Date(startDate); 
+        const selectEnd = new Date(endDate);
         const Blocked = calendarApi.getEvents().some((event) => {
             if (event.display !== 'background') return false;
         
@@ -198,6 +214,17 @@ this.initializeCalendarOptions();
                 icon: 'warning',
                 title: 'Time Unavailable',
                 text: 'This time  is not available for appointments.',
+                confirmButtonColor: '#f87171',
+            });
+
+            calendarApi.unselect();
+            return;
+        }
+        if (!this.businessHours(selectStart)) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Outside business hours',
+                text: 'This time  is outside of our business hours.',
                 confirmButtonColor: '#f87171',
             });
 
@@ -311,7 +338,8 @@ this.initializeCalendarOptions();
         this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
     }
     loadPets(): void {
-        this._petService.getList('10', '1', '').subscribe(
+        const currentUserId = localStorage.getItem('connectedUserId');
+        this._petService.getList('10', '1', '',currentUserId).subscribe(
             (response) => {
                 this.pets = response.data;
                 console.log('Pets loaded:', this.pets);
@@ -326,6 +354,32 @@ this.initializeCalendarOptions();
             }
         );
     }
+
+////// Business hours
+    businessHours(date: Date): boolean {
+        const day = date.getDay(); 
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+    
+        const timeInMinutes = hour * 60 + minute;
+    
+        for (const hours of this.CalendarOptions.businessHours as any[]) {
+            if (hours.daysOfWeek.includes(day)) {
+                const [startHour, startMin] = hours.startTime.split(':').map(Number);
+                const [endHour, endMin] = hours.endTime.split(':').map(Number);
+    
+                const startMinutes = startHour * 60 + startMin;
+                const endMinutes = endHour * 60 + endMin;
+    
+                if (timeInMinutes >= startMinutes && timeInMinutes < endMinutes) {
+                    return true;
+                }
+            }
+        }
+    
+        return false;
+    }
+    
 
     loadAppointments(): void {
         const currentUserId = localStorage.getItem('connectedUserId');
@@ -373,6 +427,7 @@ this.initializeCalendarOptions();
                                 },
                             ];
                         }
+                       
                         // secretary view
                         let title = `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`;
 
@@ -432,17 +487,25 @@ this.initializeCalendarOptions();
     }
     updateCalendarEvents(events: EventInput[]): void {
         const calendarApi = this.calendarComponent.getApi();
-        calendarApi.addEventSource(events); // Add events to FullCalendar
+        calendarApi.addEventSource(events); 
     }
 
     handleEventDrop(dropInfo: any) {
         const updatedStart = dropInfo.event.startStr;
         const updatedEnd = dropInfo.event.endStr;
         const appointmentId = dropInfo.event.id;
-        
-        console.log('Updated start date:', updatedStart);
-        console.log('Updated end date:', updatedEnd);
-    
+    const updatedStartDate = new Date(updatedStart);
+      if (!this.businessHours(updatedStartDate)) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Outside business hours',
+            text: 'This time  is outside of our business hours.',
+            confirmButtonColor: '#f87171',
+        }).then(() => {
+            dropInfo.revert();
+        });
+        return;
+    }
         this._appointmentService.getAppointment(appointmentId).subscribe({
             next: (appointment) => {
                
