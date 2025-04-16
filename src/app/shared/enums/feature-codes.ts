@@ -17,6 +17,7 @@ export enum FeatureCodes {
   texts = 'texts',
   excursions = 'excursions',
   calendar='calendar',
+  shop='shop',
 }
 
 export const listFeatureActions: RefList<FeatureCodes>[] = [
@@ -36,4 +37,5 @@ export const listFeatureActions: RefList<FeatureCodes>[] = [
   { key: FeatureCodes.profile, value: 'Profile' },
   { key: FeatureCodes.userFeatures, value: 'user-features' },
   { key: FeatureCodes.calendar, value: 'Calendar' },
+  { key: FeatureCodes.shop, value: 'Shop' },
 ];
