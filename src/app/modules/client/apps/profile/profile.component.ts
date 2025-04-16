@@ -13,7 +13,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
-  user = { id:"string",name: '', email: '',avatar:"" , phone:"" };
+  user = { id:"string",name: '', email: '',avatar:"" , phone:"" ,type:"" };
   userPets: Pet[] = [];
   selectedAvatar = '';
   connectedUser: any;
@@ -43,6 +43,7 @@ export class ProfileComponent {
         this.user.email = results.email;
         this.user.phone = results.phone;
         this.user.id = results._id;
+        this.user.type = results.type;
         console.log('User:', this.user);
         this.selectedAvatar = results.avatar || this.avatars[0];
         

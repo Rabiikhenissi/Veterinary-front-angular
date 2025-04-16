@@ -172,6 +172,16 @@ export const appRoutes: Route[] = [
                         },
                         loadChildren: () => import('app/modules/client/apps/clients/clients.routes'),
                         
+                    },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'shop',
+                        data: {
+                            breadcrumb: 'Shop',
+                            feature: FeatureCodes.shop,
+                        },
+                        loadChildren: () => import('app/modules/client/apps/shop/shop.routes'),
                     }
                     
                 ],
