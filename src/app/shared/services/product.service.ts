@@ -31,8 +31,8 @@ endpoint = `${environment.api}/products`; // API endpoint for pets
       return this.http.get<Pagination<Product>>(`${this.endpoint}`, { params: searchParams });
     }
 
-deleteOne(id: string): Observable<null> {
-    return this.http.delete<null>(`${this.endpoint}/${id}`);
+archiveOne(id: string): Observable<Product> {
+    return this.http.patch<Product>(`${this.endpoint}/archive/${id}`,{});
   }
 
   // Get a product 
@@ -41,11 +41,11 @@ deleteOne(id: string): Observable<null> {
   }
 
     createOne(product: Product): Observable<null> {
-      return this.http.post<null>(`${this.endpoint}/`, { product });
+      return this.http.post<null>(`${this.endpoint}/`,  product);
     }
     // Update an existing pet
       updateOne(product: Product): Observable<null> {
-        return this.http.patch<null>(`${this.endpoint}/${product._id}`, { product });
+        return this.http.patch<null>(`${this.endpoint}/${product._id}`,  product );
       }
 
 }
