@@ -3,6 +3,7 @@ import { Component, inject, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { FilterOptions } from 'app/shared/models/filter-options';
 import { Pagination } from 'app/shared/models/pagination';
 import { Product } from 'app/shared/models/product';
 import { ProductService } from 'app/shared/services/product.service';
@@ -25,7 +26,10 @@ export class ShopComponent {
   //species list is static now but will be dynalmic in the future depending on the pets of the company
   speciesList: string[] = ['Cat', 'Dog', 'Rabbit', 'fish','turtle','monkey'];
   selectedSpecies: string[] = [];
-  
+   filterOptions: FilterOptions = new FilterOptions();
+    typingTimer;
+    doneTypingInterval = 500;
+    filterSearch: string;
   selectedCategories: string[] = [];
 
   searchQuery: string = '';
@@ -50,6 +54,8 @@ export class ShopComponent {
         next: results => {
           this.products = results.data;
           this.total = results.total;
+          console.log(this.products);
+          
         },
         error: (error) => {
           console.error('Error fetching products:', error);
@@ -57,9 +63,13 @@ export class ShopComponent {
       }));
   }
 
-  onSearchChange(): void {
-    this.currentPage = 1;
-    this.fetchProducts();
+  onSearchChange() {
+    clearTimeout(this.typingTimer);
+    this.filterOptions.search = this.filterSearch;
+    this.typingTimer = setTimeout(() => {
+      this.paginator?.firstPage();
+      this.fetchProducts();
+    }, this.doneTypingInterval);
   }
 
   

@@ -182,6 +182,16 @@ export const appRoutes: Route[] = [
                             feature: FeatureCodes.shop,
                         },
                         loadChildren: () => import('app/modules/client/apps/shop/shop.routes'),
+                    },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'stock',
+                        data: {
+                            breadcrumb: 'Stock',
+                            feature: FeatureCodes.stock,
+                        },
+                        loadChildren: () => import('app/modules/Veterinarian/apps/stock/stock.routing'),
                     }
                     
                 ],
