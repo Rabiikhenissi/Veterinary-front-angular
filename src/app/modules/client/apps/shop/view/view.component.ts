@@ -1,0 +1,92 @@
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Product } from 'app/shared/models/product';
+import { CartService } from 'app/shared/services/cart.service';
+import { ProductService } from 'app/shared/services/product.service';
+
+@Component({
+  selector: 'app-view',
+  imports: [CommonModule,FormsModule],
+  templateUrl: './view.component.html'
+})
+export class ViewComponent {
+  product: Product ;
+  quantity: number = 1;
+  recommendedProducts: Product[] = [];
+  userId;
+  searchQuery: string = '';
+  currentPage = 1;
+  total = 0;
+  currentSize = 10;
+
+  route=inject(ActivatedRoute);
+  _productService = inject(ProductService);
+  _cartService = inject(CartService);
+  router=inject(Router);
+ 
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.loadProduct(id);
+      }
+    });
+     this.userId = this.route.snapshot.paramMap.get('userId');
+    
+  }
+
+  increaseQty() {
+    this.quantity++;
+  }
+
+  decreaseQty() {
+    if (this.quantity > 1) this.quantity--;
+  }
+
+  onQuantityChange() {
+    if (this.quantity < 1 || isNaN(this.quantity)) {
+      this.quantity = 1;
+    }
+  }
+
+  addToCart() {
+    this._cartService.addToCart(this.userId,this.product._id, this.quantity);
+  }
+
+  loadRecommendedProducts(): void {
+    this._productService.getList(
+      this.currentSize.toString(),
+      this.currentPage.toString(),
+      this.searchQuery,
+      this.product.category,
+      this.product.species).subscribe(response => {
+        const products = response.data; // Adjust based on your actual response shape
+    
+        this.recommendedProducts = products.filter(p =>
+          p._id !== this.product._id &&
+          p.category === this.product.category &&
+          Array.isArray(p.species) &&
+          Array.isArray(this.product.species) &&
+          p.species.some(s => this.product.species.includes(s))
+        );
+      });
+    }
+
+    loadProduct(id: string): void {
+      this._productService.getOne(id).subscribe(product => {
+        this.product = product;
+        this.quantity = 1;
+        this.loadRecommendedProducts(); // reload based on the new product
+      });
+    }
+
+  viewProduct(productId: string): void {
+    console.log(productId)
+    this.router.navigate(['..', productId], { relativeTo: this.route }); 
+  }
+
+
+}

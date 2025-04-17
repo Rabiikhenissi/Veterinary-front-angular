@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Pagination } from 'app/shared/models/pagination';
 import { Product } from 'app/shared/models/product';
 import { ProductService } from 'app/shared/services/product.service';
@@ -14,7 +14,8 @@ import { ProductService } from 'app/shared/services/product.service';
   styleUrl: './shop.component.scss'
 })
 export class ShopComponent {
-
+  //********* INJECT SERVICES ***********//
+  route = inject(ActivatedRoute);
   _productService = inject(ProductService);
   router=inject(Router);
   products: Product[] = [];
@@ -103,6 +104,12 @@ export class ShopComponent {
   }
 
   viewProduct(productId: string): void {
-    this.router.navigate(['/products', productId]); // or whatever route you use
+    console.log(productId)
+    this.router.navigate([ productId], { relativeTo: this.route }); 
+  }
+
+  addToCart(product: any) {
+    // Implement your cart service here
+    console.log('Adding to cart:', product);
   }
 }
