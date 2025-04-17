@@ -8,7 +8,7 @@ export class Product {
     quantity?: number;
     image?: string;
     expirationDate?: Date;
-    species?: string;
+    species?:  string[]; 
     archived?: boolean;
   }
   
