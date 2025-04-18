@@ -1,1 +1,56 @@
-<p>details works!</p>
+<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
+    <div class="flex flex-col lg:flex-row gap-12">
+    
+        <!-- Product Image -->
+        <div class="lg:w-[40%] w-full">
+          <img 
+            [src]="product.image"
+            alt="{{ product.name }}"
+            class="w-full h-[420px] object-cover rounded-xl border border-gray-300 shadow-sm" />
+        </div>
+    
+        <!-- Product Details -->
+        <div class="lg:w-[60%] w-full flex flex-col justify-between space-y-8 text-gray-900">
+          
+          <!-- Title + Info -->
+          <div>
+            <h2 class="text-5xl font-extrabold tracking-tight mb-6">{{ product.name }}</h2>
+    
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-12 text-lg">
+              <p><span class="font-semibold">📂 Category:</span> {{ product.category }}</p>
+    
+              <!-- Species with image -->
+              <div>
+                <span class="font-semibold">🐾 Species:</span>
+                <div class="flex flex-wrap items-center gap-3 mt-2">
+                  <ng-container *ngIf="product.species?.length; else allSpecies">
+                    <div 
+                      *ngFor="let spec of product.species" 
+                      class="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow border border-gray-200">
+                      <img 
+                        [src]="getSpeciesImage(spec)" 
+                        [alt]="spec" 
+                        class="w-8 h-8 object-contain rounded-full" />
+                      <span>{{ spec }}</span>
+                    </div>
+                  </ng-container>
+              
+                  <ng-template #allSpecies>
+                    <span class="text-gray-600">All</span>
+                  </ng-template>
+                </div>
+              </div>
+              <p><span class="font-semibold">📦 Quantity:</span> {{ product.quantity }}</p>
+              <p><span class="font-semibold">💰 Price:</span> {{ product.price | currency:'TND ':'symbol':'1.2-2' }}</p>
+              <p><span class="font-semibold">⏳ Expiration Date:</span> {{ product.expirationDate || 'N/A' }}</p>
+            </div>
+          </div>
+    
+          <!-- Description -->
+          <div *ngIf="product.description" class="text-gray-700">
+            <h3 class="font-semibold text-2xl mb-2">📝 Description</h3>
+            <p class="text-base leading-relaxed">{{ product.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>

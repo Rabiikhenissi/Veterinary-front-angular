@@ -62,8 +62,8 @@ export class ViewComponent {
       this.currentPage.toString(),
       this.searchQuery,
       this.product.category,
-      this.product.species).subscribe(response => {
-        const products = response.data; // Adjust based on your actual response shape
+      this.product.species.join(',')).subscribe(response => {
+        const products = response.data;
     
         this.recommendedProducts = products.filter(p =>
           p._id !== this.product._id &&
@@ -79,7 +79,7 @@ export class ViewComponent {
       this._productService.getOne(id).subscribe(product => {
         this.product = product;
         this.quantity = 1;
-        this.loadRecommendedProducts(); // reload based on the new product
+        this.loadRecommendedProducts(); 
       });
     }
 

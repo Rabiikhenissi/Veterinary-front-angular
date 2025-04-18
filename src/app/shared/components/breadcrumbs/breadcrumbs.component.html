@@ -1,0 +1,23 @@
+<div class="flex items-center space-x-3 text-base text-zinc-600 dark:text-zinc-300 font-medium">
+    <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
+      <div class="flex items-center space-x-2">
+        @if(!last){<a
+          [routerLink]="breadcrumb.url"
+          class="transition hover:text-primary hover:underline underline-offset-4 duration-200 text-lg"
+        >
+          {{ breadcrumb.label }}
+        </a>}
+        @if(last){
+        <span  class="text-primary font-semibold tracking-wide text-lg">
+          {{ breadcrumb.label }}
+        </span>}
+  
+        @if(last){<mat-icon
+          svgIcon="heroicons_outline:chevron-right"
+          class="w-5 h-5 text-zinc-400"
+        ></mat-icon>}
+        @if(!last){
+        <span class="text-zinc-400">></span>}
+      </div>
+    </ng-container>
+  </div>
