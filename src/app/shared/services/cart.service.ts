@@ -16,8 +16,8 @@ endpoint = `${environment.api}/cart`;
     return this.http.get<Cart>(`${this.endpoint}/${userId}`);
   }
 
-  addToCart(userId: string, productId: string, quantity: number): Observable<Cart> {
-    return this.http.post<Cart>(`${this.endpoint}`, { userId, productId, quantity });
+  addToCart( productId: string, quantity: number): Observable<Cart> {
+    return this.http.post<Cart>(`${this.endpoint}`, { productId, quantity });
   }
 
   removeFromCart(userId: string, productId: string): Observable<Cart> {

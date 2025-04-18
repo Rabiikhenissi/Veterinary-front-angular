@@ -14,8 +14,7 @@ import { ProductService } from 'app/shared/services/product.service';
 export class ViewComponent {
   product: Product ;
   quantity: number = 1;
-  recommendedProducts: Product[] = [];
-  userId;
+  recommendedProducts: Product[] = [];;
   searchQuery: string = '';
   currentPage = 1;
   total = 0;
@@ -29,12 +28,11 @@ export class ViewComponent {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+    const id = params.get('id');
       if (id) {
         this.loadProduct(id);
       }
     });
-     this.userId = this.route.snapshot.paramMap.get('userId');
     
   }
 
@@ -53,7 +51,7 @@ export class ViewComponent {
   }
 
   addToCart() {
-    this._cartService.addToCart(this.userId,this.product._id, this.quantity);
+    this._cartService.addToCart(this.product._id, this.quantity);
   }
 
   loadRecommendedProducts(): void {
@@ -62,15 +60,15 @@ export class ViewComponent {
       this.currentPage.toString(),
       this.searchQuery,
       this.product.category,
-      this.product.species).subscribe(response => {
-        const products = response.data; // Adjust based on your actual response shape
+      this.product.species.join(',')).subscribe(response => {
+        const products = response.data; 
     
-        this.recommendedProducts = products.filter(p =>
-          p._id !== this.product._id &&
-          p.category === this.product.category &&
-          Array.isArray(p.species) &&
+        this.recommendedProducts = products.filter(prod =>
+          prod._id !== this.product._id &&
+          prod.category === this.product.category &&
+          Array.isArray(prod.species) &&
           Array.isArray(this.product.species) &&
-          p.species.some(s => this.product.species.includes(s))
+          prod.species.some(s => this.product.species.includes(s))
         );
       });
     }

@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FilterOptions } from 'app/shared/models/filter-options';
 import { Pagination } from 'app/shared/models/pagination';
 import { Product } from 'app/shared/models/product';
+import { CartService } from 'app/shared/services/cart.service';
 import { ProductService } from 'app/shared/services/product.service';
 
 @Component({
@@ -17,6 +18,7 @@ import { ProductService } from 'app/shared/services/product.service';
 export class ShopComponent {
   //********* INJECT SERVICES ***********//
   route = inject(ActivatedRoute);
+  _cartService = inject(CartService);
   _productService = inject(ProductService);
   router=inject(Router);
   products: Product[] = [];
@@ -34,7 +36,7 @@ export class ShopComponent {
   selectedCategories: string[] = [];
 
   searchQuery: string = '';
-
+  
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
@@ -119,7 +121,13 @@ export class ShopComponent {
   }
 
   addToCart(product: any) {
-    // Implement your cart service here
-    console.log('Adding to cart:', product);
+    this._cartService.addToCart(product._id, 1).subscribe({
+      next: (response) => {
+        console.log('Product added to cart:', response);
+      }
+      , error: (error) => {
+        console.error('Error adding product to cart:', error);
+      }
+    });
   }
 }
