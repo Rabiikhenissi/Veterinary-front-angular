@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'app/shared/models/product';
 import { CartService } from 'app/shared/services/cart.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { CartSidebarComponent } from "../cart-sidebar/cart-sidebar.component";
 
 @Component({
   selector: 'app-view',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule, CartSidebarComponent],
   templateUrl: './view.component.html'
 })
 export class ViewComponent {
@@ -25,7 +26,7 @@ export class ViewComponent {
   _cartService = inject(CartService);
   router=inject(Router);
  
-
+@ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
     const id = params.get('id');
@@ -51,7 +52,11 @@ export class ViewComponent {
   }
 
   addToCart() {
-    this._cartService.addToCart(this.product._id, this.quantity);
+    this._cartService.addToCart(this.product._id, this.quantity).subscribe({
+      next: () => {
+        this._cartService.fetchCart();
+      }
+    });
   }
 
   loadRecommendedProducts(): void {
@@ -82,7 +87,7 @@ export class ViewComponent {
     }
 
   viewProduct(productId: string): void {
-    console.log(productId)
+    
     this.router.navigate(['..', productId], { relativeTo: this.route }); 
   }
 

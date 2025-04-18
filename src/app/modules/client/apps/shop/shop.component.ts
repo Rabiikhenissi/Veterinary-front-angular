@@ -8,10 +8,11 @@ import { Pagination } from 'app/shared/models/pagination';
 import { Product } from 'app/shared/models/product';
 import { CartService } from 'app/shared/services/cart.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 
 @Component({
   selector: 'app-shop',
-  imports: [MatPaginator,CommonModule,FormsModule],
+  imports: [MatPaginator,CommonModule,FormsModule,CartSidebarComponent],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss'
 })
@@ -36,8 +37,15 @@ export class ShopComponent {
   selectedCategories: string[] = [];
 
   searchQuery: string = '';
+  constructor() {
+    this._cartService.cart$.subscribe(c => this.cart = c);
+  }
+  cart: any;
   
-
+  getTotalItems(): number {
+    return this.cart?.products?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+  }
+  @ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
     this.fetchProducts();
@@ -57,7 +65,6 @@ export class ShopComponent {
         next: results => {
           this.products = results.data;
           this.total = results.total;
-          console.log(this.products);
           
         },
         error: (error) => {
@@ -116,14 +123,15 @@ export class ShopComponent {
   }
 
   viewProduct(productId: string): void {
-    console.log(productId)
     this.router.navigate([ productId], { relativeTo: this.route }); 
   }
 
   addToCart(product: any) {
     this._cartService.addToCart(product._id, 1).subscribe({
       next: (response) => {
-        console.log('Product added to cart:', response);
+        
+        this.sidebar.cartService.fetchCart(); // Refresh the cart after adding product
+        
       }
       , error: (error) => {
         console.error('Error adding product to cart:', error);
