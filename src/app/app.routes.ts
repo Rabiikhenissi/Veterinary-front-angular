@@ -71,11 +71,8 @@ export const appRoutes: Route[] = [
             {
                 path: 'home',
                 data: {
-                    breadcrumb: {
-                        label: 'Home',
-                        info: { myData: { icon: 'home', iconType: 'material' } },
-                    },
-                },
+                    breadcrumb: 'Home',
+                  },
                 children: [
                     {
                         path: '',

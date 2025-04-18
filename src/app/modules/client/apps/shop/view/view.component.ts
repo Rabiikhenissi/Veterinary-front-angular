@@ -61,7 +61,7 @@ export class ViewComponent {
       this.searchQuery,
       this.product.category,
       this.product.species.join(',')).subscribe(response => {
-        const products = response.data; 
+        const products = response.data;
     
         this.recommendedProducts = products.filter(prod =>
           prod._id !== this.product._id &&
@@ -77,7 +77,7 @@ export class ViewComponent {
       this._productService.getOne(id).subscribe(product => {
         this.product = product;
         this.quantity = 1;
-        this.loadRecommendedProducts(); // reload based on the new product
+        this.loadRecommendedProducts(); 
       });
     }
 
