@@ -1,7 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { CartService } from 'app/shared/services/cart.service';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-cart-sidebar',
   imports: [CurrencyPipe,CommonModule],
@@ -9,6 +9,7 @@ import { CartService } from 'app/shared/services/cart.service';
   styleUrl: './cart-sidebar.component.scss'
 })
 export class CartSidebarComponent {
+  
   isOpen = false;
   cart: any;
   constructor(public cartService: CartService) {
@@ -35,7 +36,12 @@ export class CartSidebarComponent {
       },
       error: (error) => {
         console.error('Error updating quantity:', error);
-        //change behaveior of the cart if error occurs
+         Swal.fire({
+                        icon: 'warning',
+                        title: 'Cannot add more',
+                        text: 'Requested quantity exceeds available stock',
+                        confirmButtonColor: '#f87171',
+                    });
       }
     })
   }

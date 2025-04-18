@@ -25,7 +25,14 @@ export class ViewComponent {
   _productService = inject(ProductService);
   _cartService = inject(CartService);
   router=inject(Router);
- 
+  constructor() {
+    this._cartService.cart$.subscribe(c => this.cart = c);
+  }
+  cart: any;
+  
+  getTotalItems(): number {
+    return this.cart?.products?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+  }
 @ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
