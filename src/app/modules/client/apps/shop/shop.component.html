@@ -1,3 +1,16 @@
+<app-cart-sidebar></app-cart-sidebar>
+<button 
+  (click)="sidebar.toggleCart()" 
+  class="fixed top-4 right-4 z-50 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-lg "
+>
+  🛒
+  <span 
+    *ngIf="cart?.products?.length" 
+    class="absolute -top-1 -right-1 bg-green-300 text-black text-sm font-bold w-5 h-5 flex items-center justify-center rounded-full"
+  >
+    {{ getTotalItems() }}
+  </span>
+</button>
 <div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
 
   <!-- Layout: Sidebar + Product Grid -->
@@ -65,9 +78,9 @@
 
 <!-- When on the view page -->
 <button
-  
+  [disabled]="product?.quantity === 0"
   (click)="addToCart(product); $event.stopPropagation()"
-  class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-500 ease-in-out">
+  class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-500 ease-in-out disabled:opacity-50">
   Add to Cart
 </button>
         </div>

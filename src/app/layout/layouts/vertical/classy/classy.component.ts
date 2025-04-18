@@ -11,6 +11,7 @@ import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
 import {MenuService} from "../../../../shared/services/menu.service";
 import { BreadcrumbsComponent } from "../../../../shared/components/breadcrumbs/breadcrumbs.component";
+import { CartService } from 'app/shared/services/cart.service';
 
 @Component({
     selector: 'classy-layout',
@@ -26,6 +27,8 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     isLoading: boolean = true;
 
+    itemCount: number = 0;
+    showCart: boolean = false;
     /**
      * Constructor
      */
@@ -36,6 +39,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
         private _userService: UserService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
+        private _cartService: CartService,
     )
     {
     }
@@ -75,6 +79,11 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
                 // Check if the screen is small
                 this.isScreenSmall = !matchingAliases.includes('md');
             });
+
+            this._router.events.subscribe(() => {
+                this.showCart = this._router.url.includes('/shop');
+              });
+          
     }
 
     /**
@@ -107,4 +116,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
             navigation.toggle();
         }
     }
+
+
+    
 }
