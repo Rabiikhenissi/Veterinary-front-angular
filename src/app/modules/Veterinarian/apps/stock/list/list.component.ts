@@ -156,6 +156,10 @@ console.log('Updated product:', updatedProduct);
       }
     });
   }
+
+  details(productId: string): void {
+    this._router.navigate([`${productId}`], { relativeTo: this._route }).then();
+  }
 }
 
 
