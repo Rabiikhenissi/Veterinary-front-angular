@@ -11,9 +11,7 @@ export default  [
       {
         path: '',
         component: ListComponent,
-        data: {
-          breadcrumb: 'stock',
-        },
+       
       },
         {
               path: 'add',
@@ -28,10 +26,16 @@ export default  [
               {
                 path: '',
                 component: DetailsComponent,
+                data: {
+                  breadcrumb: 'Details',
+                },
               },
               {
                 path: 'edit',
                 component: EditComponent,
+                data: {
+                  breadcrumb: 'Edit',
+                },
               },
             ],
           },

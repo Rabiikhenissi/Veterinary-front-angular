@@ -1,4 +1,4 @@
-import { Route } from "@angular/router";
+import { Routes } from "@angular/router";
 import { ShopComponent } from "./shop.component";
 import { ViewComponent } from "./view/view.component";
 
@@ -17,4 +17,4 @@ export default [
         breadcrumb: 'Product',
         },
   }
-] as Route[];
+] as Routes;

@@ -1,0 +1,64 @@
+<!-- Container that wraps both backdrop and sidebar -->
+<div *ngIf="isOpen" class="fixed inset-0 z-60 flex justify-end">
+
+    <!-- Backdrop (clicking here closes the cart) -->
+    <div 
+      class="absolute inset-0 bg-black bg-opacity-30"
+      (click)="closeCart()"
+    ></div>
+  
+    <!-- Sidebar -->
+    <div 
+      class="relative h-full w-80 bg-white shadow-lg border-l border-green-200 transition-transform duration-300 flex flex-col"
+      (click)="$event.stopPropagation()"
+    >
+    <div class="flex justify-between items-center p-4 border-b">
+      <button 
+        class="text-sm text-gray-900 hover:underline" 
+        (click)="clearCart()"
+      >
+        Clear All 🗑
+      </button>
+      <h2 class="text-lg font-semibold text-green-700">Your Cart</h2>
+      <button (click)="closeCart()" class="text-red-500 hover:text-red-700">✖</button>
+    </div>
+  
+      <!-- Cart Items -->
+      <div class="p-4 space-y-4 overflow-y-auto flex-1">
+        <ng-container *ngIf="!cart?.products?.length; else cartItems">
+          <div class="text-gray-500">Cart is empty</div>
+        </ng-container>
+  
+        <ng-template #cartItems>
+          <div *ngFor="let item of cart.products; trackBy: trackByIndex" class="border p-2 rounded shadow-sm">
+            <div class="flex justify-between items-center">
+              <p class="font-semibold text-green-800">{{ item.productId.name }}</p>
+              <p class="text-sm text-green-700">{{ item.productId.price | currency:'TND ':'symbol':'1.2-3' }}</p>
+            </div>
+  
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex items-center space-x-2">
+                <button class="px-2 py-1 bg-green-200 text-green-800 rounded" (click)="decreaseQuantity(item)">-</button>
+                <span>{{ item.quantity }}</span>
+                <button class="px-2 py-1 bg-green-200 text-green-800 rounded" (click)="increaseQuantity(item)">+</button>
+              </div>
+              <div class="flex items-center space-x-2">
+                <p class="text-right font-semibold text-gray-700">
+                  {{ item.productId.price * item.quantity | currency:'TND ':'symbol':'1.2-3' }}
+                </p>
+                <button class="text-red-500 hover:text-red-700" (click)="removeItem(item)">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+  
+      <!-- Total Price -->
+      <div class="p-4 border-t font-semibold text-green-800 text-right">
+        Total: {{ totalPrice | currency:'TND ':'symbol':'1.2-3' }}
+      </div>
+    </div>
+  </div>
+  

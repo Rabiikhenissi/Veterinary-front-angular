@@ -5,26 +5,25 @@ import { DetailsComponent } from './details/details.component';
 import { EditComponent } from './edit/edit.component';
 
 const routes: Routes = [
-    
     {
         path: 'add',
         component: AddComponent,
-        data:{breadcrumb: 'add'},
+        data: { breadcrumb: 'Add Pet' }, // Only appears when adding
     },
     {
         path: ':id',
-        children:[
-              {
-              path:"",
-              component: DetailsComponent,
-              data:{breadcrumb: 'details'},
-              },
-              {
-                path:"edit",
+        children: [
+            {
+                path: 'edit',
                 component: EditComponent,
-                data:{breadcrumb: 'edit'},
-              }
-          ],
+                data: { breadcrumb: 'Edit Pet' }, // Appears when editing
+            },
+            {
+                path: '',
+                component: DetailsComponent,
+                data: { breadcrumb: 'Pet Details' }, // Appears when viewing
+            },
+        ],
     },
 ];
 

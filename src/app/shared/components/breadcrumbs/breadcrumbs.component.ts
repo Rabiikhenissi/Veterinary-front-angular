@@ -26,20 +26,25 @@ export class BreadcrumbsComponent implements OnInit {
   }
 
   buildBreadcrumbs(route: ActivatedRoute, url: string = '', breadcrumbs: Breadcrumb[] = []): Breadcrumb[] {
-    if (route.routeConfig && route.routeConfig.path) {
+    if (route.routeConfig && route.routeConfig.path !== null) { // Ensure path is not null
       const routeURL = route.routeConfig.path;
-      url += `/${routeURL.replace(/:.*$/, '')}`; 
+      url += `/${routeURL.replace(/:.*$/, '')}`; // Remove route parameter (e.g., :id)
   
       const label = route.snapshot.data['breadcrumb'];
-      if (label) {
+      
+      // Check if the breadcrumb label already exists to prevent duplicates
+      if (label && !breadcrumbs.some(b => b.label === label)) {
         breadcrumbs.push({ label, url });
       }
     }
   
+    // Recursively process child routes
     if (route.firstChild) {
       return this.buildBreadcrumbs(route.firstChild, url, breadcrumbs);
     }
   
     return breadcrumbs;
   }
+  
+  
 }

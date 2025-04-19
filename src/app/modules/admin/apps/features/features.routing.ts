@@ -24,14 +24,21 @@ export default [
       },
       {
         path: ':id',
+        
         children: [
           {
             path: '',
             component: DetailsComponent,
+            data: {
+              breadcrumb: 'Details',
+            },
           },
           {
             path: 'edit',
             component: EditComponent,
+            data: {
+              breadcrumb: 'Edit',
+            },
           },
         ],
       },
