@@ -93,5 +93,29 @@ export class CartSidebarComponent {
       error: (err) => console.error('Error removing item:', err)
     });
   }
-  
+  confirmPurchase() {
+    this.cartService.confirmPurchase().subscribe({
+      next: (pdfBlob: Blob) => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Purchase Confirmed',
+          text: 'Your invoice has been Created!',
+          confirmButtonColor: '#38a169',
+        });
+          const pdfUrl = URL.createObjectURL(pdfBlob);
+          window.open(pdfUrl, '_blank');
+          this.clearCart();
+          this.cartService.fetchCart();
+      },
+      error: (error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Purchase Failed',
+          text: 'Something went wrong while generating the invoice.',
+          confirmButtonColor: '#e53e3e',
+        });
+        console.error('Error confirming purchase:', error);
+      }
+    });
+  }
 }

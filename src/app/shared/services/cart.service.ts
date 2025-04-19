@@ -44,6 +44,7 @@ cart$ = this.cart.asObservable();
 updateQuantity(productId: string, quantity: number): Observable<Cart> {
     return this.http.put<Cart>(`${this.endpoint}`, { productId, quantity });
   }
-
-
+  confirmPurchase(): Observable<Blob> {
+    return this.http.post<Blob>(`${this.endpoint}/confirm-purchase`, {}, { responseType: 'blob' as 'json' });
+  }
 }
