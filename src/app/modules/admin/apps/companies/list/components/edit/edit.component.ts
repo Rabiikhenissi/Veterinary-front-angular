@@ -12,6 +12,7 @@ import {forkJoin} from "rxjs";
 import {LoadingService} from "../../../../../../../shared/services/loading.service";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
+import mapboxgl from 'mapbox-gl';
 export const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY', // Parsing format for input
@@ -54,6 +55,8 @@ export class EditComponent implements OnInit {
     //********* DECLARE CLASSES/ENUMS ***********//
     id = this._route.snapshot.paramMap.get('id') || undefined;
     company: Company;
+    map: mapboxgl.Map | undefined;
+
     ngOnInit(): void {
         if (this.id) {
             this._loadingService.show()
@@ -66,11 +69,52 @@ export class EditComponent implements OnInit {
                       this.company.firstCalendarDay = this.formatDateForInput(this.company.firstCalendarDay);
                     }
                     this._loadingService.hide()
+                    setTimeout(() => this.initMapbox(), 100);
                 },
                 error: () => {
                     this._loadingService.hide()
                 }
             });
+        }
+      }
+      initMapbox(): void {
+        if (!this.company?.latitude || !this.company?.longitude) return;
+      
+        (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
+        this.map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [this.company.longitude, this.company.latitude],
+          zoom: 13,
+        });
+      
+      
+    this.map.addControl(new mapboxgl.NavigationControl());
+    const marker = new mapboxgl.Marker({ draggable: true })
+    .setLngLat([this.company.longitude, this.company.latitude])
+    .addTo(this.map);
+
+    const nameElement = document.createElement('div');
+    nameElement.className = 'company-name'; 
+    nameElement.innerHTML = `<strong>${this.company.name}</strong>`;
+
+
+    new mapboxgl.Marker(nameElement)
+        .setLngLat([this.company.longitude, this.company.latitude])
+        .setPopup(new mapboxgl.Popup({ offset: 25 }) ) 
+        .addTo(this.map);
+        marker.on('dragend', () => {
+          const newLngLat = marker.getLngLat(); // Get new coordinates after dragging
+          this.company.longitude = newLngLat.lng;
+          this.company.latitude = newLngLat.lat;
+      
+          this.updateCoordinatesInForm();
+        });
+      }
+      updateCoordinatesInForm(): void {
+        const coordinates = document.querySelector('#coordinates');
+        if (coordinates) {
+          coordinates.innerHTML = `Latitude: ${this.company.latitude}, Longitude: ${this.company.longitude}`;
         }
       }
       formatDateForInput(date: string): string {
