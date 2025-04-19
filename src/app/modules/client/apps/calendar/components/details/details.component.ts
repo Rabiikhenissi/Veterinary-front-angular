@@ -8,10 +8,12 @@ import { Pet } from 'app/shared/models/pet';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
-
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 @Component({
   selector: 'app-details',
-  imports: [CommonModule,DatePipe],
+  imports: [CommonModule,DatePipe,FeaturesDirective],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
@@ -22,7 +24,8 @@ export class DetailsComponent implements OnInit {
   _route = inject(ActivatedRoute);
   _router = inject(Router);
       _fuseConfirmationService= inject(FuseConfirmationService);
-  
+      featureCodes = FeatureCodes;
+      featureActions = FeatureActions;
   id = this._route.snapshot.paramMap.get('id')!;
   appointment!: Appointment;
   pet:Pet;
