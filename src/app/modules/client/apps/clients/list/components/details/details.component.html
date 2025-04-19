@@ -1,6 +1,11 @@
 <div class="max-w-7xl w-full mx-auto p-6 relative bg-green-50 rounded-xl shadow-lg border border-green-100">
     <!-- Edit Profile Button -->
-    <button (click)="editProfile()"
+    <button *appFeatures="[
+    {
+      code: featureCodes.clients,
+      actions: [featureActions.update]
+    }
+  ]" (click)="editProfile()"
       class="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded-md text-sm shadow transition-colors duration-500 ease-in-out">
       ✏️ Edit Profile
     </button>
@@ -26,7 +31,13 @@
         <h3 class="text-xl font-bold text-green-700 flex items-center gap-2">
           🐶 My Pets
         </h3>
-        <button (click)="addNewPet()"
+        <button *appFeatures="[
+        {
+          code: featureCodes.clients,
+          actions: [featureActions.update]
+        }
+      ]"
+      (click)="addNewPet()"
           class="bg-green-500 hover:bg-green-600 text-black px-3 py-1 rounded-md text-sm shadow transition-colors duration-500 ease-in-out w-full sm:w-auto">
           ➕ Add New
         </button>
@@ -54,7 +65,12 @@
                        transition-colors duration-500 ease-in-out w-full sm:w-auto" (click)="viewPetDetails(pet._id)">
                 View
               </button>
-              <button 
+              <button *appFeatures="[
+              {
+                code: featureCodes.clients,
+                actions: [featureActions.update]
+              }
+            ]" 
                 class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-md text-sm shadow 
                        transition-colors duration-500 ease-in-out w-full sm:w-auto"(click)="editPet(pet._id)">
                 Edit

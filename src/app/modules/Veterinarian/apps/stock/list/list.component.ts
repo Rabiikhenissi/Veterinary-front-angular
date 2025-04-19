@@ -8,10 +8,12 @@ import { FilterOptions } from 'app/shared/models/filter-options';
 import { Product } from 'app/shared/models/product';
 import { ProductService } from 'app/shared/services/product.service';
 import Swal from 'sweetalert2';
-
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 @Component({
   selector: 'app-list',
-  imports: [MatPaginator,CommonModule,FormsModule],
+  imports: [MatPaginator,CommonModule,FormsModule,FeaturesDirective],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -26,7 +28,8 @@ _route = inject(ActivatedRoute);
   selectedCategories: string[] = [];
   lowStockOnly: boolean = false;
   searchQuery: string = '';
-
+  featureCodes = FeatureCodes;
+  featureActions = FeatureActions;
   currentPage = 1;
   total = 0;
   currentSize = 10;

@@ -15,7 +15,12 @@
                   placeholder="{{ 'Search' | transloco }}"
               />
          </mat-form-field>
-         <button
+         <button *appFeatures="[
+         {
+           code: featureCodes.groups,
+           actions: [featureActions.create]
+         }
+       ]"
              class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
              mat-stroked-button
              (click)="addGroup()">
@@ -62,11 +67,22 @@
                           <span class="ml-2 mr-1  block">{{ 'Show' | transloco }}</span>
                           <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                         </button>
-                        <button mat-menu-item class="flex justify-between" (click)="openEdit(row)">
+                        <button *appFeatures="[
+                        {
+                          code: featureCodes.groups,
+                          actions: [featureActions.update]
+                        }
+                      ]"
+                      mat-menu-item class="flex justify-between" (click)="openEdit(row)">
                           <span class="ml-2 mr-1  block">{{ 'Edit' | transloco }}</span>
                           <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                         </button>
-                        <button
+                        <button *appFeatures="[
+                        {
+                          code: featureCodes.groups,
+                          actions: [featureActions.delete]
+                        }
+                      ]"
                           mat-menu-item
                           class="flex justify-between"
                           (click)="deleteGroup(row)"
