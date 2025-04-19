@@ -7,11 +7,12 @@ import { EditComponent } from './edit/edit.component';
 export default [
     {
             path: '',
+            
             children: [
               {
                 path: '',
                 component: ProfileComponent,
-                data:{breadcrumb: 'profile'},
+                
               },
               
               
@@ -23,7 +24,7 @@ export default [
                 ,{
                   path:"pet",
                   loadChildren: () => import('./pet/pet.routes').then(m => m.PetRoutingModule),
-                  data:{breadcrumb: 'pet'},
+                  data:{breadcrumb: null},
                 }
                 
                 

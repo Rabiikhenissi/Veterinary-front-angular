@@ -28,10 +28,16 @@ export default [
           {
             path: '',
             component: DetailsComponent,
+            data: {
+              breadcrumb: 'Details',
+            },
           },
           {
             path: 'edit',
             component: EditComponent,
+            data: {
+              breadcrumb: 'Edit',
+            },
           },
         ],
       },

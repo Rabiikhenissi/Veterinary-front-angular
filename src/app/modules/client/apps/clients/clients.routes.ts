@@ -12,7 +12,7 @@ export default [
         path: '',
         component: ListComponent,
         data: {
-          breadcrumb: 'Companies',
+          breadcrumb: 'Clients',
         },
       },
       {
@@ -28,14 +28,20 @@ export default [
           {
             path: '',
             component: DetailsComponent,
+            data: {
+              breadcrumb: 'Profile',
+            },
           },
           {
             path: 'edit',
             component: EditComponent,
+            data: {
+              breadcrumb: 'Edit',
+            },
           },{
             path:"pet",
             loadChildren: () => import('./list/components/details/pet/pet.routes').then(m => m.PetRoutingModule),
-            data:{breadcrumb: 'pet'},
+            
           }
         ]
       }

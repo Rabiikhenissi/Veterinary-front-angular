@@ -24,7 +24,7 @@ route= inject(ActivatedRoute);
       icon: ['', Validators.required], // or optional
       ownerId: [''], 
     });
-  
+  console.log(this.router.config)
   }
   icons = [
     { icon: 'assets/images/avatars/pets/dog.png', label: 'Dog' },
