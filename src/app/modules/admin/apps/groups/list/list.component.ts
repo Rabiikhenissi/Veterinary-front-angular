@@ -15,7 +15,9 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {LoadingService} from "../../../../../shared/services/loading.service";
-
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -33,6 +35,7 @@ import {LoadingService} from "../../../../../shared/services/loading.service";
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
+        FeaturesDirective
     ],
 })
 export class ListComponent implements OnInit {
@@ -55,7 +58,8 @@ export class ListComponent implements OnInit {
   filterType: string[] = [];
   filterStatus: string[] = [];
   filterSearch: string;
-
+ featureCodes = FeatureCodes;
+  featureActions = FeatureActions;
   ngOnInit(): void {
     this.getList();
   }

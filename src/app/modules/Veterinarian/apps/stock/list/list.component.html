@@ -1,7 +1,12 @@
 <div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-3xl font-bold text-green-800">📦 Stock Management</h2>
-      <button (click)="addNewProduct()"
+      <button *appFeatures="[
+      {
+        code: featureCodes.users,
+        actions: [featureActions.create]
+      }
+    ]" (click)="addNewProduct()"
               class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-md text-base shadow transition">
         ➕ Add Product
       </button>

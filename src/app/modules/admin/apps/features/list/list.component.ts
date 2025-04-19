@@ -20,7 +20,9 @@ import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import {LoadingService} from "../../../../../shared/services/loading.service";
 import {listFeatureStatus} from "../../../../../shared/enums/featureStatus";
-
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -41,6 +43,7 @@ import {listFeatureStatus} from "../../../../../shared/enums/featureStatus";
         MatLabel,
         MatOption,
         MatSelect,
+        FeaturesDirective,
     ],
 })
 export class ListComponent implements OnInit {
@@ -59,6 +62,8 @@ export class ListComponent implements OnInit {
   typingTimer;
   doneTypingInterval = 500;
   isScreenSmall: boolean;
+  featureCodes = FeatureCodes;
+  featureActions = FeatureActions;
   //************* FILTERS *****************//
   openFilter = false;
   protected readonly listFeatureType = listFeatureType;

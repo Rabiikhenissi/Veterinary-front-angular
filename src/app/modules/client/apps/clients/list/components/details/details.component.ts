@@ -6,10 +6,12 @@ import { Pet } from 'app/shared/models/pet';
 import { AuthService } from 'app/shared/services/auth.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
-
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 @Component({
   selector: 'app-details',
-  imports: [DatePipe,MatPaginator],
+  imports: [DatePipe,MatPaginator,FeaturesDirective],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
@@ -17,6 +19,8 @@ export class DetailsComponent {
 
   user = { id:"string",name: '', email: '',avatar:"" , phone:""};
   userPets: Pet[] = [];
+  featureCodes = FeatureCodes;
+  featureActions = FeatureActions;
   selectedAvatar = '';
   avatars = [
     'assets/images/avatars/male.png',

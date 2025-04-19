@@ -15,7 +15,12 @@
                   placeholder="{{ 'Search' | transloco }}"
               />
          </mat-form-field>
-         <button
+         <button *appFeatures="[
+         {
+           code: featureCodes.features,
+           actions: [featureActions.update]
+         }
+       ]"
              class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
              mat-stroked-button
              (click)="addFeature()">
@@ -85,7 +90,13 @@
                           <span class="ml-2 mr-1  block">{{ 'Show' | transloco }}</span>
                           <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                         </button>
-                        <button mat-menu-item class="flex justify-between" (click)="openEdit(feature)">
+                        <button  *appFeatures="[
+                        {
+                          code: featureCodes.features,
+                          actions: [featureActions.update]
+                        }
+                      ]"
+                      mat-menu-item class="flex justify-between" (click)="openEdit(feature)">
                           <span class="ml-2 mr-1  block">{{ 'Edit' | transloco }}</span>
                           <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                         </button>
@@ -94,7 +105,12 @@
                           class="flex justify-between"
                           (click)="deleteFeature(feature)"
                         >
-                          <span class="ml-2 mr-1 block">{{ 'Delete' | transloco }}</span>
+                          <span  *appFeatures="[
+                          {
+                            code: featureCodes.features,
+                            actions: [featureActions.delete]
+                          }
+                        ]" class="ml-2 mr-1 block">{{ 'Delete' | transloco }}</span>
                           <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
                         </button>
                       </mat-menu>
