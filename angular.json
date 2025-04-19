@@ -58,7 +58,8 @@
               "src/styles/styles.scss",
               "src/styles/tailwind.scss",
               "./node_modules/@syncfusion/ej2-material-theme/styles/material.css",
-              "node_modules/sweetalert2/dist/sweetalert2.min.css"
+              "node_modules/sweetalert2/dist/sweetalert2.min.css",
+               "node_modules/mapbox-gl/dist/mapbox-gl.css"
               
 
             ],

@@ -33,8 +33,6 @@ import {Feature} from "../../../../../../../shared/models/feature";
         ReactiveFormsModule,
         MatError,
         TranslocoPipe,
-        MatIcon,
-        MatIconButton,
         MatOption,
         MatRadioButton,
         MatSelect,

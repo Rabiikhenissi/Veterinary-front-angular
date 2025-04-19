@@ -37,8 +37,7 @@ import { AuthService } from 'app/shared/services/auth.service';
         MatError,
         ReactiveFormsModule,
         TranslocoPipe,
-        MatOption,
-        MatSelect,
+        
     ],
 })
 export class AddComponent implements OnInit {

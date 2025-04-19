@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject} from '@angular/core';
 import { NgForm, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Company } from '../../../../../shared/models/company';
 import { fuseAnimations } from '../../../../../../@fuse/animations';
@@ -12,7 +12,7 @@ import {TranslocoPipe} from "@ngneat/transloco";
 import {LoadingService} from "../../../../../shared/services/loading.service";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
-
+import mapboxgl from 'mapbox-gl';
 export const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY', // Parsing format for input
@@ -48,8 +48,9 @@ export const MY_DATE_FORMATS = {
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddComponent {
+export class AddComponent implements AfterViewInit {
     //********* INJECT SERVICES ***********//
+    _changeDetectorRef = inject(ChangeDetectorRef);
     _companyService= inject(CompanyService);
     _router= inject(Router);
     _fuseConfirmationService= inject(FuseConfirmationService);
@@ -57,6 +58,51 @@ export class AddComponent {
     _loadingService = inject(LoadingService)
     //********* DECLARE CLASSES/ENUMS ***********//
     company = new Company();
+    map!: mapboxgl.Map;
+    marker?: mapboxgl.Marker;
+
+
+    ngAfterViewInit(): void {
+      // set the token
+      (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
+  
+      // init the map
+      this.map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [10.1658, 36.8065],
+                zoom: 9
+      });
+  
+      // handle map click
+      this.map.on('click', (event) => {
+        const { lng, lat } = event.lngLat;
+        this._changeDetectorRef.detectChanges();
+        // drop or move marker
+        if (!this.marker) {
+          this.marker = new mapboxgl.Marker({ draggable: true })
+            .setLngLat([lng, lat])
+            .addTo(this.map);
+  
+          this.marker.on('dragend', () => {
+            const pos = this.marker!.getLngLat();
+            this.company.latitude = pos.lat;
+            this.company.longitude = pos.lng;
+            this._changeDetectorRef.detectChanges();
+          });
+        } else {
+          this.marker.setLngLat([lng, lat]);
+        }
+  
+        // set the lat/lng in model
+        this.company.latitude = lat;
+        this.company.longitude = lng;
+      });
+    }
+  
+
+
+
 
   addOne(myForm: NgForm): void {
     if (myForm.valid) {

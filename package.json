@@ -38,6 +38,7 @@
     "jwt-decode": "^4.0.0",
     "lodash-es": "4.17.21",
     "luxon": "3.4.4",
+    "mapbox-gl": "^3.11.0",
     "ng-apexcharts": "1.8.0",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",

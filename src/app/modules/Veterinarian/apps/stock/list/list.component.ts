@@ -86,7 +86,7 @@ _route = inject(ActivatedRoute);
   }
  
   editProduct(product: Product): void {
-    this._router.navigate(['/stock/edit', product._id]);
+    this._router.navigate([`${product._id}/edit`], { relativeTo: this._route }).then();
   }
 
   archiveProduct(product): void {
