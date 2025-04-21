@@ -1,0 +1,33 @@
+<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
+    <h1 class="text-2xl font-bold text-green-800 mb-6">📄 My Invoices</h1>
+  
+    @if (invoices.length === 0) {
+      <div class="text-center text-gray-500">
+        <p>No invoices found.</p>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (invoice of invoices; track invoice.invoiceId) {
+            <div >
+        <div class="bg-white p-4 rounded-lg border border-green-100 shadow-sm hover:shadow-md transition">
+          <div class="mb-3">
+            <h3 class="text-lg font-semibold text-green-700">Invoice #{{ invoice.invoiceId }}</h3>
+            <p class="text-sm text-gray-500">Date: {{ invoice.createdAt | date: 'shortDate' }}</p>
+          </div>
+  
+          <div class="text-sm space-y-1 text-gray-700">
+            <p><strong>Total:</strong> {{ invoice.totalPrice }} TND</p>
+            <p><strong>Number of products:</strong> {{ invoice.totalProducts }}</p>
+          </div>
+  
+          <button 
+            class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition"
+            (click)="openInvoicePDF(invoice.invoiceId)">
+            View PDF
+          </button>
+        </div>
+      
+    </div>}
+  </div>
+  

@@ -106,6 +106,7 @@ export class CartSidebarComponent {
           window.open(pdfUrl, '_blank');
           this.clearCart();
           this.cartService.fetchCart();
+          this.closeCart();
       },
       error: (error) => {
         Swal.fire({
