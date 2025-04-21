@@ -189,6 +189,16 @@ export const appRoutes: Route[] = [
                             feature: FeatureCodes.stock,
                         },
                         loadChildren: () => import('app/modules/Veterinarian/apps/stock/stock.routing'),
+                    },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'invoices',
+                        data: {
+                            breadcrumb: 'Invoices',
+                            feature: FeatureCodes.invoices,
+                        },
+                        loadChildren: () => import('app/modules/client/apps/invoices/invoices.routes'),
                     }
                     
                 ],

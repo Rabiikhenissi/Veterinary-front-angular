@@ -16,7 +16,9 @@ private cart = new BehaviorSubject<any>(null);
 cart$ = this.cart.asObservable();
 
   constructor(private http: HttpClient) {}
-
+  
+  
+ 
   getCart(): Observable<Cart> {
     return this.http.get<Cart>(`${this.endpoint}/`);
   }
@@ -46,5 +48,13 @@ updateQuantity(productId: string, quantity: number): Observable<Cart> {
   }
   confirmPurchase(): Observable<Blob> {
     return this.http.post<Blob>(`${this.endpoint}/confirm-purchase`, {}, { responseType: 'blob' as 'json' });
+  }
+  getInvoices(): Observable<any> {
+    return this.http.get<any>(`${this.endpoint}/invoices`);
+  }
+  getInvoicePdf(invoiceId: string) {
+    return this.http.get(`${this.endpoint}/invoice/${invoiceId}`, {
+      responseType: 'blob',
+    });
   }
 }
