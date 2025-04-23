@@ -84,7 +84,7 @@ export class AddComponent implements AfterViewInit {
             .setLngLat([lng, lat])
             .addTo(this.map);
   
-          this.marker.on('dragend', () => {
+          this.marker.on('draged', () => {
             const pos = this.marker!.getLngLat();
             this.company.latitude = pos.lat;
             this.company.longitude = pos.lng;

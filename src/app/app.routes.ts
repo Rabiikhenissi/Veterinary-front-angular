@@ -199,7 +199,18 @@ export const appRoutes: Route[] = [
                             feature: FeatureCodes.invoices,
                         },
                         loadChildren: () => import('app/modules/client/apps/invoices/invoices.routes'),
-                    }
+                    },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'appointments',
+                        data: {
+                            breadcrumb: 'Appointments',
+                            feature: FeatureCodes.appointments,
+                    },
+                        loadChildren: () => import('app/modules/client/apps/appointments/appointments.routes'),
+                    },
+                    
                     
                 ],
             },
