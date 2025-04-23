@@ -1,38 +1,89 @@
 @if (!loading && pet) {
-    <div class="max-w-5xl w-full mx-auto mt-8 mb-16 p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
-      <h2 class="text-3xl font-bold mb-6 text-green-800 text-center">{{ pet.name }}</h2>
-    
-      @if (pet.icon) {
-      <div class="flex justify-center mb-6">
-        <img [src]="pet.icon" alt="Pet icon" class="w-36 h-36 rounded-full border-4 border-green-300 object-cover shadow" />
-      </div>
-      }
-    
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-green-700 text-lg">
-        <div>
-          <strong class="block text-green-800 mb-1">Species:</strong>
-          <span>{{ pet.species }}</span>
-        </div>
-    
-        <div>
-          <strong class="block text-green-800 mb-1">Birth Date:</strong>
-          <span>{{ pet.birthDate | date }}</span>
-        </div>
-    
-        <div>
-            <strong class="block text-green-800 mb-1">Owner name:</strong>
-            <span>{{ pet.ownerId.name }}</span>
-          </div>
-          <div>
-            <strong class="block text-green-800 mb-1">Owner email:</strong>
-            <span>{{ pet.ownerId.email }}</span>
-          </div>
-          
-      </div>
+<div
+    class="max-w-5xl w-full mx-auto mt-8 mb-16 p-6 bg-green-50 rounded-xl shadow-lg border border-green-100"
+>
+    <h2 class="text-3xl font-bold mb-6 text-green-800 text-center">
+        {{ pet.name }}
+    </h2>
+
+    @if (pet.icon) {
+    <div class="flex justify-center mb-6">
+        <img
+            [src]="pet.icon"
+            alt="Pet icon"
+            class="w-36 h-36 rounded-full border-4 border-green-300 object-cover shadow"
+        />
     </div>
     }
-    
-    <ng-template #loadingTemplate>
-      <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
-    </ng-template>
-    
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-green-700 text-lg">
+        <div>
+            <strong class="block text-green-800 mb-1">Species:</strong>
+            <span>{{ pet.species }}</span>
+        </div>
+
+        <div>
+            <strong class="block text-green-800 mb-1">Birth Date:</strong>
+            <span>{{ pet.birthDate | date }}</span>
+        </div>
+    </div>
+    @if (!loadingAppointments) {
+    <div
+        class="max-w-5xl w-full mx-auto mt-4 p-6 bg-white border rounded-xl shadow-md"
+    >
+        <h3 class="text-2xl font-semibold text-green-800 mb-4">
+            📅 Appointments
+        </h3>
+
+        @if (appointments) {
+        <ul class="space-y-4">
+            @for ( appt of appointments ;track $index) {
+            <li
+                class="p-4 bg-green-50 border border-green-100 rounded-lg shadow-sm"
+            >
+                <div
+                    class="flex flex-col sm:flex-row sm:justify-between sm:items-center"
+                >
+                    <div>
+                        <p class="font-bold text-green-800 text-lg">
+                            Date: {{ appt.date | date : "mediumDate" }} at
+                            {{ ('1970-01-01T' + appt.time) |  date:'HH:mm' }}
+                        </p>
+                        <p class="text-green-700 text-sm">
+                            Status: {{ appt.status }}
+                        </p>
+                    </div>
+                    <div class="text-sm text-gray-500 mt-2 sm:mt-0">
+                        Company: {{ appt.companyId?.name || "N/A" }}
+                    </div>
+                </div>
+            </li>
+
+            }
+        </ul>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center">
+            <mat-paginator
+                [length]="total"
+                [pageSize]="currentSize"
+                [pageIndex]="currentPage - 1"
+                [pageSizeOptions]="[5, 10, 20, 50, 100]"
+                (page)="pageChanged($event)"
+            >
+            </mat-paginator>
+        </div>
+
+        } @else {
+        <p class="text-gray-500">No appointments found for this pet.</p>
+        }
+    </div>
+    } @else {
+    <div class="text-center text-gray-400 mt-4">Loading appointments...</div>
+    }
+</div>
+}
+
+<ng-template #loadingTemplate>
+    <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
+</ng-template>

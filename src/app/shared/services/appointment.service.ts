@@ -34,6 +34,49 @@ export class AppointmentService {
     return this.http.get<Appointment>(`${this.endpoint}/${id}`);
   }
 
+  getAppointmentsByUser(
+    
+    limit: string,
+    page: string,
+    search: string,
+    userId: string,
+  ): Observable<Pagination<Appointment>> {
+    let searchParams = new HttpParams()
+      .set('limit', limit)
+      .set('page', page);
+  
+    if (search) {
+      searchParams = searchParams.set('search', search);
+    }
+  
+    return this.http.get<Pagination<Appointment>>(
+      `${this.endpoint}/user/${userId}`,
+      { params: searchParams }
+    );
+  }
+  
+  getAppointmentsByPet(
+    limit: string,
+    page: string,
+    search: string,
+    petId: string
+  ): Observable<Pagination<Appointment>> {
+    let searchParams = new HttpParams()
+      .set('limit', limit)
+      .set('page', page);
+  
+    if (search) {
+      searchParams = searchParams.set('search', search);
+    }
+  
+    return this.http.get<Pagination<Appointment>>(
+      `${this.endpoint}/pet/${petId}`,
+      { params: searchParams }
+    );
+  }
+  
+
+
   createAppointment(appointment: Appointment): Observable<Appointment> {
     return this.http.post<Appointment>(`${this.endpoint}`, appointment);
   }
