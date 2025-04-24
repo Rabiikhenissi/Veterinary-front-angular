@@ -6,6 +6,7 @@ export class Appointment {
   date: string;
   time: string;
   status: string;
+  medications?: string[];
 }
 export class Appointment2 {
   _id?: string;

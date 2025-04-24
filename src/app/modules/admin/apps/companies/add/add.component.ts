@@ -69,7 +69,7 @@ export class AddComponent implements AfterViewInit {
       // init the map
       this.map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [10.1658, 36.8065],
                 zoom: 9
       });

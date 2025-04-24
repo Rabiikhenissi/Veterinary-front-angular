@@ -1,0 +1,74 @@
+<div class="max-w-6xl w-full mx-auto p-8 relative bg-green-50 rounded-xl shadow-lg border border-green-100">
+    <h2 class="text-3xl font-bold text-green-800 mb-6">🩺 Add Appointment Info</h2>
+  
+    <form (ngSubmit)="onSubmit()" #infoForm="ngForm" class="space-y-6">
+  
+      <!-- Symptoms (Dropdown) -->
+      <div>
+        <label class="block text-green-700 font-semibold mb-1">Symptoms</label>
+        <input type="text" name="symptoms" [(ngModel)]="info.symptoms" required
+          placeholder="Add symptoms, separated by commas"
+          class="w-full px-4 py-2 rounded-md shadow border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white" />
+      </div>
+      <!-- Performed Procedures (Multi-select) -->
+      <div>
+        <label class="block text-green-700 font-semibold mb-1">Performed Procedures</label>
+        <select multiple name="procedures" [(ngModel)]="info.performedProcedures"
+          class="w-full h-32 px-4 py-2 rounded-md shadow border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white">
+          <option *ngFor="let procedure of procedureOptions" [value]="procedure">{{ procedure }}</option>
+        </select>      </div>
+  
+      <!-- Weight -->
+      <div>
+        <label class="block text-green-700 font-semibold mb-1">Weight (kg)</label>
+        <input type="number" name="weight" [(ngModel)]="info.weight" required step="0.1"
+          class="w-full px-4 py-2 rounded-md shadow border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white" />
+      </div>
+  
+      <!-- Temperature -->
+      <div>
+        <label class="block text-green-700 font-semibold mb-1">Temperature (°C)</label>
+        <input type="number" name="temperature" [(ngModel)]="info.temperature" required step="0.1"
+          class="w-full px-4 py-2 rounded-md shadow border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white" />
+      </div>
+  
+      <!-- Heart Rate -->
+      <div>
+        <label class="block text-green-700 font-semibold mb-1">Heart Rate (bpm)</label>
+        <input type="number" name="heartRate" [(ngModel)]="info.heartRate" required
+          class="w-full px-4 py-2 rounded-md shadow border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white" />
+      </div>
+ <!-- Medications (Multi-select) -->
+
+ <div>
+    <label class="block font-medium text-green-800 mb-1">Prescribed Medications</label>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
+      <div
+        *ngFor="let medication of medication" 
+        class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
+        [class.border-green-500]="info.medications.includes(medication._id)"  
+        (click)="selectMedication(medication)"
+      >
+        <img [src]="medication.image" [alt]="medication.name" class="w-16 h-16 mb-1 object-cover rounded" />
+        <span class="text-sm font-medium text-green-700">{{ medication.name }}</span>
+        <span class="text-xs text-green-500">{{ medication.price | currency }}</span> <!-- Display price -->
+      </div>
+    </div>
+  </div>
+   
+  
+      <!-- Next Appointment -->
+      <div>
+        <label class="block text-green-700 font-semibold mb-1">Next Appointment</label>
+        <input type="date" name="nextAppointment" [(ngModel)]="info.nextAppointment"
+          class="w-full px-4 py-2 rounded-md shadow border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white" />
+      </div>
+  
+      <!-- Submit Button -->
+      <button type="submit"
+        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md shadow text-md font-semibold">
+        ✅ Save Info
+      </button>
+    </form>
+  </div>
+  

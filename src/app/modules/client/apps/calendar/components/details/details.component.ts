@@ -11,6 +11,7 @@ import { PetService } from 'app/shared/services/pet.service';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { ProductService } from 'app/shared/services/product.service';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,DatePipe,FeaturesDirective],
@@ -21,6 +22,7 @@ export class DetailsComponent implements OnInit {
   _loadingService = inject(LoadingService);
   _appointmentService = inject(AppointmentService);
   _petService = inject(PetService);
+  _productService = inject(ProductService);
   _route = inject(ActivatedRoute);
   _router = inject(Router);
       _fuseConfirmationService= inject(FuseConfirmationService);
@@ -29,6 +31,7 @@ export class DetailsComponent implements OnInit {
   id = this._route.snapshot.paramMap.get('id')!;
   appointment!: Appointment;
   pet:Pet;
+  medications: any[] = [];
   ngOnInit(): void {
     this._loadingService.show();
     this._appointmentService.getAppointment(this.id).subscribe({
@@ -36,6 +39,7 @@ export class DetailsComponent implements OnInit {
         this.appointment = data;
         this._loadingService.hide();
         console.log('petId',this.appointment.petId._id) ;
+        console.log(this.appointment);
         
         this._petService.getOne(this.appointment.petId._id).subscribe({
           next: (petData) => {
@@ -45,7 +49,16 @@ export class DetailsComponent implements OnInit {
         error: () => this._loadingService.hide()
         });
         
-        
+        if (this.appointment.medications?.length > 0) {
+          this.appointment.medications.forEach((medicationId) => {
+            this._productService.getOne(medicationId).subscribe({
+              next: (medicationData) => {
+                this.medications.push(medicationData);
+              },
+              error: () => console.error('Failed to fetch medication data')
+            });
+          });
+        }
       },
       error: () => this._loadingService.hide()
     });
@@ -104,5 +117,12 @@ export class DetailsComponent implements OnInit {
   }
  editAppointment(): void {
   this._router.navigate([`/home/calendar/${this.appointment._id}/edit`]).then();
+ }
+ addAppointmentInfo(): void {
+  this._router.navigate(['info'], { relativeTo: this._route }).then(); 
+ }
+ addPrescription(): void {
+  this._router.navigate(['prescription'], { relativeTo: this._route }).then(); 
+  
  }
 }

@@ -87,5 +87,8 @@ export class AppointmentService {
   archiveAppointment(id: string): Observable<Appointment> {
     return this.http.patch<Appointment>(`${this.endpoint}/archive/${id}`, {});
   }
+  addAppointmentInfo(id: string, info: any): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.endpoint}/info/${id}`, info);
+  }
   
 }
