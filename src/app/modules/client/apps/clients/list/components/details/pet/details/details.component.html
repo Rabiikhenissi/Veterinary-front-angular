@@ -37,29 +37,21 @@
 
         @if (appointments) {
         <ul class="space-y-4">
-            @for ( appt of appointments ;track $index) {
-            <li
-                class="p-4 bg-green-50 border border-green-100 rounded-lg shadow-sm"
-            >
-                <div
-                    class="flex flex-col sm:flex-row sm:justify-between sm:items-center"
-                >
-                    <div>
+            @for (appt of appointments ; track $index) {
+                <li (click)="viewDetails(appt._id)" class="p-4 bg-green-50 border border-green-100 rounded-lg shadow-sm hover:bg-green-100 transition cursor-pointer">
+                  
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                      <div>
                         <p class="font-bold text-green-800 text-lg">
-                            Date: {{ appt.date | date : "mediumDate" }} at
-                            {{ ('1970-01-01T' + appt.time) |  date:'HH:mm' }}
+                          Date: {{ appt.date | date:'mediumDate' }} at {{ ('1970-01-01T' + appt.time) | date:'HH:mm' }}
                         </p>
-                        <p class="text-green-700 text-sm">
-                            Status: {{ appt.status }}
-                        </p>
+                      </div>
+                      <div class="text-sm text-gray-500 mt-2 sm:mt-0">
+                        Company: {{ appt.companyId?.name || 'N/A' }}
+                      </div>
                     </div>
-                    <div class="text-sm text-gray-500 mt-2 sm:mt-0">
-                        Company: {{ appt.companyId?.name || "N/A" }}
-                    </div>
-                </div>
-            </li>
-
-            }
+                </li>
+              }
         </ul>
 
         <!-- Pagination -->
