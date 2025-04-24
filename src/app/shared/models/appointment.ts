@@ -7,6 +7,7 @@ export class Appointment {
   time: string;
   status: string;
   medications?: string[];
+  prescriptionId?: string;
 }
 export class Appointment2 {
   _id?: string;

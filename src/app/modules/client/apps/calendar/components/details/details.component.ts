@@ -12,6 +12,7 @@ import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { ProductService } from 'app/shared/services/product.service';
+import { PrescriptionService } from 'app/shared/services/prescription.service';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,DatePipe,FeaturesDirective],
@@ -21,6 +22,7 @@ import { ProductService } from 'app/shared/services/product.service';
 export class DetailsComponent implements OnInit {
   _loadingService = inject(LoadingService);
   _appointmentService = inject(AppointmentService);
+  _prescriptionService = inject(PrescriptionService);
   _petService = inject(PetService);
   _productService = inject(ProductService);
   _route = inject(ActivatedRoute);
@@ -123,6 +125,6 @@ export class DetailsComponent implements OnInit {
  }
  addPrescription(): void {
   this._router.navigate(['prescription'], { relativeTo: this._route }).then(); 
-  
  }
+ 
 }

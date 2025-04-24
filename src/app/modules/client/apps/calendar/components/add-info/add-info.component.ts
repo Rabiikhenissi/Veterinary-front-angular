@@ -22,7 +22,6 @@ export class AddInfoComponent implements OnInit {
   _petService=inject(PetService);
   id = this._route.snapshot.paramMap.get('id')!;
  
-  medication: any[] = [];
   procedureOptions = [
     'Blood Test',
     'X-Ray',
@@ -39,19 +38,9 @@ export class AddInfoComponent implements OnInit {
     temperature: null,
     heartRate: null,
     nextAppointment: '',
-    medications: []
   };
   species: string;
-  selectMedication(medication: any) {
-    if (medication && medication._id) {
-      const index = this.info.medications.indexOf(medication._id);
-      if (index > -1) {
-        this.info.medications.splice(index, 1);
-      } else {
-        this.info.medications.push(medication._id); 
-      }
-    }
-  }
+
 
   ngOnInit(): void {
     // get Appointment
@@ -63,16 +52,6 @@ export class AddInfoComponent implements OnInit {
           next: (petData) => {
             this.species = petData.species;
             console.log('Species:', this.species);
-            //fetch medications based on species 
-              this._productService.getList('100', '1', '', 'Medications', this.species).subscribe({
-              next: (res) => {
-                console.log('Medications for', this.species, ':', res.data);
-                this.medication = res.data;  
-              },
-              error: (err) => {
-                console.error('Error loading medications:', err);
-              }
-            });
           },
           error: (error) => {
             console.error('Error fetching pet data:', error);

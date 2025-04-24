@@ -55,5 +55,6 @@ export class PrescriptionService {
   generatePrescriptionPDF(id: string): Observable<Blob> {
     return this.http.get<Blob>(`${this.endpoint}/${id}/pdf`, { responseType: 'blob' as 'json' });
   }
+  
  
 }
