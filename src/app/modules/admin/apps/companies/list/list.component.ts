@@ -68,7 +68,7 @@ export class ListComponent implements OnInit {
 
       this.map = new mapboxgl.Map({
         container: 'map', // ID of the div container
-        style: 'mapbox://styles/mapbox/streets-v11', // Map style
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [this.longitude, this.latitude], // Initial center coordinates
         zoom: this.zoom, // Initial zoom level
       });

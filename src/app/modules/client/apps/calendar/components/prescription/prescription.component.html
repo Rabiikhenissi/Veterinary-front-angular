@@ -1,0 +1,50 @@
+<div class="bg-white p-4 rounded-xl shadow-md my-6 w-full">
+    <h3 class="text-2xl font-semibold text-green-700 mb-4">Prescribed Medications</h3>
+  
+    <div>
+      <label class="block font-medium text-green-800 mb-1">Prescribed Medications</label>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
+        <div
+          *ngFor="let med of medication"
+          class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
+          [class.border-green-500]="selectedMedications.includes(med)"
+          (click)="selectMedication(med)"
+        >
+          <img [src]="med.image" [alt]="med.name" class="w-16 h-16 mb-1 object-cover rounded" />
+          <span class="text-sm font-medium text-green-700">{{ med.name }}</span>
+          <span class="text-xs text-green-500">{{ med.price | currency }}</span>
+  
+          <!-- Dosage & Instructions for selected ones -->
+          <div *ngIf="selectedMedications.includes(med)" class="w-full mt-2">
+            <input
+              type="text"
+              [(ngModel)]="med.dosage"
+              placeholder="Dosage (e.g., 2ml)"
+              class="mt-2 p-2 border rounded-md w-full focus:ring-2 focus:ring-green-300"
+              (click)="$event.stopPropagation()"
+            />
+            <input
+              type="text"
+              [(ngModel)]="med.instructions"
+              placeholder="Instructions (e.g., Twice a day)"
+              class="mt-2 p-2 border rounded-md w-full focus:ring-2 focus:ring-green-300"
+              (click)="$event.stopPropagation()"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Action Buttons -->
+    <div class="mt-6 flex flex-wrap gap-4">
+      <button
+        (click)="savePrescription()"
+        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2"
+      >
+        💾 Save Prescription
+      </button>
+  
+      
+    </div>
+  </div>
+  

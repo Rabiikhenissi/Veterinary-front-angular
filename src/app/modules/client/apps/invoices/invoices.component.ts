@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { co } from '@fullcalendar/core/internal-common';
 import { CartService } from 'app/shared/services/cart.service';
 
 @Component({
