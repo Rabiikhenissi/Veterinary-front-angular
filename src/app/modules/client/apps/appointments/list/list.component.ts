@@ -1,6 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Appointment } from 'app/shared/models/appointment';
 import { Pagination } from 'app/shared/models/pagination';
 import { AppointmentService } from 'app/shared/services/appointment.service';
@@ -13,6 +14,8 @@ import { AuthService } from 'app/shared/services/auth.service';
   styleUrl: './list.component.scss'
 })
 export class ListComponent implements OnInit {
+  route=inject(ActivatedRoute);
+  router=inject(Router);
   userId: string;
   appointments: Appointment[] = [];
   currentSize = 10;
@@ -57,5 +60,8 @@ export class ListComponent implements OnInit {
         console.error('Error fetching appointments:', error);
     }
     });
+  }
+  navigateToDetails(appointmentId: string): void {
+    this.router.navigate([ appointmentId], { relativeTo: this.route }); 
   }
 }

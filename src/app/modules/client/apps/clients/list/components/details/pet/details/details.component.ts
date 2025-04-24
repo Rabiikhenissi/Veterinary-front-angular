@@ -1,5 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Pet } from 'app/shared/models/pet';
 import { PetService } from 'app/shared/services/pet.service';
 import {DatePipe } from '@angular/common';
@@ -12,6 +12,7 @@ import { MatPaginator } from '@angular/material/paginator';
   templateUrl: './details.component.html',
 })
 export class DetailsComponent {
+  router= inject(Router);
   _petService = inject(PetService);
     _appointmentService = inject(AppointmentService);
     route = inject(ActivatedRoute);
@@ -69,5 +70,9 @@ export class DetailsComponent {
           this.loadingAppointments = false;
         },
       });
+    }
+
+    viewDetails(id: string) {
+      this.router.navigate(['/home/appointments', id]);
     }
 }
