@@ -5,8 +5,7 @@ export interface Prescription {
     userId: string;
     petId: string;
     medications: Medication[];
-    pdf?: string; 
-
+    pdf?: string;  // Optional field for invoice ID
   }
   
   export interface Medication {

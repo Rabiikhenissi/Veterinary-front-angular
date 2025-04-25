@@ -73,6 +73,11 @@ export class DetailsComponent {
     }
 
     viewDetails(id: string) {
-      this.router.navigate(['/home/appointments', id]);
+      const type= localStorage.getItem('connectedUserType');
+      if (type === 'external') {
+        this.router.navigate(['/home/appointments', id]);
+      }
+      else{
+      this.router.navigate(['/home/calendar', id]);}
     }
 }
