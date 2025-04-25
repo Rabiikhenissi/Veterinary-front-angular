@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PetService } from 'app/shared/services/pet.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-edit-info',
@@ -73,7 +74,15 @@ export class EditInfoComponent implements OnInit {
     this._appointmentService.updateAppointmentInfo(this.id, this.info).subscribe({
       next: (data) => {
         console.log('Info updated successfully:', data);
-        this._router.navigate([`/calendar/${this.id}`], { relativeTo: this._route }).then();
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Prescription saved successfully!',
+          timer: 1500,
+        });       
+        console.log('Redirecting to appointment page...',this.id);
+        
+         this._router.navigate([`../..`], { relativeTo: this._route }).then();
       },
       error: (error) => {
         console.error('Error updating info:', error);
