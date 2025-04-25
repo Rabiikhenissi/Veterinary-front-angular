@@ -131,6 +131,17 @@ export class DetailsComponent implements OnInit {
         }
     });
   }
+  PrescriptionPdf(): void {
+    this._appointmentService.getPrescriptionPdf(this.appointment.prescriptionId).subscribe(
+      (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      (error) => {
+        console.error('Error fetching prescription PDF', error);
+      }
+    );
+  }
  editAppointment(): void {
   this._router.navigate([`/home/calendar/${this.appointment._id}/edit`]).then();
  }

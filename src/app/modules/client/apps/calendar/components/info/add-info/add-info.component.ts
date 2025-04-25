@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { ProductService } from 'app/shared/services/product.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-info',
@@ -71,8 +72,12 @@ export class AddInfoComponent implements OnInit {
   console.log('Submitted info:', this.info);
     this._appointmentService.addAppointmentInfo(this.id, this.info).subscribe({
       next: (data) => {
-        console.log('Info added successfully:', data);
-        this._router.navigate([`../`], { relativeTo: this._route }).then();  
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Appointment info added successfully!',
+          timer: 1500,
+        });        this._router.navigate([`../`], { relativeTo: this._route }).then();  
       },
       error: (error) => {
         console.error('Error adding info:', error);

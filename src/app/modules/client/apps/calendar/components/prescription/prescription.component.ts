@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 import { ProductService } from 'app/shared/services/product.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-prescription',
@@ -19,6 +20,7 @@ export class PrescriptionComponent implements OnInit {
   appointment: any;
   medications: any[] = [];
   selectedMedications: any[] = [];
+  _router = inject(Router);
 _route = inject(ActivatedRoute);
   _appointmentService = inject(AppointmentService);
   _prescriptionService = inject(PrescriptionService);
@@ -125,9 +127,17 @@ console.log('Prescription:', prescription);
   this._prescriptionService.createPrescription(prescription).subscribe({
     next: (res) => {
       console.log('Prescription saved:', res);
-      alert('Prescription saved successfully!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Prescription saved successfully!',
+        timer: 1500,
+        
+      });      
       const prescriptionId = res._id;
       this.generatePDF(prescriptionId);
+      this._router.navigate([`/calendar/${this.id}`], { relativeTo: this._route }).then();
+
     },
     error: (err) => {
       console.error('Error saving prescription:', err);
@@ -135,7 +145,6 @@ console.log('Prescription:', prescription);
     },
   });
 }
-
   generatePDF(id): void {
     this._prescriptionService.generatePrescriptionPDF(id).subscribe({
       next: (res: Blob) => {
@@ -144,8 +153,13 @@ console.log('Prescription:', prescription);
       },
       error: (err) => {
         console.error('Failed to fetch PDF:', err);
-        alert('Unable to load PDF');
-      },
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to fetch PDF',
+          text: 'Unable to load the prescription PDF.',
+          timer: 1500,
+          
+        });      },
     });
   }
 }
