@@ -52,7 +52,8 @@ export class EditComponent implements OnInit {
       price: [product.price, [Validators.required, Validators.min(0)]],
       expirationDate: [formattedDate],
       description: [product.description || ''],
-      image: [product.image]
+      image: [product.image],
+      limitPerUser: [product.limitPerUser || 0],
     });
   }
 

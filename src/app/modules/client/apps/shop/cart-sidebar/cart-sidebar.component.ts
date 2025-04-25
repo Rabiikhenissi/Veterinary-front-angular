@@ -29,22 +29,55 @@ export class CartSidebarComponent {
   }
 
   increaseQuantity(item: any) {
-    
+    // Check if quantity exceeds the user's limit
+    if (item.quantity >= item.productId.limit) {
+      // Alert user that the limit is reached
+      Swal.fire({
+        icon: 'warning',
+        title: 'Limit Reached',
+        text: `You cannot purchase more than ${item.productId.limit} of this product.`,
+        confirmButtonColor: '#f87171',
+      });
+      return; // Prevent further increase if limit is reached
+    }
+  
+    // Proceed to update the quantity if the limit is not reached
     this.cartService.updateQuantity(item.productId._id, item.quantity + 1).subscribe({
       next: () => {
         this.cartService.fetchCart(); // Refresh the cart after updating quantity
       },
       error: (error) => {
         console.error('Error updating quantity:', error);
-         Swal.fire({
-                        icon: 'warning',
-                        title: 'Cannot add more',
-                        text: 'Requested quantity exceeds available stock',
-                        confirmButtonColor: '#f87171',
-                    });
+  
+        if (error.status == 409) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Cannot add more',
+            text: 'Requested quantity exceeds available stock',
+            confirmButtonColor: '#f87171',
+          });
+        } else if (error.status == 422) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached',
+            text: 'You cannot purchase more of this product due to the per-user limit',
+            confirmButtonColor: '#f87171',
+          });
+        
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong while updating the quantity.',
+            confirmButtonColor: '#f87171',
+          });
+        }
       }
-    })
+    });
   }
+  
+  
+  
   
   decreaseQuantity(item: any) {
     if (item.quantity > 1) {
