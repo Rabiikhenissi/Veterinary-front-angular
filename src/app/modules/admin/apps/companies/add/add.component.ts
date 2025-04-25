@@ -63,8 +63,8 @@ export class AddComponent implements AfterViewInit {
 
 
     ngAfterViewInit(): void {
-      // set the token
-      (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
+      setTimeout(() => {
+        (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
   
       // init the map
       this.map = new mapboxgl.Map({
@@ -97,10 +97,10 @@ export class AddComponent implements AfterViewInit {
         // set the lat/lng in model
         this.company.latitude = lat;
         this.company.longitude = lng;
-      });
+      });    }, 10); 
+
     }
   
-
 
 
 

@@ -98,19 +98,38 @@
       <p class="text-lg text-gray-700">No procedures performed</p>
     </ng-template>
   </div>
-    <!-- Medications Section -->
+   <!-- Medications Section -->
 <div class="bg-white p-4 rounded-xl shadow-md my-6 w-full">
   <h3 class="text-2xl font-semibold text-green-700 mb-4">Medications</h3>
-
-  
 
   <ng-template #noMedications>
     <p class="text-lg text-gray-700">No medications provided</p>
   </ng-template>
-  <div class="mt-4">
-    <button (click)="addPrescription()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm shadow">
+
+  <div class="mt-4" *ngIf="userRole?.includes('veterinarian')">
+    <!-- Show Add Button if no prescription -->
+    <button 
+      *ngIf="!appointment.prescriptionId; else prescriptionExists" 
+      (click)="addPrescription()" 
+      class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm shadow"
+    >
       Add Prescription
     </button>
+
+    <!-- If prescription exists, show PDF icon -->
+    <ng-template #prescriptionExists>
+      <div class="flex items-center gap-2 text-blue-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V3m0 0L7 8m5-5l5 5m-6 13h.01M12 17h.01M12 21h.01M12 13h.01" />
+        </svg>
+        <button 
+          (click)="PrescriptionPdf()" 
+          class="underline hover:text-blue-800 text-sm"
+        >
+          View Prescription PDF
+        </button>
+      </div>
+    </ng-template>
   </div>
 </div>
 
@@ -125,12 +144,13 @@
         </div>
 
         <!-- Add/Edit Info Buttons -->
-        <div class="flex gap-4 flex-wrap">
-          <button (click)="addAppointmentInfo()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
+        <div *ngIf="userRole?.includes('veterinarian') " class="flex gap-4 flex-wrap">
+          
+          <button  *ngIf="!appointment.weight" (click)="addAppointmentInfo()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
             Add Appointment Info
           </button>
 
-          <button (click)="editAppointmentInfo()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
+          <button  *ngIf="appointment.weight" (click)="editAppointmentInfo()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
             Edit Appointment Info
           </button>
           
