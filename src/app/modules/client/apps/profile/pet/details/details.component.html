@@ -24,8 +24,15 @@
     </div>
     @if (!loadingAppointments) {
       <div class="max-w-5xl w-full mx-auto mt-4 p-6 bg-white border rounded-xl shadow-md">
-        <h3 class="text-2xl font-semibold text-green-800 mb-4">📅 Appointments</h3>
-    
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-2xl font-semibold text-green-800">📅 Appointments</h3>
+        
+          <a [routerLink]="['/home/calendar']">
+            <button class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+              ➕ Add Appointment
+            </button>
+          </a>
+        </div>
         @if (appointments) {
           <ul class="space-y-4">
             @for (appt of appointments ; track $index) {

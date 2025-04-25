@@ -9,6 +9,7 @@ import { Product } from 'app/shared/models/product';
 import { CartService } from 'app/shared/services/cart.service';
 import { ProductService } from 'app/shared/services/product.service';
 import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-shop',
@@ -134,8 +135,32 @@ export class ShopComponent {
         
       }
       , error: (error) => {
-        console.error('Error adding product to cart:', error);
+        console.error('Error updating quantity:', error);
+  
+        if (error.status === 409) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Cannot add more',
+            text: 'Requested quantity exceeds available stock',
+            confirmButtonColor: '#f87171',
+          });
+        } else if (error.status === 422) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached',
+            text: 'You cannot purchase more of this product due to the limit per client',
+            confirmButtonColor: '#f87171',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Something went wrong while updating the quantity.',
+            confirmButtonColor: '#f87171',
+          });
+        }
       }
+      
     });
   }
 }

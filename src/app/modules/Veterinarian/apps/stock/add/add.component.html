@@ -43,6 +43,10 @@
         <label class="block font-medium text-green-800 mb-1">Quantity</label>
       <input [(ngModel)]="product.quantity" name="quantity" type="number" min="0" placeholder="Quantity"
              required class="w-full p-2 border rounded-md focus:ring-2 ring-green-300" />
+             <!-- Limit Per User -->
+<label class="block font-medium text-green-800 mb-1">Limit Per User</label>
+<input [(ngModel)]="product.limitPerUser" name="limitPerUser" type="number" min="1" placeholder="Max units per user"
+       required class="w-full p-2 border rounded-md focus:ring-2 ring-green-300" />
   
       <!-- Image Upload -->
       <div>

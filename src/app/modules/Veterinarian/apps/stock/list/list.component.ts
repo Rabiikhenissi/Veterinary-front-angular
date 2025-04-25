@@ -134,31 +134,36 @@ _route = inject(ActivatedRoute);
   }
   updateStock(product: Product): void {
     if (product.quantity < 1) {
-  Swal.fire({
-    icon: 'info',
-    title: 'Out Of Stock',
-    text: `${product.name} is now out of stock.`,
-    confirmButtonText: 'OK',
-  customClass: {
-    confirmButton: 'swal2-confirm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded'
-  },
-  buttonsStyling: false
-});
-}
-const updatedProduct = { ...product, quantity: product.quantity };
-console.log('Updated product:', updatedProduct);
-
+      Swal.fire({
+        icon: 'info',
+        title: 'Out Of Stock',
+        text: `${product.name} is now out of stock.`,
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'swal2-confirm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded'
+        },
+        buttonsStyling: false
+      });
+    }
   
+    const updatedProduct = { ...product, quantity: product.quantity };
     this._productService.updateOne(updatedProduct).subscribe({
       next: () => {
         console.log(`Stock updated for product: ${product.name}`);
-        this.fetchProducts();
+        // No need to call fetchProducts() here unless stock affects filtering
       },
       error: (error) => {
         console.error('Error updating stock:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error updating stock',
+          text: 'Please try again later',
+          confirmButtonColor: '#ef4444',
+        });
       }
     });
   }
+  
 
   details(productId: string): void {
     this._router.navigate([`${productId}`], { relativeTo: this._route }).then();

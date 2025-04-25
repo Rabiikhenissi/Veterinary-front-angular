@@ -10,5 +10,6 @@ export class Product {
     expirationDate?: Date;
     species?:  string[]; 
     archived?: boolean;
+    limitPerUser?: number;
   }
   
