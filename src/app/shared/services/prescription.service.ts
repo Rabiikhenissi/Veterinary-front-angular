@@ -30,7 +30,7 @@ export class PrescriptionService {
   }
 
   // Get a specific prescription by ID
-  getPrescription(id: string): Observable<Prescription> {
+  getPrescription(id: string): Observable<any> {
     return this.http.get<Prescription>(`${this.endpoint}/${id}`);
   }
 
