@@ -13,6 +13,8 @@ import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { ProductService } from 'app/shared/services/product.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
+import { UserService } from 'app/shared/services/user.service';
+import { User } from 'app/shared/models/user';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,DatePipe,FeaturesDirective],
@@ -23,6 +25,7 @@ export class DetailsComponent implements OnInit {
   _loadingService = inject(LoadingService);
   _appointmentService = inject(AppointmentService);
   _prescriptionService = inject(PrescriptionService);
+  _userService = inject(UserService);
   _petService = inject(PetService);
   _productService = inject(ProductService);
   _route = inject(ActivatedRoute);
@@ -34,7 +37,18 @@ export class DetailsComponent implements OnInit {
   appointment!: Appointment;
   pet:Pet;
   medications: any[] = [];
+  userRole:string
   ngOnInit(): void {
+    const userId=localStorage.getItem('connectedUserId')
+    console.log('userId',userId) ;
+    this._userService.getOne(userId!).subscribe({
+      next: (userData) => {
+        console.log('userData',userData) ;
+        this.userRole=userData.groupsId.code;
+        console.log('userRole',this.userRole) ;
+      },
+      error: () => console.error('Failed to fetch user data')
+    });
     this._loadingService.show();
     this._appointmentService.getAppointment(this.id).subscribe({
       next: (data) => {
@@ -122,6 +136,9 @@ export class DetailsComponent implements OnInit {
  }
  addAppointmentInfo(): void {
   this._router.navigate(['info'], { relativeTo: this._route }).then(); 
+ }
+ editAppointmentInfo(): void {
+  this._router.navigate(['info/edit'], { relativeTo: this._route }).then(); 
  }
  addPrescription(): void {
   this._router.navigate(['prescription'], { relativeTo: this._route }).then(); 

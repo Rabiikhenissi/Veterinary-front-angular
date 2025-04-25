@@ -3,8 +3,9 @@ import { CalendarComponent } from './calendar.component';
 import { EditComponent } from './components/edit/edit.component';
 import { DetailsComponent } from './components/details/details.component';
 import { AddComponent } from './add/add.component';
-import { AddInfoComponent } from './components/add-info/add-info.component';
+import { AddInfoComponent } from './components/info/add-info/add-info.component';
 import { PrescriptionComponent } from './components/prescription/prescription.component';
+import { EditInfoComponent } from './components/info/edit-info/edit-info.component';
 
 export default [
   {
@@ -43,11 +44,22 @@ export default [
               },
               {
                 path: 'info',
-                component: AddInfoComponent,
-                data: {
-                  breadcrumb: 'Info',
-                },
-
+                children: [
+                  {
+                    path: '',
+                    component: AddInfoComponent, 
+                    data: {
+                      breadcrumb: 'Add Info',
+                    },
+                  },
+                  {
+                    path: 'edit',
+                    component: EditInfoComponent,  
+                    data: {
+                      breadcrumb: 'Edit Info',
+                    },
+                  },
+                ],
               },
               {
                 path: 'prescription',

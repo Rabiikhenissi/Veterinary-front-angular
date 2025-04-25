@@ -90,6 +90,9 @@ export class AppointmentService {
   addAppointmentInfo(id: string, info: any): Observable<Appointment> {
     return this.http.patch<Appointment>(`${this.endpoint}/info/${id}`, info);
   }
+  updateAppointmentInfo(id: string, info: any): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.endpoint}/info/update/${id}`, info);
+
 
   getPrescriptionPdf(prescriptionId: string) {
     return this.http.get(`${this.endpoint}/prescription/${prescriptionId}/pdf`, {

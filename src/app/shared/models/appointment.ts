@@ -7,6 +7,13 @@ export class Appointment {
   time: string;
   status: string;
   medications?: string[];
+  weight?: number;       
+  height?: number;   
+  temperature?: number;  
+  heartRate?: number;   
+  symptoms?: string[];   
+  performedProcedures?: string[]; 
+  nextAppointment?: string; 
   prescriptionId?: string;
 }
 
