@@ -1,4 +1,3 @@
-import { R } from '@angular/cdk/keycodes';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,7 +13,6 @@ import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { ProductService } from 'app/shared/services/product.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 import { UserService } from 'app/shared/services/user.service';
-import { User } from 'app/shared/models/user';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,DatePipe,FeaturesDirective],
@@ -37,8 +35,8 @@ export class DetailsComponent implements OnInit {
   appointment!: Appointment;
   pet:Pet;
   medications: any[] = [];
-  userRole:string
-  ngOnInit(): void {
+  userRole: string = '';
+    ngOnInit(): void {
     const userId=localStorage.getItem('connectedUserId')
     console.log('userId',userId) ;
     this._userService.getOne(userId!).subscribe({
@@ -154,5 +152,26 @@ export class DetailsComponent implements OnInit {
  addPrescription(): void {
   this._router.navigate(['prescription'], { relativeTo: this._route }).then(); 
  }
+ addInfo(): boolean {
+  if (!this.appointment?.date || !this.appointment?.time) {
+    return false;
+  }
+  const currentDate = new Date();
+  const currentDateFormatted = currentDate.toISOString().split('T')[0]; // 'yyyy-mm-dd'
+
+  if (currentDateFormatted > this.appointment.date) {
+    return true;
+  }
+
+  if (currentDateFormatted === this.appointment.date) {
+    const [appointmentHour, appointmentMinute] = this.appointment.time.split(':');
+    const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes();
+    const appointmentTime = parseInt(appointmentHour) * 60 + parseInt(appointmentMinute);
+
+    return currentTime >= appointmentTime;
+  }
+
+  return false;
+}
  
 }

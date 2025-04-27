@@ -101,7 +101,15 @@ export class AppointmentService {
   }
   getInvoicePdf(invoiceId: string) {
     return this.http.get(`${this.endpoint}/invoice/${invoiceId}/pdf`, {
-      responseType: 'blob',
+      responseType: 'json',
+    });
+  }
+  isAvailable(date: string, time: string, companyId: string,id: string): Observable<{ available: boolean }> {
+    return this.http.post<{ available: boolean }>(`${this.endpoint}/check`, {
+      date,
+      time,
+      companyId,
+      id
     });
   }
 }
