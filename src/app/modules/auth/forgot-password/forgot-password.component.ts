@@ -101,6 +101,7 @@ export class AuthForgotPasswordComponent implements OnInit
                 },
                 (response) =>
                 {
+                    
                     // Set the alert
                     this.alert = {
                         type   : 'error',

@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseValidators } from '@fuse/validators';
@@ -38,7 +38,8 @@ export class AuthResetPasswordComponent implements OnInit
     constructor(
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
 
     )
     {
@@ -115,6 +116,9 @@ export class AuthResetPasswordComponent implements OnInit
                         type   : 'success',
                         message: 'Your password has been reset.',
                     };
+                    setTimeout(() => {
+                        this.router.navigate(['/sign-in']);
+                      }, 1500); 
                 },
                 (response) =>
                 {

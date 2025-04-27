@@ -143,6 +143,26 @@ export class UserService {
       params: searchParams,
     });
   }
+  getClients(
+    limit: string,
+    page: string,
+    search: string,
+    companyId: string,
+  ): Observable<Pagination<User>> {
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('limit', limit);
+
+    searchParams = searchParams.append('page', page);
+    
+    if (search) {
+      searchParams = searchParams.append('search', search);
+    }
+    return this.http.get<Pagination<User>>(`${this.endpointAuth}/clients/${companyId}`, {
+      params: searchParams,
+    });
+  }
+
+
   getOne(id: string): Observable<User> {
     return this.http.get<User>(`${this.endpointAuth}/${id}`);
   }
