@@ -102,12 +102,16 @@ authService= inject(AuthService);
     return ''; 
   }
   getList(): void {
+    this.connectedUser=this.authService._userService.decodeToken(this.authService.accessToken);
+    const companyId = this.connectedUser.companyId;
+    console.log('companyId', companyId);
     this._loadingService.show();
     this._userService
-      .getUsers(
+      .getClients(
         this.currentSize.toString(),
         this.currentPage.toString(),
         this.filterSearch,
+        companyId
       )
       .subscribe({ 
         
@@ -118,8 +122,7 @@ authService= inject(AuthService);
               user.type === 'external' &&
               user.companyId==this.connectedUser.companyId
             );
-            console.log('filteredUsers', filteredUsers);
-            console.log("current user",this.connectedUser);
+            
             this.displayedList = {
               ...results,
               data: filteredUsers
