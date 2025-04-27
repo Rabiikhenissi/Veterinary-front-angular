@@ -123,7 +123,6 @@ savePrescription(): void {
   };
 console.log('Prescription:', prescription);
 
-  // Call the service to save the prescription
   this._prescriptionService.createPrescription(prescription).subscribe({
     next: (res) => {
       console.log('Prescription saved:', res);
@@ -136,7 +135,7 @@ console.log('Prescription:', prescription);
       });      
       const prescriptionId = res._id;
       this.generatePDF(prescriptionId);
-      this._router.navigate([`/calendar/${this.id}`], { relativeTo: this._route }).then();
+      this._router.navigate([`../`], { relativeTo: this._route }).then(); 
 
     },
     error: (err) => {
