@@ -106,10 +106,10 @@
     <p class="text-lg text-gray-700">No medications provided</p>
   </ng-template>
 
-  <div class="mt-4" *ngIf="userRole?.includes('veterinarian')">
+  <div class="mt-4" *ngIf="userRole?.includes('veterinarian')&& addInfo()">
     <!-- Show Add Button if no prescription -->
     <button 
-      *ngIf="!appointment.prescriptionId; else prescriptionExists" 
+      *ngIf="!appointment.prescriptionId ; else prescriptionExists " 
       (click)="addPrescription()" 
       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm shadow"
     >
@@ -144,7 +144,7 @@
         </div>
 
         <!-- Add/Edit Info Buttons -->
-        <div *ngIf="userRole?.includes('veterinarian') " class="flex gap-4 flex-wrap">
+        <div *ngIf="userRole?.includes('veterinarian') && addInfo()" class="flex gap-4 flex-wrap">
           
           <button  *ngIf="!appointment.weight" (click)="addAppointmentInfo()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm shadow flex items-center gap-2">
             Add Appointment Info

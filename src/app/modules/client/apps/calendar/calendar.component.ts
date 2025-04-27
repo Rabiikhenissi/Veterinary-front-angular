@@ -120,7 +120,7 @@ this.initializeCalendarOptions();
         eventDrop: this.handleEventDrop.bind(this),
         businessHours: [
             {
-                daysOfWeek: [ 1, 2, 3, 4,5 ],
+                daysOfWeek: [ 1, 2, 3, 4,5],
                 startTime: '08:00', // 8am
                 endTime:'18:00'
             },

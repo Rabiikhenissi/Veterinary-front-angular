@@ -81,21 +81,42 @@ export class EditComponent implements OnInit {
       userId: this.appointment.userId._id,
       companyId: this.appointment.companyId
     };
-
-    this._appointmentService.updateAppointment(updatedAppointment).subscribe({
-      next: () => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Updated!',
-          text: 'Appointment updated successfully.',
-            timer: 1500,
-        }).then(() => {
-          this._router.navigate([`../`], { relativeTo: this._route }).then();        });
-      },
-      error: (err) => {
-        console.error('Update failed', err);
-        Swal.fire('Error', 'Could not update appointment', 'error');
-      },
-    });
+    if (updatedAppointment.companyId) {
+      this._appointmentService.isAvailable(this.selectedDate, this.selectedTime, updatedAppointment.companyId,this.appointment._id).subscribe((res) => {
+        if (res.available) {
+          console.log('available', res.available);
+          
+          // Available: proceed with update
+          this._appointmentService.updateAppointment(updatedAppointment).subscribe({
+            next: () => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: 'Appointment updated successfully.',
+                timer: 1500,
+              }).then(() => {
+                this._router.navigate([`../`], { relativeTo: this._route }).then();
+              });
+            },
+            error: (err) => {
+              console.error('Update failed', err);
+              Swal.fire('Error', 'Could not update appointment', 'error');
+            },
+          });
+        } else {
+          console.log('not available', res.available);
+          // Not available: show error
+          Swal.fire({
+            icon: 'error',
+            title: 'Unavailable',
+            text: 'This time slot is already booked. Please choose another one.',
+          });
+        }
+      }, (error) => {
+        console.error('Error checking availability:', error);
+      });
+    } else {
+      console.error('No companyId found.');
+    }
   }
 }

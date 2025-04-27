@@ -1,12 +1,14 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 
 @Component({
   selector: 'app-details',
-  imports: [DatePipe,CommonModule],
+  imports: [DatePipe,CommonModule,FormsModule],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
@@ -14,11 +16,12 @@ export class DetailsComponent implements OnInit {
   appointment: any;
   isLoading = true;
   invoice: any | null = null;  // Variable to store invoiceId
-
+  invoices: any = null; 
+  selectedInvoiceType: string = '';
   constructor(
     private route: ActivatedRoute,
     private appointmentService: AppointmentService,
-    private prescriptionService: PrescriptionService  // Inject PrescriptionService
+    private prescriptionService: PrescriptionService,  // Inject PrescriptionService
   ) {}
 
   ngOnInit(): void {
@@ -45,8 +48,8 @@ export class DetailsComponent implements OnInit {
   getPrescriptionInvoiceId(prescriptionId: string): void {
     this.prescriptionService.getPrescription(prescriptionId).subscribe({
       next: (prescriptionData) => {
-        this.invoice = prescriptionData.invoice;
-        console.log('prescriptionData:', this.invoice);
+        this.invoices = prescriptionData;
+                console.log('prescriptionData:', this.invoice);
       },
       error: (err) => {
         console.error('Error fetching prescription data:', err);
@@ -68,19 +71,22 @@ export class DetailsComponent implements OnInit {
   }
 
   // Open the invoice PDF using the invoiceId
-  openInvoicePDF(prescriptionId): void {
-    if (this.invoice) {
-      this.appointmentService.getInvoicePdf(prescriptionId).subscribe(
-        (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          window.open(url);
-        },
-        (error) => {
-          console.error('Error fetching invoice PDF', error);
-        }
-      );
+  openInvoicePDF(invoiceType: string): void {
+    if (this.invoices) {
+      const invoiceBuffer = this.invoices[invoiceType]; // Get either invoice or invoiceNoMeds
+  
+      if (invoiceBuffer) {
+        // Convert the buffer into a Blob
+        const blob = new Blob([new Uint8Array(invoiceBuffer.data)], { type: 'application/pdf' });
+  
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
+      } else {
+        console.error(`${invoiceType} not found`);
+      }
     } else {
-      console.error('No invoice ID found');
+      console.error('No invoices found');
     }
   }
+
 }
