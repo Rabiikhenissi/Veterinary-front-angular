@@ -24,7 +24,7 @@ export class ShopComponent {
   _productService = inject(ProductService);
   router=inject(Router);
   products: Product[] = [];
-  categories: string[] = ["Medications", "Accessories", "Food", "Hygiene", "Medical Supplies"];
+  categories: string[] = [ "Accessories", "Food", "Hygiene"];
   currentPage = 1;
   total = 0;
   currentSize = 10;
@@ -64,8 +64,10 @@ export class ShopComponent {
       )
       .subscribe(({
         next: results => {
-          this.products = results.data;
-          this.total = results.total;
+          this.products = results.data.filter(product => 
+            this.categories.includes(product.category)
+          );
+          this.total = this.products.length;
           
         },
         error: (error) => {
