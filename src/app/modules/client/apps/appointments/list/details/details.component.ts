@@ -49,7 +49,7 @@ export class DetailsComponent implements OnInit {
     this.prescriptionService.getPrescription(prescriptionId).subscribe({
       next: (prescriptionData) => {
         this.invoices = prescriptionData;
-                console.log('prescriptionData:', this.invoice);
+                console.log('prescriptionData:', prescriptionData);
       },
       error: (err) => {
         console.error('Error fetching prescription data:', err);

@@ -154,7 +154,9 @@ export class DetailsComponent implements OnInit {
  }
  addInfo(): boolean {
   if (!this.appointment?.date || !this.appointment?.time) {
+    console.log('no date or time') ;
     return false;
+    
   }
   const currentDate = new Date();
   const currentDateFormatted = currentDate.toISOString().split('T')[0]; // 'yyyy-mm-dd'
@@ -162,12 +164,18 @@ export class DetailsComponent implements OnInit {
   if (currentDateFormatted > this.appointment.date) {
     return true;
   }
-
-  if (currentDateFormatted === this.appointment.date) {
+ console.log('currentDateFormatted',currentDateFormatted) ;
+  console.log('this.appointment.date',this.appointment.date) ;
+ 
+  if (currentDateFormatted === this.appointment.date.split('T')[0]) {
+    console.log('currentDateFormatted',currentDateFormatted) ;
+    
     const [appointmentHour, appointmentMinute] = this.appointment.time.split(':');
     const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes();
     const appointmentTime = parseInt(appointmentHour) * 60 + parseInt(appointmentMinute);
-
+    console.log('currentTime',currentTime) ;
+    console.log('appointmentTime',appointmentTime) ;
+    
     return currentTime >= appointmentTime;
   }
 
