@@ -20,6 +20,7 @@ import {MatSlideToggle} from "@angular/material/slide-toggle";
 import {MatRadioButton} from "@angular/material/radio";
 import {MatIcon} from "@angular/material/icon";
 import {GroupFeature} from "../../../../../shared/models/group-feature";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-details',
@@ -88,7 +89,16 @@ export class AddComponent implements OnInit {
                     this._groupService.createOne(this.group, this.groupFeature).subscribe({
                         next:() => {
                             this._router.navigate([`../`], { relativeTo: this._route }).then();
-                        }
+                        },
+                        error: (error) => {
+                            console.log('Error while creating group', 'error');
+                            if(error.status === 400) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'group already exists',
+                                confirmButtonColor:'#f87171',
+                        })}}
                     });
                 }
             }

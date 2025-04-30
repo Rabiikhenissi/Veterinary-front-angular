@@ -16,6 +16,7 @@ import { MatButton } from '@angular/material/button';
 import {TranslocoModule} from "@ngneat/transloco";
 import {forkJoin} from "rxjs";
 import {LoadingService} from "../../../../../../../shared/services/loading.service";
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -92,11 +93,22 @@ export class EditComponent implements OnInit {
             this.feature.subtitle = null;
           }
 
-                  this._featureService.updateFeature(this.feature).subscribe(() => {
-                    this._router.navigate(['../'], { relativeTo: this._route }).then();
-                  });
+                  this._featureService.updateFeature(this.feature).subscribe({
+                    next: () => {
+                      this._router.navigate(['../'], { relativeTo: this._route }).then();
+                    },
+                    error: (error) => {
+                      console.log(error);
+                      if(error.status === 400) {
+                        Swal.fire({
+                          icon: 'error',
+                          title: "can't update feature",
+                          text: 'The feature already exists.',
+                          confirmButtonColor: '#f87171',
+                        });
+                      }
         }
-      }
+      })}}
     cancelEdit(myForm: NgForm) {
         if (myForm.pristine) {
           this._router.navigate([`../`], { relativeTo: this._route }).then();

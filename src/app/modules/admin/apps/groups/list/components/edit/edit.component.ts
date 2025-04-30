@@ -19,6 +19,7 @@ import {GroupFeature} from "../../../../../../../shared/models/group-feature";
 import {Feature} from "../../../../../../../shared/models/feature";
 import {FeatureService} from "../../../../../../../shared/services/feature.service";
 import {MatTooltip} from "@angular/material/tooltip";
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-edit',
     templateUrl: './edit.component.html',
@@ -101,9 +102,23 @@ export class EditComponent implements OnInit {
     }
     updateOne(myForm: NgForm) {
         if (myForm.valid) {
-            this._groupService.updateOne(this.group, this.groupFeature).subscribe(() => {
-                this._router.navigate(['../'], { relativeTo: this._route }).then();
-            });
+            this._groupService.updateOne(this.group, this.groupFeature).subscribe(
+                {
+                    next: () => {
+                        this._router.navigate([`../`], { relativeTo: this._route }).then();
+                    },
+                    error: (err) => {
+                        this._loadingService.hide()
+                        if(err.status=400){
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'group already exist',
+                                confirmButtonColor: '#f87171',
+                            })
+                    }
+                }}
+            );
         }
     }
     cancelEdit(myForm: NgForm) {
