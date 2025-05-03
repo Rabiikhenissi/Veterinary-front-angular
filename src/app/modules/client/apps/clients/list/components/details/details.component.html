@@ -79,15 +79,27 @@
           </div>
         </li>}
       </ul>
-      <div class="mt-4 flex justify-center">
-        <mat-paginator
-          [length]="total"
-          [pageSize]="currentSize"
-          [pageIndex]="currentPage - 1"
-          [pageSizeOptions]="[5, 10, 20]"
-          (page)="pageChanged($event)">
-        </mat-paginator>
-      </div>
+      @if (userPets?.length > 0) {
+        <ul class="space-y-4">
+          @for (pet of userPets; track $index) {
+            <!-- Pet list item here -->
+          }
+        </ul>
+        <div class="mt-4 flex justify-center">
+          <mat-paginator
+            [length]="total"
+            [pageSize]="currentSize"
+            [pageIndex]="currentPage - 1"
+            [pageSizeOptions]="[5, 10, 20]"
+            (page)="pageChanged($event)">
+          </mat-paginator>
+        </div>
+      } @else {
+        <div class="text-center text-gray-600 italic py-6">
+          {{user.name}} has no pets yet. 🐾
+        </div>
+      }
+
     </div>
   </div>
   
