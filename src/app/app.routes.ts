@@ -144,10 +144,10 @@ export const appRoutes: Route[] = [
                          canActivateChild: [IsAuthorizedGuard],
                         path:'appointments',
                         data: {
-                            breadcrumb: 'appointments',
+                            breadcrumb: 'Appointments',
                             feature: FeatureCodes.appointments,
                         },
-                        loadChildren: () => import('/app/modules/client/apps/appointments/appointments.routing'),
+                        loadChildren: () => import('app/modules/client/apps/appointments/appointments.routing'),
                     },
                     {
                         canActivate: [IsAuthorizedGuard],
@@ -203,12 +203,12 @@ export const appRoutes: Route[] = [
                     {
                         canActivate: [IsAuthorizedGuard],
                         canActivateChild: [IsAuthorizedGuard],
-                        path:'appointments',
+                        path:'appointments_history',
                         data: {
-                            breadcrumb: 'Appointments',
-                            feature: FeatureCodes.appointments,
+                            breadcrumb: 'Appointments History',
+                            feature: FeatureCodes.appointments_history,
                     },
-                        loadChildren: () => import('app/modules/client/apps/appointments/appointments.routing'),
+                        loadChildren: () => import('app/modules/client/apps/appointments_history/appointments_history.routes'),
                     },
                     
                     

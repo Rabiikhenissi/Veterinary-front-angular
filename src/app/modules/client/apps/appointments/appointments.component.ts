@@ -37,8 +37,8 @@ import { CommonModule } from '@angular/common';
 @Component({
     selector: 'app-calendar',
     imports: [FullCalendarModule,CommonModule],
-    templateUrl: './calendar.component.html',
-    styleUrls: ['./calendar.component.scss'],})
+    templateUrl: './appointments.component.html',
+    styleUrls: ['./appointments.component.scss'],})
 export class CalendarComponent implements OnInit {
     eventGuid: number = 0;
     @ViewChild(FullCalendarComponent) calendarComponent!: FullCalendarComponent;
