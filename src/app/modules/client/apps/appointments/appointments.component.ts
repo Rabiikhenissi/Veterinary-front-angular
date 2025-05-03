@@ -54,10 +54,21 @@ companyDate: string = '';
 calendarFirstDate: string = '';
 userType: string = '';
 CalendarOptions!: CalendarOptions;
+connectedUser;
     ngOnInit(): void {
         this.loadAppointments();
         this.loadPets();
         this.userType = localStorage.getItem('connectedUserType');
+        const connectedUserId = localStorage.getItem('connectedUserId');
+        this._userService.getOne(connectedUserId).subscribe({
+            next: (user) => {
+                this.connectedUser = user;
+                console.log('Connected User:', this.connectedUser);
+            },
+            error: (error) => {
+                console.error('Error fetching connected user:', error);
+            },
+        });
         const connectedUserCompany = localStorage.getItem('connectedUserCompany');
         console.log('connectedUserCompany', connectedUserCompany);//mrigla
 this._companyService.getOne(connectedUserCompany).subscribe({
@@ -232,6 +243,15 @@ this.initializeCalendarOptions();
             return;
         }
         if(this.userType === 'external') {
+            if(this.connectedUser.petId.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Pets Found',
+                    text: 'You need to add a pet before making an appointment.',
+                    confirmButtonColor: '#f87171',
+                });
+            return;}
+            
         Swal.fire({
             title: 'Select a Pet',
             input: 'select',

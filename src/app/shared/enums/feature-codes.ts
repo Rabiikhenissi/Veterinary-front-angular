@@ -16,11 +16,11 @@ export enum FeatureCodes {
   pages = 'pages',
   texts = 'texts',
   excursions = 'excursions',
-  calendar='calendar',
+  appointments='appointments',
   shop='shop',
   stock='stock',
   invoices='invoices',
-  appointments='appointments',
+  appointments_history='appointments history',
 }
 
 export const listFeatureActions: RefList<FeatureCodes>[] = [
@@ -39,9 +39,9 @@ export const listFeatureActions: RefList<FeatureCodes>[] = [
   { key: FeatureCodes.account, value: 'Account' },
   { key: FeatureCodes.profile, value: 'Profile' },
   { key: FeatureCodes.userFeatures, value: 'user-features' },
-  { key: FeatureCodes.calendar, value: 'Calendar' },
   { key: FeatureCodes.shop, value: 'Shop' },
   { key: FeatureCodes.stock, value: 'Stock' },
   { key: FeatureCodes.invoices, value: 'Invoices' },
   { key: FeatureCodes.appointments, value: 'Appointments' },
+  { key: FeatureCodes.appointments_history, value: 'Appointments History' },
 ];

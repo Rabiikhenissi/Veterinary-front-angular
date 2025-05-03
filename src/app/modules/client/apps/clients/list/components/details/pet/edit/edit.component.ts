@@ -29,6 +29,7 @@ export class EditComponent {
   route = inject(ActivatedRoute);
   petId!: string;
   id:string;
+  today: Date = new Date();
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
       name: ['', Validators.required],
