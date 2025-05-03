@@ -1,5 +1,5 @@
 import { Route, Routes } from '@angular/router';
-import { CalendarComponent } from './calendar.component';
+import { CalendarComponent } from './appointments.component';
 import { EditComponent } from './components/edit/edit.component';
 import { DetailsComponent } from './components/details/details.component';
 import { AddComponent } from './add/add.component';
@@ -15,7 +15,7 @@ export default [
         path: '',
         component: CalendarComponent,
         data: {
-          breadcrumb: 'Calendar',
+          breadcrumb: 'Appointments',
         },
       },
         {

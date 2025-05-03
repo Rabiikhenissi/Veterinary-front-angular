@@ -142,12 +142,12 @@ export const appRoutes: Route[] = [
                     {
                          canActivate: [IsAuthorizedGuard],
                          canActivateChild: [IsAuthorizedGuard],
-                        path:'calendar',
+                        path:'appointments',
                         data: {
-                            breadcrumb: 'Calendar',
-                            feature: FeatureCodes.calendar,
+                            breadcrumb: 'appointments',
+                            feature: FeatureCodes.appointments,
                         },
-                        loadChildren: () => import('app/modules/client/apps/calendar/calendar.routing'),
+                        loadChildren: () => import('/app/modules/client/apps/appointments/appointments.routing'),
                     },
                     {
                         canActivate: [IsAuthorizedGuard],
@@ -208,7 +208,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Appointments',
                             feature: FeatureCodes.appointments,
                     },
-                        loadChildren: () => import('app/modules/client/apps/appointments/appointments.routes'),
+                        loadChildren: () => import('app/modules/client/apps/appointments/appointments.routing'),
                     },
                     
                     

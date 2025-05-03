@@ -9,15 +9,21 @@
                class="w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" />
       </div>
   
-      <!-- Birth Date Field -->
-      <div class="mb-6">
-        <label class="block font-semibold text-green-700">Birth Date</label>
-        <mat-form-field class="w-full">
-          <input matInput [matDatepicker]="picker" formControlName="birthDate"  />
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
+     <!-- Birth Date Field -->
+    <div class="mb-6">
+      <label class="block font-semibold text-green-900">Birth Date</label>
+      <mat-form-field appearance="outline" class="w-full">
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="birthDate"
+          [max]="today"
+          
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
   
       <!-- Species Selector -->
       <div class="mb-6">

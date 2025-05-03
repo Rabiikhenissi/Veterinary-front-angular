@@ -1,12 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PetService } from 'app/shared/services/pet.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add',
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule,CommonModule,MatFormFieldModule, MatInputModule, MatDatepickerModule],
   templateUrl: './add.component.html',
 })
 export class AddComponent {
@@ -14,6 +18,7 @@ export class AddComponent {
   petForm: FormGroup;
   _petService = inject(PetService);
 route= inject(ActivatedRoute);
+today: string = new Date().toISOString().split('T')[0];
 
 
   constructor(private fb: FormBuilder, private router: Router) {
@@ -53,6 +58,13 @@ route= inject(ActivatedRoute);
         },
         error: (error) => {
           console.error('Error adding pet:', error);
+          if(error.status === 400) {
+            Swal.fire({
+              icon: 'error',
+              title: 'cant add pet',
+              text: 'pet name already exists',
+              confirmButtonColor: '#f87171',
+          })}
         }
     })
   }
