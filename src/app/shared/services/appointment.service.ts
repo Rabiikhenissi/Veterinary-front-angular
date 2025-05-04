@@ -17,11 +17,14 @@ export class AppointmentService {
   getAppointments(
     limit: string,
     page: string,
-    search: string
+    search: string,
+    companyId: string,
   ): Observable<Pagination<Appointment>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
     searchParams = searchParams.append('page', page);
+    searchParams = searchParams.append('companyId', companyId);
+    
     if (search) {
       searchParams = searchParams.append('search', search);
     }

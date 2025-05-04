@@ -70,10 +70,11 @@
     <h2 class="text-xl font-semibold text-green-800 mb-2">Description</h2>
     <p class="text-gray-700">{{ product?.description || 'No description provided.' }}</p>
   </div>
+<!-- Recommended Products -->
+<div class="mt-10">
+  <h2 class="text-xl font-semibold text-green-800 mb-4">Recommended for You</h2>
 
-  <!-- Recommended Products -->
-  <div class="mt-10">
-    <h2 class="text-xl font-semibold text-green-800 mb-4">Recommended for You</h2>
+  <ng-container *ngIf="recommendedProducts?.length > 0; else noRecommendations">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div *ngFor="let item of recommendedProducts"
            class="bg-white border border-green-100 rounded-lg shadow-sm hover:shadow-md transition p-4">
@@ -86,6 +87,9 @@
         </button>
       </div>
     </div>
-  </div>
+  </ng-container>
 
+  <ng-template #noRecommendations>
+    <div class="text-gray-500 text-center italic">No recommended products available at the moment.</div>
+  </ng-template>
 </div>

@@ -8,11 +8,11 @@
     }
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (invoice of invoices; track invoice.invoiceId) {
+        @for (invoice of invoices; track invoice.invoiceId;let i = $index) {
             <div >
         <div class="bg-white p-4 rounded-lg border border-green-100 shadow-sm hover:shadow-md transition">
           <div class="mb-3">
-            <h3 class="text-lg font-semibold text-green-700">Invoice #{{ invoice.invoiceId }}</h3>
+            <h3 class="text-lg font-semibold text-green-700">Invoice #{{ i+1}}</h3>
             <p class="text-sm text-gray-500">Date: {{ invoice.createdAt | date: 'shortDate' }}</p>
           </div>
   

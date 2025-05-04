@@ -2,6 +2,9 @@ import { A, C } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'app/shared/models/product';
 import { ProductService } from 'app/shared/services/product.service';
@@ -9,7 +12,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,MatFormFieldModule,MatSelectModule,MatInputModule],
   templateUrl: './add.component.html',
   styleUrl: './add.component.scss'
 })
@@ -76,6 +79,15 @@ productService = inject(ProductService);
         }, (error) => {
           
           console.error(error);
+          if (error.status === 400) {
+            Swal.fire({
+              icon: 'error',
+              title: 'product already exists',
+              text: 'Please check the product name,species and try again.',
+              timer: 1000,
+              showConfirmButton: false,
+            });
+          }
         });
       }
       

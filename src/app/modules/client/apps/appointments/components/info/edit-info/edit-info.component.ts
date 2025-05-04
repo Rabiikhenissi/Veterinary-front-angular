@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PetService } from 'app/shared/services/pet.service';
@@ -8,7 +11,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-edit-info',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,MatFormField,MatLabel,MatSelect,MatOption],
   templateUrl: './edit-info.component.html',
   styleUrl: './edit-info.component.scss'
 })
@@ -21,12 +24,15 @@ export class EditInfoComponent implements OnInit {
 
   id = this._route.snapshot.paramMap.get('id')!;
   procedureOptions = [
+    'Allergy Test',
+    'physical Examination',
     'Blood Test',
     'X-Ray',
     'Vaccination',
     'Wound Cleaning',
     'Surgery',
     'Ultrasound'
+
   ];
 
   info = {
