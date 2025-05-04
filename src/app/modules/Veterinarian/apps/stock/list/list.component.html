@@ -29,7 +29,7 @@
             'bg-green-600 text-white': selectedCategories.includes(category),
             'bg-white text-green-700 border': !selectedCategories.includes(category)
           }"
-          class="px-4 py-2 rounded-full border border-green-300 text-sm font-medium transition hover:bg-green-100">
+          class="px-4 py-2 rounded-full border border-green-300 text-md font-medium transition hover:bg-green-100">
           {{ category }}
         </button>
       </div>
@@ -49,7 +49,7 @@
     <!-- Desktop -->
     <div class="hidden md:block overflow-x-auto rounded-lg border border-green-100 bg-white shadow-sm">
       <table class="min-w-full text-base text-left">
-        <thead class="bg-green-100 text-green-800 uppercase text-sm font-semibold">
+        <thead class="bg-green-100 text-green-800 uppercase text-md font-semibold">
           <tr>
             <th class="px-5 py-4">Image</th>
             <th class="px-5 py-4">Product</th>
@@ -79,11 +79,11 @@
            
               <td class="px-4 py-8 flex space-x-4 ">
                 <button (click)="editProduct(product)"
-                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm shadow flex items-center gap-1">
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-md shadow flex items-center gap-1">
                   ✏️ Edit
                 </button>
                 <button (click)="archiveProduct(product) ; $event.stopPropagation()"
-                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm shadow flex items-center gap-1">
+                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-md shadow flex items-center gap-1">
                   🗑️ Archive
                 </button>
               </td>

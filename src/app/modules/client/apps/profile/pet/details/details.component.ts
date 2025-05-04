@@ -72,7 +72,7 @@ petId: string;
     });
   }
   viewDetails(id: string) {
-    this.router.navigate(['/home/appointments', id]);
+    this.router.navigate(['/home/appointments-history', id]);
   }
   
 }

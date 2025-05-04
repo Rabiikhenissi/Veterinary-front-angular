@@ -2,6 +2,8 @@ import { F } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PetService } from 'app/shared/services/pet.service';
@@ -10,7 +12,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-info',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,MatFormField,MatLabel,MatSelect,MatOption],
   templateUrl: './add-info.component.html',
   styleUrl: './add-info.component.scss'
 })
@@ -24,12 +26,15 @@ export class AddInfoComponent implements OnInit {
   id = this._route.snapshot.paramMap.get('id')!;
  
   procedureOptions = [
+    'Allergy Test',
+    'physical Examination',
     'Blood Test',
     'X-Ray',
     'Vaccination',
     'Wound Cleaning',
     'Surgery',
-    'Ultrasound'
+    'Ultrasound',
+
   ];
 
   info = {

@@ -58,6 +58,8 @@ connectedUser;
     ngOnInit(): void {
         this.loadAppointments();
         this.loadPets();
+        const savedDate = localStorage.getItem('calendarDate');
+        
         this.userType = localStorage.getItem('connectedUserType');
         const connectedUserId = localStorage.getItem('connectedUserId');
         this._userService.getOne(connectedUserId).subscribe({
@@ -86,10 +88,15 @@ this._companyService.getOne(connectedUserCompany).subscribe({
         }
         else {
             this.calendarFirstDate = new Date().toISOString().replace(/T.*$/, '');;
-            console.log('calendarFirstDate', this.calendarFirstDate);
             
         }
         this.initializeCalendarOptions(); 
+        if (savedDate) {
+            
+                const calendarApi = this.calendarComponent.getApi();
+                calendarApi.gotoDate(savedDate);
+                localStorage.removeItem('calendarDate');
+           }
 
     },
 error: (error) => {
@@ -328,7 +335,10 @@ this.initializeCalendarOptions();
             const [selectedDate, selectedTime] = startDate.split('T');
             console.log('Selected date:', selectedDate);
             console.log('Selected time:', selectedTime);
-            
+            //to save in which date before navigating
+            const calendarApi = this.calendarComponent.getApi(); 
+            const currentDate = calendarApi.getDate();
+            localStorage.setItem('calendarDate', currentDate.toISOString());
             this._router.navigate(['add'], {
               relativeTo: this._route,
               queryParams: {
@@ -346,6 +356,9 @@ this.initializeCalendarOptions();
         console.log('Clicked appointment ID:', appointmentId);
         
         if (appointmentId) {
+            const calendarApi = this.calendarComponent.getApi(); 
+            const currentDate = calendarApi.getDate();
+            localStorage.setItem('calendarDate', currentDate.toISOString());
             this._router.navigate([`${appointmentId}`], { relativeTo: this._route }).then();
              } 
             else {
@@ -408,9 +421,9 @@ this.initializeCalendarOptions();
         console.log('test', localStorage.getItem('connectedUserId'));
         const connectedUserType = localStorage.getItem('connectedUserType');
         console.log('test', localStorage.getItem('connectedUserType'));
-       
+        const connectedUserCompany = localStorage.getItem('connectedUserCompany');
 
-        this._appointmentService.getAppointments('10', '1', '').subscribe(
+        this._appointmentService.getAppointments('100', '1', '',connectedUserCompany).subscribe(
             (response) => {
                 console.log('Appointments fetched successfully:', response);
 
