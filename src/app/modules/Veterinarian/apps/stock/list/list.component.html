@@ -3,7 +3,7 @@
       <h2 class="text-3xl font-bold text-green-800">📦 Stock Management</h2>
       <button *appFeatures="[
       {
-        code: featureCodes.users,
+        code: featureCodes.stock,
         actions: [featureActions.create]
       }
     ]" (click)="addNewProduct()"
@@ -130,15 +130,17 @@
       </div>
     </div>
   
-    <!-- Bottom Controls -->
-    <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <!-- Pagination -->
+    <div class="mt-4 w-full rounded-lg border border-green-100 bg-white shadow-sm p-2">
       <mat-paginator
+        class="w-full"
         [length]="total"
         [pageSize]="currentSize"
         [pageIndex]="currentPage - 1"
-        [pageSizeOptions]="[5, 10, 20, 50]"
+        [pageSizeOptions]="[5, 10, 20]"
         (page)="pageChanged($event)">
       </mat-paginator>
     </div>
+    
   </div>
   
