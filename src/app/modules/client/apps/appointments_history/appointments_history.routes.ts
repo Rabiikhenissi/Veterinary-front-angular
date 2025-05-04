@@ -9,9 +9,7 @@ export default [
             {
                 path     : '',
                 component: ListComponent,
-                data     : {
-                    breadcrumb: 'Appointments',
-                }
+                
             },
             {
                 path     : ':id',

@@ -30,10 +30,10 @@ productService = inject(ProductService);
     name: '',
     category: '',
     species: [],
-        price: 0,
-    quantity: 0,
+        price: null,
+    quantity: null,
     image: '',
-    limitPerUser: 0,
+    limitPerUser: null,
   };
   selectSpecies(name: string) {
     if (name && name.trim()) {

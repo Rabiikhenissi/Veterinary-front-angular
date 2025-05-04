@@ -203,7 +203,7 @@ export const appRoutes: Route[] = [
                     {
                         canActivate: [IsAuthorizedGuard],
                         canActivateChild: [IsAuthorizedGuard],
-                        path:'appointments_history',
+                        path:'appointments-history',
                         data: {
                             breadcrumb: 'Appointments History',
                             feature: FeatureCodes.appointments_history,
