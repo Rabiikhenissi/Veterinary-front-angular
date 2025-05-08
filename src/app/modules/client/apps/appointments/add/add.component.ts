@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { Pet } from 'app/shared/models/pet';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
 import Swal from 'sweetalert2';
@@ -20,6 +21,7 @@ _router= inject(Router);
 _appointmentService= inject(AppointmentService);
 _userService= inject(UserService);
 _petService= inject(PetService);
+_notificationService = inject(NotificationService); 
 _formBuilder= inject(FormBuilder);
 selectedTime: string = '';
   appointmentForm!: FormGroup;
@@ -78,7 +80,10 @@ selectedTime: string = '';
     console.log('Form values:', this.appointmentForm.value);
 
     const petId = this.appointmentForm.value.petId;
-    console.log('Selected pet ID:', petId);
+    const pet = this.pets.find(p => p._id === petId); 
+    const petName = pet?.name 
+    const petSpecies = pet?.species 
+          console.log('Selected pet ID:', petId);
 
     const companyId = localStorage.getItem('connectedUserCompany');
     
@@ -96,14 +101,45 @@ selectedTime: string = '';
     console.log('Payload:', payload);
 
     this._appointmentService.createAppointment(payload).subscribe(() => {
-      Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Appointment added successfully.',
-                  timer: 1500,
-              }).then(() => {
-                this._router.navigate([`../`], { relativeTo: this._route }).then();        });
-    }, (error) => {
+      const title = 'Appointment Created';
+      const message = `Your appointment for  ${petName} (${petSpecies}) has been successfully scheduled.`;
+      const type = 'Appointment Created';
+      console.log('Notification Payload:', { userId, title, message, type });
+  
+      this._notificationService.createNotification({ userId, title, message, type }).subscribe(() => {
+        console.log('userId:', userId);
+        console.log('title:', title);
+        console.log('message:', message);
+        console.log('type:', type);
+        // const smsMessage = `Your appointment for ${this.selectedPetId} is confirmed for ${this.appointmentForm.value.date} at ${this.appointmentForm.value.time}.`;
+        // this._notificationService.sendSMSNotification(this.selectedClient.phone, smsMessage).subscribe(() => {
+  
+          //  Email Notification
+          const emailMessage = `A new appointment is scheduled for your pet ${petName} (${petSpecies}) for ${this.appointmentForm.value.date} at ${this.appointmentForm.value.time}.`;
+          this._notificationService.sendEmailNotification(
+            this.selectedClient.email,
+            'Appointment Confirmation',
+            emailMessage
+          ).subscribe(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: 'Appointment added successfully.',
+              timer: 1500,
+            }).then(() => {
+              this._router.navigate([`../`], { relativeTo: this._route }).then();
+            });
+          }, (error) => {
+            console.error('Error sending email:', error);
+          });
+  
+        // }, (error) => {
+        //   console.error('Error sending SMS:', error);
+        // });
+  
+      });
+  
+    },(error) => {
       
       console.error(error);
     });

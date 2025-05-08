@@ -4,7 +4,7 @@ import { Pet } from 'app/shared/models/pet';
 import { PetService } from 'app/shared/services/pet.service';
 import {DatePipe } from '@angular/common';
 import { AppointmentService } from 'app/shared/services/appointment.service';
-import { Appointment } from 'app/shared/models/appointment';
+import { Appointment } from 'app/shared/enums/appointment';
 import { MatPaginator } from '@angular/material/paginator';
 @Component({
   selector: 'app-details',

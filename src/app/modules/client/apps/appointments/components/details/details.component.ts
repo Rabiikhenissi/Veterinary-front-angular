@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { Appointment } from 'app/shared/models/appointment';
+import { Appointment } from 'app/shared/enums/appointment';
 import { Pet } from 'app/shared/models/pet';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { LoadingService } from 'app/shared/services/loading.service';
@@ -13,6 +13,9 @@ import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { ProductService } from 'app/shared/services/product.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 import { UserService } from 'app/shared/services/user.service';
+import Swal from 'sweetalert2';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { User } from 'app/shared/models/user';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,DatePipe,FeaturesDirective],
@@ -24,6 +27,7 @@ export class DetailsComponent implements OnInit {
   _appointmentService = inject(AppointmentService);
   _prescriptionService = inject(PrescriptionService);
   _userService = inject(UserService);
+  _notificationService = inject(NotificationService);
   _petService = inject(PetService);
   _productService = inject(ProductService);
   _route = inject(ActivatedRoute);
@@ -81,6 +85,9 @@ export class DetailsComponent implements OnInit {
     const dateTime = new Date(`2025-04-08T${time}`); 
     return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }).format(dateTime);
   }
+
+
+
   confirmAppointment(): void {
     this.appointment.status = 'confirmed';
     const updatedAppointment = {
@@ -89,16 +96,87 @@ export class DetailsComponent implements OnInit {
       userId: this.appointment.userId._id, 
       petId: this.appointment.petId._id    
     };
-    console.log('Updated Appointment:', updatedAppointment);
-    this._appointmentService.updateAppointment(updatedAppointment).subscribe({
-      next: () => {
-        this._loadingService.hide();
+    let user: User;
+  this._userService.getOne(this.appointment.userId._id).subscribe({
+      next: (userData) => {
+        user = userData;
+        console.log('user',user) ;
       },
-      error: () => {
-        this._loadingService.hide();
+      error: () => console.error('Failed to fetch user data')
+    });
+
+
+    console.log('Updated Appointment:', updatedAppointment);
+      this._appointmentService.updateAppointment(updatedAppointment).subscribe({
+      next: () => {
+        const title = 'Appointment Confirmed';
+        const message = `Your appointment for ${this.appointment.petId.name} (${this.appointment.petId.species}) has been successfully scheduled for ${this.appointment.date} at ${this.appointment.time}.`;
+        const type = 'Appointment Confirmation';
+  
+        console.log('Notification Payload:', { userId: this.appointment.userId._id, title, message, type });
+  
+        // Create notification
+        this._notificationService.createNotification({
+          userId: this.appointment.userId._id,
+          title,
+          message,
+          type
+        }).subscribe(() => {
+          console.log('Notification sent successfully.');
+  
+          // Send Email Notification
+          const emailMessage = `A new appointment is scheduled for your pet ${this.appointment.petId.name} (${this.appointment.petId.species}) for ${this.appointment.date} at ${this.appointment.time}.`;
+  
+          this._notificationService.sendEmailNotification(
+            user.email,
+            'Appointment Confirmation',
+            emailMessage
+          ).subscribe({
+            next: () => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Appointment confirmed successfully.',
+                timer: 1500,
+              }).then(() => {
+                this._router.navigate([`../`], { relativeTo: this._route });
+              });
+            },
+            error: (error) => {
+              console.error('Error sending email:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong while sending the email notification.',
+              });
+            }
+          });
+        }, (error) => {
+          console.error('Error sending notification:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong while sending the notification.',
+          });
+        });
+      },
+      error: (err) => {
+        console.error('Error confirming appointment:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong while confirming the appointment.',
+        });
       }
     });
+  
+    this._loadingService.hide();
   }
+  
+
+
+
+
   cancelAppointment(): void {
     this._loadingService.show();
           const confirmation = this._fuseConfirmationService.open({
