@@ -233,6 +233,9 @@ export class UserService {
   }
   getExternalUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.endpointAuth}/external`)
+  }
+  getInternalUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.endpointAuth}/internal`)
 
   }
 }

@@ -4,7 +4,7 @@ import {  Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Pagination } from '../models/pagination';
-import { Appointment, Appointment2 } from '../models/appointment';
+import { Appointment, Appointment2 } from '../enums/appointment';
 @Injectable({
   providedIn: 'root',
 })

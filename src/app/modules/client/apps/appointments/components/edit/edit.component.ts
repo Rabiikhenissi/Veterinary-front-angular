@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Appointment } from 'app/shared/models/appointment';
+import { Appointment } from 'app/shared/enums/appointment';
 import { Pet } from 'app/shared/models/pet';
 import { User } from 'app/shared/models/user';
 import { AppointmentService } from 'app/shared/services/appointment.service';
