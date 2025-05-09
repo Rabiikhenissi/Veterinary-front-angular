@@ -31,11 +31,11 @@
         <div class="space-y-2">
           <label *ngFor="let species of speciesList" class="flex items-center gap-2 text-sm text-gray-700">
             <input type="checkbox"
-                  [value]="species"
-                  [checked]="selectedSpecies.includes(species)"
-                  (change)="toggleSpecies(species)"
+                  [value]="species.name"
+                  [checked]="selectedSpecies.includes(species.name)"
+                  (change)="toggleSpecies(species.name)"
                   class="form-checkbox text-green-600 rounded" />
-            {{ species }}
+            {{ species.name }}
           </label>
         </div>
       </div>

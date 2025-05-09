@@ -210,6 +210,16 @@ export const appRoutes: Route[] = [
                     },
                         loadChildren: () => import('app/modules/client/apps/appointments_history/appointments_history.routes'),
                     },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'pet-species',
+                        data: {
+                            breadcrumb: 'Pet Species',
+                            feature: FeatureCodes.pet_species,
+                    },
+                        loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/pets/pets.routing'),
+                    },
                     
                     
                 ],

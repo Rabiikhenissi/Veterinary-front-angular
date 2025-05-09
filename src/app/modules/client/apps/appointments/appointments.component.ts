@@ -23,7 +23,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { AppointmentService } from 'app/shared/services/appointment.service';
-import { Appointment, Appointment2 } from 'app/shared/enums/appointment';
+import { Appointment, Appointment2 } from 'app/shared/models/appointment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'app/shared/services/auth.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -306,7 +306,7 @@ this.initializeCalendarOptions();
                         .subscribe(
                             (response) => {
                                 const title = 'New Appointment Booked';
-                                const message = `A new appointment has been booked by ${appointment.userId.name} for their pet ${appointment.petId.name}.\nThe appointment is scheduled for ${appointment.date} at ${appointment.time}.`;
+                                const message = `A new appointment has been booked by ${appointment.userId.name} for their pet ${appointment.petId.name} (${appointment.petId.species}).\nThe appointment is scheduled for ${appointment.date} at ${appointment.time}.`;
                                 const type = 'Appointment Booking';
                                 
                                 this._userService.getInternalUsers().subscribe({

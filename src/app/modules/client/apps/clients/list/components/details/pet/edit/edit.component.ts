@@ -4,7 +4,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PetSpecies } from 'app/shared/models/petSpecies';
 import { PetService } from 'app/shared/services/pet.service';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 
 export const MY_DATE_FORMATS = {
   parse: {
@@ -26,6 +28,8 @@ export const MY_DATE_FORMATS = {
 export class EditComponent {
   petForm: FormGroup;
   _petService = inject(PetService);
+      _petSpeciesService = inject(PetSpeciesService);
+  
   route = inject(ActivatedRoute);
   petId!: string;
   id:string;
@@ -38,14 +42,8 @@ export class EditComponent {
       icon: [''],
     });
   }
-  icons = [
-    { icon: 'assets/images/avatars/pets/dog.png', label: 'Dog' },
-    { icon: 'assets/images/avatars/pets/cat.png', label: 'Cat' },
-    { icon: 'assets/images/avatars/pets/rabbit.png', label: 'Rabbit' },
-    { icon: 'assets/images/avatars/pets/fish.png', label: 'Fish' },
-    { icon: 'assets/images/avatars/pets/turtle.png', label: 'Turtle' },
-    { icon: 'assets/images/avatars/pets/monkey.png', label: 'Monkey' },
-  ];
+  speciesOptions: PetSpecies[] = []; 
+  
 
   selectIcon(iconData: { icon: string; label: string }) {
     this.petForm.patchValue({
@@ -64,6 +62,14 @@ export class EditComponent {
       error: (err) => {
         console.error('Error loading pet:', err);
       },
+    });
+    this._petSpeciesService.getList().subscribe({
+      next: (res) => {
+        this.speciesOptions = res.data;
+      },
+      error: (err) => {
+        console.error('Failed to fetch species', err);
+      }
     });
     
   }

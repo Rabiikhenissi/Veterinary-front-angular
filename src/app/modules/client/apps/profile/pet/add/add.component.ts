@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PetSpecies } from 'app/shared/models/petSpecies';
 import { PetService } from 'app/shared/services/pet.service';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,10 +15,12 @@ import Swal from 'sweetalert2';
   imports: [ReactiveFormsModule,CommonModule,MatFormFieldModule, MatInputModule, MatDatepickerModule],
   templateUrl: './add.component.html',
 })
-export class AddComponent {
+export class AddComponent implements OnInit {
   //********* INJECT SERVICES ***********//
   petForm: FormGroup;
   _petService = inject(PetService);
+  _petSpeciesService = inject(PetSpeciesService);
+  
 route= inject(ActivatedRoute);
 today: string = new Date().toISOString().split('T')[0];
 
@@ -31,15 +35,19 @@ today: string = new Date().toISOString().split('T')[0];
     });
   console.log(this.router.config)
   }
-  icons = [
-    { icon: 'assets/images/avatars/pets/dog.png', label: 'Dog' },
-    { icon: 'assets/images/avatars/pets/cat.png', label: 'Cat' },
-    { icon: 'assets/images/avatars/pets/rabbit.png', label: 'Rabbit' },
-    { icon: 'assets/images/avatars/pets/fish.png', label: 'Fish' },
-    { icon: 'assets/images/avatars/pets/turtle.png', label: 'Turtle' },
-    { icon: 'assets/images/avatars/pets/monkey.png', label: 'Monkey' },
-  ];
   
+   speciesOptions: PetSpecies[] = []; 
+  
+    ngOnInit() {
+      this._petSpeciesService.getList().subscribe({
+        next: (res) => {
+          this.speciesOptions = res.data;
+        },
+        error: (err) => {
+          console.error('Failed to fetch species', err);
+        }
+      });
+    }
   selectIcon(iconData: { icon: string; label: string }) {
     this.petForm.patchValue({
       icon: iconData.icon,

@@ -28,20 +28,20 @@
       </mat-form-field>
     </div>
       <!-- Select Species -->
-      <div class="mb-6">
-        <label class="block font-semibold text-green-900 mb-3">Select a Species</label>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
-          @for (item of icons; track $index) {
-          <div
-            class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
-            [class.border-green-500]="petForm.value.icon === item.icon"
-            (click)="selectIcon(item)"
-          >
-            <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
-            <span class="text-sm font-medium text-green-700">{{ item.label }}</span>
-          </div>}
-        </div>
+    <div class="mb-6">
+      <label class="block font-semibold text-green-900 mb-3">Select a Species</label>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
+        @for (item of speciesOptions; track $index) {
+        <div
+          class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
+          [class.border-green-500]="petForm.value.icon === item.icon"
+          (click)="selectIcon(item)"
+        >
+          <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
+          <span class="text-sm font-medium text-green-700">{{ item.name }}</span>
+        </div>}
       </div>
+    </div>
   
       <!-- Submit -->
       <button
