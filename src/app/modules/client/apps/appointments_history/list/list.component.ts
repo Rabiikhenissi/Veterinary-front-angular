@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Appointment } from 'app/shared/enums/appointment';
+import { Appointment } from 'app/shared/models/appointment';
 import { Pagination } from 'app/shared/models/pagination';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { AuthService } from 'app/shared/services/auth.service';

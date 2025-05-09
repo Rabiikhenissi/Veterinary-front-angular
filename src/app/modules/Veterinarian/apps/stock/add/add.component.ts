@@ -6,7 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PetSpecies } from 'app/shared/models/petSpecies';
 import { Product } from 'app/shared/models/product';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { ProductService } from 'app/shared/services/product.service';
 import Swal from 'sweetalert2';
 
@@ -18,15 +20,10 @@ import Swal from 'sweetalert2';
 })
 export class AddComponent  {
   categories: string[] = ['Medications', 'Accessories', 'Food', 'Hygiene', 'Medical Supplies'];
-  speciesOptions = [
-    { name: 'Dog', image: 'assets/images/avatars/pets/dog.png' },
-    { name: 'Cat', image: 'assets/images/avatars/pets/cat.png' },
-    { name: 'Rabbit', image: 'assets/images/avatars/pets/rabbit.png' },
-    { name: 'Fish', image: 'assets/images/avatars/pets/fish.png' },
-    { name: 'Turtle', image: 'assets/images/avatars/pets/turtle.png' },
-    { name: 'Monkey', image: 'assets/images/avatars/pets/monkey.png' }
-  ];
-productService = inject(ProductService);
+ 
+_productService = inject(ProductService);
+_petSpeciesService = inject(PetSpeciesService);
+
   _router = inject(Router);
   _route = inject(ActivatedRoute);
   product: Product = {
@@ -38,6 +35,18 @@ productService = inject(ProductService);
     image: '',
     limitPerUser: null,
   };
+  speciesOptions: PetSpecies[] = []; 
+
+  ngOnInit() {
+    this._petSpeciesService.getList().subscribe({
+      next: (res) => {
+        this.speciesOptions = res.data;
+      },
+      error: (err) => {
+        console.error('Failed to fetch species', err);
+      }
+    });
+  }
   selectSpecies(name: string) {
     if (name && name.trim()) {
       const index = this.product.species.indexOf(name);
@@ -68,7 +77,7 @@ productService = inject(ProductService);
 
   addProduct() {
     console.log(this.product);
-    this.productService.createOne(this.product).subscribe(() => {Swal.fire({
+    this._productService.createOne(this.product).subscribe(() => {Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: 'Product added successfully.',

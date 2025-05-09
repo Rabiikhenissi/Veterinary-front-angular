@@ -1,0 +1,49 @@
+<div class="w-full max-w-7xl mx-auto px-10 py-10 bg-green-50 border border-green-100 rounded-3xl shadow-2xl">
+    <div class="flex items-center justify-between mb-10">
+      <h2 class="text-4xl font-bold text-green-800">🐾 Pet Species</h2>
+      <button
+        (click)="add()"
+        class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-xl text-lg font-semibold shadow-md transition-all duration-300"
+      >
+        ➕ Add Species
+      </button>
+    </div>
+  
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div
+        *ngFor="let species of speciesList"
+        class="border-2 rounded-lg p-6 flex flex-col items-center text-center transition-all duration-200 relative group"
+        [ngClass]="{
+          'border-green-500 bg-green-50 shadow-lg': selectedSpeciesId === species._id,
+          'border-gray-200 hover:border-green-300': selectedSpeciesId !== species._id
+        }"
+      >
+        <img
+          [src]="species.icon"
+          alt="{{ species.name }}"
+          class="w-20 h-20 object-cover rounded-full mb-2"
+        />
+        <span class="font-medium text-gray-800">{{ species.name }}</span>
+        <span class="text-sm text-gray-500">Species</span>
+  
+        <!-- Edit/Delete buttons -->
+        <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            (click)="editSpecies(species)"
+            class="text-blue-600 hover:text-blue-800"
+            title="Edit"
+          >
+            ✏️
+          </button>
+          <button
+            (click)="archiveSpecies(species)"
+            class="text-red-600 hover:text-red-800"
+            title="Delete"
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

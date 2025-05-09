@@ -37,7 +37,7 @@
              class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
              [class.border-green-500]="product.species?.includes(sp.name)"
              (click)="selectSpecies(sp.name)">
-          <img [src]="sp.image" [alt]="sp.name" class="w-16 h-16 mb-1 object-cover rounded" />
+          <img [src]="sp.icon" [alt]="sp.name" class="w-16 h-16 mb-1 object-cover rounded" />
           <span class="text-sd font-medium text-green-700">{{ sp.name }}</span>
         </div>
       </div>
