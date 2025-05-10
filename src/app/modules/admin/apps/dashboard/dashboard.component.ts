@@ -25,13 +25,13 @@ export type ChartOptions = {
   };
 
 @Component({
-    selector       : 'project',
+    selector       : 'dashboard-admin',
     templateUrl    : './dashboard.component.html',
     encapsulation  : ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports        : [TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, MatTableModule,NgApexchartsModule],
 })
-export class ProjectComponent implements OnInit, OnDestroy
+export class DashboardComponent implements OnInit, OnDestroy
 {
   _userService=inject(UserService);
   _authService=inject(AuthService)
