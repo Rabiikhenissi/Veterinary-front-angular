@@ -6,6 +6,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { CompanyService } from 'app/shared/services/company.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { ProductService } from 'app/shared/services/product.service';
 import Swal from 'sweetalert2';
@@ -22,24 +23,13 @@ export class AddInfoComponent implements OnInit {
   _router=inject(Router);
   _productService=inject(ProductService);
   _appointmentService=inject(AppointmentService);
+  _companyService=inject(CompanyService);
   _petService=inject(PetService);
   id = this._route.snapshot.paramMap.get('id')!;
- 
-  procedureOptions = [
-    'Allergy Test',
-    'physical Examination',
-    'Blood Test',
-    'X-Ray',
-    'Vaccination',
-    'Wound Cleaning',
-    'Surgery',
-    'Ultrasound',
-
-  ];
-
+ services: any[] = [];
   info = {
     symptoms:  [] as string[],
-    performedProcedures: [],
+performedProcedures: [] as { name: string, price: number }[],
     weight: null,
     temperature: null,
     heartRate: null,
@@ -68,10 +58,25 @@ export class AddInfoComponent implements OnInit {
         console.error('Error fetching appointment data:', error);
       }
     });
-  }
+ this._companyService.getOne(localStorage.getItem('connectedUserCompany')).subscribe({
+      next: (company) => {
+        this.services = company.services;
+      },
+      error: (err) => console.error('Failed to load services:', err)
+    });
+  } 
+  
   handleSymptomsInput(symptomInput: string) {
     const symptomsArray = symptomInput.split(',').map(symptom => symptom.trim());
     this.info.symptoms = [...this.info.symptoms, ...symptomsArray];
+  }
+
+
+    onProceduresChange(selected: any[]) {
+    this.info.performedProcedures = selected.map(service => ({
+      name: service.name,
+      price: service.price
+    }));
   }
   onSubmit() {
   console.log('Submitted info:', this.info);

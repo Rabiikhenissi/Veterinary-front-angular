@@ -12,15 +12,13 @@
       </div>
       <!-- Performed Procedures (Multi-select) -->
       <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Performed Procedures</mat-label>
-        <mat-select [(ngModel)]="info.performedProcedures" name="procedures" multiple 
-        [placeholder]="info.performedProcedures?.length ? info.performedProcedures.join(', ') : 'Select procedures'">
-          
-          <mat-option *ngFor="let procedure of procedureOptions" [value]="procedure">
-            {{ procedure }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+  <mat-label>Performed Procedures</mat-label>
+  <mat-select name="procedures" multiple (selectionChange)="onProceduresChange($event.value)">
+    <mat-option *ngFor="let service of services" [value]="service">
+      {{ service.name }} - {{ service.price }} TND
+    </mat-option>
+  </mat-select>
+</mat-form-field>
       
   
       <!-- Weight -->

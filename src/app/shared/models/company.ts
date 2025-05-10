@@ -5,4 +5,9 @@ export class Company {
   firstCalendarDay?: string;
   latitude?: number;
   longitude?: number;
+  services?: Service[];
 archived?: boolean;}
+export interface Service {
+  name: string;
+  price: number;
+}
