@@ -10,9 +10,7 @@ export default [
       {
         path: '',
         component: ListComponent,
-        data: {
-          breadcrumb: 'Companies',
-        },
+      
       },
       {
         path: 'add',
