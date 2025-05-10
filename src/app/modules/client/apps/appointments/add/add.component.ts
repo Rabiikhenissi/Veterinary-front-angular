@@ -29,7 +29,9 @@ selectedTime: string = '';
   pets: Pet[] = [];
   selectedClient: any;
   selectedPetId: string | null = null;
+   companyId:string
   ngOnInit(): void {
+    this.companyId = localStorage.getItem('connectedUserCompany') ;
     const date = this._route.snapshot.queryParamMap.get('date') || '';
     const time = this._route.snapshot.queryParamMap.get('time') || '';
 
@@ -51,7 +53,7 @@ selectedTime: string = '';
   }
 
   loadClients(): void {
-    this._userService.getExternalUsers().subscribe((res: any) => {
+    this._userService.getExternalUsers(this.companyId).subscribe((res: any) => {
       this.clients = res.data;
       console.log('Clients:', this.clients);
       
