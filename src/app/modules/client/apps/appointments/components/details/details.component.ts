@@ -139,7 +139,6 @@ export class DetailsComponent implements OnInit {
                 text: 'Appointment confirmed successfully.',
                 timer: 1500,
               }).then(() => {
-                this._router.navigate([`../`], { relativeTo: this._route });
               });
             },
             error: (error) => {
