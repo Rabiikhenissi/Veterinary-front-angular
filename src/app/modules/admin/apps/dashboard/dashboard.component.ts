@@ -1,5 +1,5 @@
 import {NgFor } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRippleModule } from '@angular/material/core';
@@ -9,8 +9,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { User } from 'app/shared/models/user';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { AuthService } from 'app/shared/services/auth.service';
 import { ProjectService } from 'app/shared/services/dashboard.service';
+import { UserService } from 'app/shared/services/user.service';
 import { ApexChart, ApexNonAxisChartSeries, ApexOptions, ApexResponsive, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject } from 'rxjs';
 
@@ -30,7 +33,10 @@ export type ChartOptions = {
 })
 export class ProjectComponent implements OnInit, OnDestroy
 {
-
+  _userService=inject(UserService);
+  _authService=inject(AuthService)
+  veterinarians:User[] = [];
+admin: User;
     chartAppointmentStats: any = {
         chart: {
           type: 'bar',
@@ -107,6 +113,14 @@ stats = {
      */
     ngOnInit(): void
     {
+      this._userService.getOne(localStorage.getItem('connectedUserId')).subscribe({
+        next: (user: User) => {
+          this.admin = user;
+        },
+        error: (err) => console.error('Error fetching admin user:', err),
+      });
+      console.log('Connected User:', localStorage.getItem('connectedUserId'));
+      this.fetchVeterinarians();
         this.fetchAppointmentStats();
 this.loadDashboardCounts();
         this.fetchAllAppointments();
@@ -187,7 +201,23 @@ this.loadDashboardCounts();
             error: (err) => console.error('Error fetching appointment stats:', err),
           });
     }
-    
+fetchVeterinarians(): void {
+  this._userService.getInternalUsers().subscribe({
+    next: (internalUsersResponse: any) => {
+      const internalUsers = internalUsersResponse?.data;
+      if (Array.isArray(internalUsers)) {
+        this.veterinarians = internalUsers.filter((user) => 
+          user.groupsId && user.groupsId.code.includes('veterinarian') 
+        );
+
+        console.log('Veterinarians:', this.veterinarians);
+        
+      } 
+    },
+    error: (err) => console.error('Error fetching veterinarians:', err),
+  });
+}
+
 
 loadDashboardCounts(): void {
     this._projectService.getStats().subscribe((data) => {

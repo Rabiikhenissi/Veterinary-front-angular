@@ -220,7 +220,10 @@ export const appRoutes: Route[] = [
                             feature: FeatureCodes.dashboard,
                         },
                         loadChildren: () => import('app/modules/admin/apps/dashboard/dashboard.routes'),
-                    }
+                     },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
 
                         path:'pet-species',
                         data: {
