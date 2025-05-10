@@ -5,6 +5,9 @@ import {  Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Pagination } from '../models/pagination';
 import { Appointment, Appointment2 } from '../models/appointment';
+
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -32,6 +35,15 @@ export class AppointmentService {
       params: searchParams,
     });
   }
+
+  getAll()  : Observable<any> {
+    return this.http.get<any>(`${this.endpoint}/all`);
+  }
+
+  getTopCompaniesComparison()  {
+    return this.http.get<any[]>(`${this.endpoint}/top-companies-comparison`);
+  }
+  
 
   getAppointment(id: string): Observable<Appointment> {
     return this.http.get<Appointment>(`${this.endpoint}/${id}`);
@@ -115,4 +127,7 @@ export class AppointmentService {
       id
     });
   }
+
+
+
 }

@@ -33,8 +33,8 @@ export class CompanyService {
       params: searchParams,
     });
   }
-  getAll(): Observable<Company[]> {
-    return this.http.get<Company[]>(`${this.endpoint}/all`);
+  getAll(): Observable<{ data: Company[], total: number }> {
+    return this.http.get<{ data: Company[], total: number }>(`${this.endpoint}/all`);
   }
   deleteOne(id: string): Observable<null> {
     return this.http.delete<null>(`${this.endpoint}/${id}`);

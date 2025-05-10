@@ -4,4 +4,5 @@ export class Company {
   name?: string;
   firstCalendarDay?: string;
   latitude?: number;
-  longitude?: number;}
+  longitude?: number;
+archived?: boolean;}

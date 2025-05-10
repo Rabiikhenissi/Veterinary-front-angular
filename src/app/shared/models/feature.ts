@@ -12,4 +12,5 @@ export class Feature {
   icon?: string;
   divider?: boolean;
   featuresIdParent?: Feature;
+  archived?: boolean;
 }

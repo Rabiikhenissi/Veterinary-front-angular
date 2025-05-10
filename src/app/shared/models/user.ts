@@ -15,6 +15,7 @@ export class User {
   groupsId?: Group;
   petId?:Pet[];
   type?:string;
+  archived?: boolean;
 }
 
 export class ResToken {

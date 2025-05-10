@@ -210,6 +210,16 @@ export const appRoutes: Route[] = [
                     },
                         loadChildren: () => import('app/modules/client/apps/appointments_history/appointments_history.routes'),
                     },
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'dashboard',
+                        data: {
+                            breadcrumb: 'dashboard',
+                            feature: FeatureCodes.dashboard,
+                        },
+                        loadChildren: () => import('app/modules/admin/apps/dashboard/dashboard.routes'),
+                    }
                     
                     
                 ],

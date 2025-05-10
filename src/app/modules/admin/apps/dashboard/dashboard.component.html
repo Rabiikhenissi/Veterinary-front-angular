@@ -1,0 +1,299 @@
+<div class="flex flex-col flex-auto min-w-0">
+
+    <!-- Header -->
+    <div class="bg-card">
+        <div class="flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
+            <div class="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 my-8 sm:my-12">
+                <!-- Avatar and name -->
+                <div class="flex flex-auto items-center min-w-0">
+                    
+                    <div class="flex flex-col min-w-0 ml-4">
+                        <ng-container *transloco="let t">
+                            <div class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate">{{t('welcome-back')}}, Admin!</div>
+                        </ng-container>
+                        
+                    </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
+                    
+                    <button
+                        mat-flat-button
+                        [color]="'primary'">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:cog-8-tooth'"></mat-icon>
+                        <span class="ml-2">Settings</span>
+                    </button>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex-auto border-t -mt-px pt-4 sm:pt-6">
+        <div class="w-full max-w-screen-xl mx-auto">
+            <!-- Tabs -->
+            <mat-tab-group
+                class="sm:px-2"
+                mat-stretch-tabs="false"
+                [animationDuration]="'0'">
+
+                <!-- overview -->
+                <mat-tab label="Overview">
+                    <ng-template matTabContent>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full min-w-0">
+                            <!-- companies -->
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate"> Companies</div>
+                                    <div class="ml-2 -mt-2 -mr-3">
+                                        <button
+                                            mat-icon-button
+                                            [matMenuTriggerFor]="summaryMenu">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                        </button>
+                                        <mat-menu #summaryMenu="matMenu">
+                                            <button mat-menu-item>Yesterday</button>
+                                            <button mat-menu-item>2 days ago</button>
+                                            <button mat-menu-item>3 days ago</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center mt-2">
+                                    <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-blue-500">{{companiesCount.total}}</div>
+                                    <div class="text-lg font-medium text-blue-600 dark:text-blue-500">total companies</div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary">
+                                        <div class="text-md font-medium truncate">inactive :</div>
+                                        <div class="ml-1.5 text-lg font-semibold">{{companiesCount.inactive}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- veterinarians -->
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">veterinarians</div>
+                                    <div class="ml-2 -mt-2 -mr-3">
+                                        <button
+                                            mat-icon-button
+                                            [matMenuTriggerFor]="overdueMenu">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                        </button>
+                                        <mat-menu #overdueMenu="matMenu">
+                                            <button mat-menu-item>Yesterday</button>
+                                            <button mat-menu-item>2 days ago</button>
+                                            <button mat-menu-item>3 days ago</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center mt-2">
+                                    <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-red-500">{{veterinariansCount.total}}</div>
+                                    <div class="text-lg font-medium text-red-600 dark:text-red-500">total veterinarians</div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary">
+                                        <div class="text-md font-medium truncate">inactive</div>
+                                        <div class="ml-1.5 text-lg font-semibold">{{veterinariansCount.inactive}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- secretaries -->
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">secretaries</div>
+                                    <div class="ml-2 -mt-2 -mr-3">
+                                        <button
+                                            mat-icon-button
+                                            [matMenuTriggerFor]="issuesMenu">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                        </button>
+                                        <mat-menu #issuesMenu="matMenu">
+                                            <button mat-menu-item>Yesterday</button>
+                                            <button mat-menu-item>2 days ago</button>
+                                            <button mat-menu-item>3 days ago</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center mt-2">
+                                    <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-amber-500">{{secretariesCount.total}}</div>
+                                    <div class="text-lg font-medium text-amber-600 dark:text-amber-500">total secretaries</div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary">
+                                        <div class="text-md font-medium truncate">inactive</div>
+                                        <div class="ml-1.5 text-lg font-semibold">{{secretariesCount.inactive}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Features -->
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">features</div>
+                                    <div class="ml-2 -mt-2 -mr-3">
+                                        <button
+                                            mat-icon-button
+                                            [matMenuTriggerFor]="featuresMenu">
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="'heroicons_mini:ellipsis-vertical'"></mat-icon>
+                                        </button>
+                                        <mat-menu #featuresMenu="matMenu">
+                                            <button mat-menu-item>Yesterday</button>
+                                            <button mat-menu-item>2 days ago</button>
+                                            <button mat-menu-item>3 days ago</button>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center mt-2">
+                                    <div class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-green-500">{{featuresCount.total}}</div>
+                                    <div class="text-lg font-medium text-green-600 dark:text-green-500">active features</div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary">
+                                        <div class="text-md font-medium truncate">inactive:</div>
+                                        <div class="ml-1.5 text-lg font-semibold">{{featuresCount.inactive}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- appointment summary -->
+                            <div class="sm:col-span-2 md:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex flex-col sm:flex-row items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">appointments summary</div>
+                                    
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4">
+                                    <!-- confirmed vs. completed on top 5 companies -->
+<div class="flex flex-col flex-auto">
+    <div class="font-medium text-secondary">Confirmed vs. Completed</div>
+    <div class="flex flex-col flex-auto">
+        <apx-chart
+            class="flex-auto w-full h-80"
+            [chart]="chartAppointmentStats.chart"
+            [colors]="chartAppointmentStats.colors"
+            [dataLabels]="chartAppointmentStats.dataLabels"
+            [grid]="chartAppointmentStats.grid"
+            [labels]="chartAppointmentStats.labels"
+            [legend]="chartAppointmentStats.legend"
+            [plotOptions]="chartAppointmentStats.plotOptions"
+            [series]="chartAppointmentStats.series"
+            [states]="chartAppointmentStats.states"
+            [stroke]="chartAppointmentStats.stroke"
+            [tooltip]="chartAppointmentStats.tooltip"
+            [xaxis]="chartAppointmentStats.xaxis"
+            [yaxis]="chartAppointmentStats.yaxis"></apx-chart>
+    </div>
+</div>
+
+
+                                    <!-- Overview -->
+                                    <div class="flex flex-col">
+                                        <div class="font-medium text-secondary">Overview</div>
+                                        <div class="flex-auto grid grid-cols-4 gap-4 mt-6">
+                                            <!-- New issues -->
+                                            <div class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-indigo-50 text-indigo-800 dark:bg-white dark:bg-opacity-5 dark:text-indigo-400">
+                                                <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+                                                    {{stats.total}}
+                                                </div>
+                                                <div class="mt-1 text-sm sm:text-lg font-medium">all appointments</div>
+                                            </div>
+                                            <!-- Closed -->
+                                            <div class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500">
+                                                <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+                                                    {{stats.completed}}
+                                                </div>
+                                                <div class="mt-1 text-sm sm:text-lg font-medium">confirmed </div>
+                                            </div>
+                                            <!-- Fixed -->
+                                            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
+                                                    {{stats.pending}}
+                                                </div>
+                                                <div class="mt-1 text-sm font-medium text-center">pending </div>
+                                            </div>
+                                            <!-- Won't fix -->
+                                            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
+                                                    {{stats.canceled}}
+                                                </div>
+                                                <div class="mt-1 text-sm font-medium text-center"> canceled</div>
+                                            </div>
+                                            <!-- Re-opened -->
+                                            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
+                                                    {{stats.completed}}
+                                                </div>
+                                                <div class="mt-1 text-sm font-medium text-center">completed</div>
+                                            </div>
+                                            <!-- Needs triage -->
+                                            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
+                                                    {{stats.rescheduled}}
+                                                </div>
+                                                <div class="mt-1 text-sm font-medium text-center">rescheduled</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </ng-template>
+                </mat-tab>
+
+                <!-- Budget -->
+                
+
+                <!-- Team -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <span class="inline-flex items-center space-x-2">
+                            <span class="">Team</span>
+                            <span class="px-2 py-1 text-sm rounded-full bg-primary-100 text-on-primary-100">9</span>
+                        </span>
+                    </ng-template>
+                    <ng-template matTabContent>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full min-w-0">
+                            <ng-container *ngFor="let member of data.teamMembers">
+                                <div class="flex flex-col flex-auto items-center bg-card shadow rounded-2xl overflow-hidden">
+                                    <!-- Avatar & Info -->
+                                    <div class="flex flex-col flex-auto w-full p-8 text-center">
+                                        <div class="w-32 h-32 mx-auto rounded-full overflow-hidden">
+                                            <img
+                                                class="w-full h-full object-cover"
+                                                [src]="member.avatar">
+                                        </div>
+                                        <div class="mt-6 font-medium">{{member.name}}</div>
+                                        <div class="text-secondary">{{member.title}}</div>
+                                    </div>
+                                    <!-- Email & Phone -->
+                                    <div class="flex items-center w-full border-t divide-x">
+                                        <a
+                                            class="flex flex-auto items-center justify-center py-4 hover:bg-hover"
+                                            [href]="'mailto:' + member.email">
+                                            <mat-icon
+                                                class="icon-size-5 text-hint"
+                                                [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
+                                            <span class="ml-2">Email</span>
+                                        </a>
+                                        <a
+                                            class="flex flex-auto items-center justify-center py-4 hover:bg-hover"
+                                            [href]="'tel:' + member.phone">
+                                            <mat-icon
+                                                class="icon-size-5 text-hint"
+                                                [svgIcon]="'heroicons_solid:phone'"></mat-icon>
+                                            <span class="ml-2">Call</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-template>
+                </mat-tab>
+
+            </mat-tab-group>
+        </div>
+    </div>
+
+</div>
