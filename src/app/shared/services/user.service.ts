@@ -238,4 +238,10 @@ export class UserService {
     return this.http.get<User[]>(`${this.endpointAuth}/internal`)
 
   }
+  getVeterinarians(): Observable<{ data: User[], total: number }> {
+    return this.http.get<{ data: User[], total: number }>(`${this.endpointAuth}/veterinarians`);
+  }
+  getSecretaries(): Observable<{ data: User[], total: number }> {
+    return this.http.get<{ data: User[], total: number }>(`${this.endpointAuth}/secretaries`);
+  }
 }
