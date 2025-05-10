@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +10,8 @@ import { CartService } from 'app/shared/services/cart.service';
 import { ProductService } from 'app/shared/services/product.service';
 import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 import Swal from 'sweetalert2';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { PetSpecies } from 'app/shared/models/petSpecies';
 
 @Component({
   selector: 'app-shop',
@@ -17,11 +19,13 @@ import Swal from 'sweetalert2';
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss'
 })
-export class ShopComponent {
+export class ShopComponent implements OnInit{
   //********* INJECT SERVICES ***********//
   route = inject(ActivatedRoute);
   _cartService = inject(CartService);
   _productService = inject(ProductService);
+  _petSpeciesService = inject(PetSpeciesService);
+  
   router=inject(Router);
   products: Product[] = [];
   categories: string[] = [ "Accessories", "Food", "Hygiene"];
@@ -29,7 +33,7 @@ export class ShopComponent {
   total = 0;
   currentSize = 10;
   //species list is static now but will be dynalmic in the future depending on the pets of the company
-  speciesList: string[] = ['Cat', 'Dog', 'Rabbit', 'fish','turtle','monkey'];
+  speciesList: PetSpecies[] = []; 
   selectedSpecies: string[] = [];
    filterOptions: FilterOptions = new FilterOptions();
     typingTimer;
@@ -43,6 +47,7 @@ export class ShopComponent {
   }
   cart: any;
   
+  
   getTotalItems(): number {
     return this.cart?.products?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
   }
@@ -50,6 +55,14 @@ export class ShopComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
     this.fetchProducts();
+    this._petSpeciesService.getList().subscribe({
+      next: (res) => {
+        this.speciesList = res.data;
+      },
+      error: (err) => {
+        console.error('Failed to fetch species', err);
+      }
+    });
   }
 
   fetchProducts(): void {

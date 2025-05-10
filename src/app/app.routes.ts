@@ -213,6 +213,7 @@ export const appRoutes: Route[] = [
                     {
                         canActivate: [IsAuthorizedGuard],
                         canActivateChild: [IsAuthorizedGuard],
+
                         path:'dashboard',
                         data: {
                             breadcrumb: 'dashboard',
@@ -220,6 +221,15 @@ export const appRoutes: Route[] = [
                         },
                         loadChildren: () => import('app/modules/admin/apps/dashboard/dashboard.routes'),
                     }
+
+                        path:'pet-species',
+                        data: {
+                            breadcrumb: 'Pet Species',
+                            feature: FeatureCodes.pet_species,
+                    },
+                        loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/pets/pets.routing'),
+                    },
+
                     
                     
                 ],

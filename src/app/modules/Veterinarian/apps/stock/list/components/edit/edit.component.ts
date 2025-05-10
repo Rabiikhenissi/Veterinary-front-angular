@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PetSpecies } from 'app/shared/models/petSpecies';
 import { Product } from 'app/shared/models/product';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { ProductService } from 'app/shared/services/product.service';
 import Swal from 'sweetalert2';
 
@@ -16,27 +18,31 @@ export class EditComponent implements OnInit {
   _route = inject(ActivatedRoute);
   _router = inject(Router);
   _fb = inject(FormBuilder);
+  _petSpeciesService = inject(PetSpeciesService);
   _productService = inject(ProductService);
   productForm!: FormGroup;
   id = this._route.snapshot.paramMap.get('id')!;
   categories = ['Medications', 'Accessories', 'Food', 'Hygiene', 'Medical Supplies'];
-  species = [
-    { name: 'Dog', image: 'assets/images/avatars/pets/dog.png' },
-    { name: 'Cat', image: 'assets/images/avatars/pets/cat.png' },
-    { name: 'Rabbit', image: 'assets/images/avatars/pets/rabbit.png' },
-    { name: 'Fish', image: 'assets/images/avatars/pets/fish.png' },
-    { name: 'Turtle', image: 'assets/images/avatars/pets/turtle.png' },
-    { name: 'Monkey', image: 'assets/images/avatars/pets/monkey.png' }
-  ];
+  
+    species: PetSpecies[] = []; 
+  
   get product() {
   return this.productForm?.value;
 }
   getSpeciesImage(name: string): string | undefined {
-    return this.species.find(s => s.name === name)?.image;
+    return this.species.find(s => s.name === name)?.icon;
   }
   ngOnInit(): void {
     this._productService.getOne(this.id).subscribe(product => {
       this.initForm(product);
+    });
+    this._petSpeciesService.getList().subscribe({
+      next: (res) => {
+        this.species = res.data;
+      },
+      error: (err) => {
+        console.error('Failed to fetch species', err);
+      }
     });
   }
 

@@ -33,6 +33,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { User } from 'app/shared/models/user';
 import { Pet } from 'app/shared/models/pet';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
     selector: 'app-calendar',
@@ -47,6 +48,7 @@ export class CalendarComponent implements OnInit {
     _petService = inject(PetService);
     _appointmentService = inject(AppointmentService);
     _userService = inject(UserService);
+    _notificationService = inject(NotificationService);
 _companyService = inject(CompanyService);
 _route= inject(ActivatedRoute);
     pets: any[] = [];
@@ -284,7 +286,7 @@ this.initializeCalendarOptions();
                     const appointment: Appointment = {
                         userId: {
                             _id: pet.ownerId._id,
-                            name: pet.ownerId._id,
+                            name: pet.ownerId.name,
                         },
                         petId: {
                             _id: pet._id,
@@ -294,7 +296,8 @@ this.initializeCalendarOptions();
                         },
                         companyId: localStorage.getItem('connectedUserCompany'),
                         date: startDate.split('T')[0],
-                        time: startDate.split('T')[1],
+                        time: startDate.split('T')[1]?.split('+')[0]?.substring(0, 5),
+                        
                         status: 'pending',
                     };
 
@@ -302,6 +305,43 @@ this.initializeCalendarOptions();
                         .createAppointment(appointment)
                         .subscribe(
                             (response) => {
+                                const title = 'New Appointment Booked';
+                                const message = `A new appointment has been booked by ${appointment.userId.name} for their pet ${appointment.petId.name} (${appointment.petId.species}).\nThe appointment is scheduled for ${appointment.date} at ${appointment.time}.`;
+                                const type = 'Appointment Booking';
+                                
+                                this._userService.getInternalUsers().subscribe({
+                                    next: (internalUsersResponse: any) => {
+                                      const internalUsers = internalUsersResponse?.data;
+                                      if (Array.isArray(internalUsers)) {
+                                        internalUsers.forEach(user => {
+                                          this._notificationService.createNotification({
+                                            userId: user._id,
+                                            title: title,
+                                            message: message,
+                                            type: type
+                                          }).subscribe(() => {
+                                             this._notificationService.sendEmailNotification(
+                                              user.email,
+                                              title,
+                                              message
+                                            ).subscribe(() => {
+                                              console.log(`Email sent to internal user ${user.name}`);
+                                            }, (error) => {
+                                              console.error('Error sending email to internal user:', error);
+                                            });
+                                          }, (error) => {
+                                            console.error('Error sending notification to internal user:', error);
+                                          });
+                                        });
+                                      } else {
+                                        console.error('Expected an array but got:', internalUsers);
+                                      }
+                                    },
+                                    error: (error) => {
+                                      console.error('Error fetching internal users:', error);
+                                    }
+                                  });
+                            
                                 Swal.fire({
                                     title: 'Appointment created!',
                                     text: 'Your appointment has been added.Waiting for confirmation.',
@@ -418,108 +458,106 @@ this.initializeCalendarOptions();
 
     loadAppointments(): void {
         const currentUserId = localStorage.getItem('connectedUserId');
-        console.log('test', localStorage.getItem('connectedUserId'));
+        console.log('Current User ID:', currentUserId);
         const connectedUserType = localStorage.getItem('connectedUserType');
-        console.log('test', localStorage.getItem('connectedUserType'));
+        console.log('User Type:', connectedUserType);
         const connectedUserCompany = localStorage.getItem('connectedUserCompany');
-
-        this._appointmentService.getAppointments('100', '1', '',connectedUserCompany).subscribe(
-            (response) => {
-                console.log('Appointments fetched successfully:', response);
-
-                const appointments = response.data;
-                console.log('Appointments:', appointments);
-
-                const events: EventInput[] = appointments.flatMap((appointment: Appointment) => {
-                        const startDate = new Date(appointment.date)
-                            .toISOString()
-                            .split('T')[0];
-                            const startDateTime = new Date(`${startDate}T${appointment.time}`);
-                            const endDateTime = new Date(startDateTime);
-                            endDateTime.setHours(endDateTime.getHours() + 1);
-                        const gapStart = new Date(endDateTime);
-                        const gapEnd = new Date(gapStart);
-                        gapEnd.setMinutes(gapEnd.getMinutes() + 30);
-                        if (
-                            appointment.userId?._id !== currentUserId &&
-                            connectedUserType === 'external'
-                        ) {
-                            
-                            return [
-                                {
-                                    start: startDateTime.toISOString(),
-                                    end: endDateTime.toISOString(),
-                                    display: 'background',
-                                    editable: false,
-                                    backgroundColor: 'grey',
-                                },
-                                {
-                                    start: gapStart.toISOString(),
-                                    end: gapEnd.toISOString(),
-                                    display: 'background',
-                                    editable: false,
-                                    backgroundColor: 'grey',
-                                },
-                            ];
-                        }
-                       
-                        // secretary view
-                        let title = `${appointment.userId.name} with ${appointment.petId.name} (${appointment.petId.species})`;
-
-                        if (appointment.status === 'pending') {
-                            // client view
-                            if (connectedUserType === 'external') {
-                                title = `${appointment.petId.name} (${appointment.petId.species})`;
-                            }
-
-                           
-        return [
-            {
-                id: appointment._id,
-                title: title,
-                start: startDateTime.toISOString(),
-                end: endDateTime.toISOString(),
-                allDay: false,
-                color: '#fbbf24',
-            },
-            {
-                start: gapStart.toISOString(),
-                end: gapEnd.toISOString(),
-                display: 'background',
-                editable: false,
-                backgroundColor: 'grey',
-            }
-        ];
-                        }
-                        return [
-                            {
-                                id: appointment._id,
-                                title: title,
-                                start: startDateTime.toISOString(),
-                                    end: endDateTime.toISOString(),
-                                allDay: false,
-                                color: 'green',
-                            },
-                            {
-                                start: gapStart.toISOString(),
-                                end: gapEnd.toISOString(),
-                                display: 'background',
-                                editable: false,
-                                backgroundColor: 'grey',
-                            }
-                        ];
-                    }
-                );
-                const calendarApi = this.calendarComponent.getApi();
-                calendarApi.removeAllEvents();
-                calendarApi.addEventSource(events);
-                calendarApi.updateSize();
-            },
-            (error) => {
-                console.error('Error fetching appointments:', error);
-            }
+      
+        this._appointmentService.getAppointments('100', '1', '', connectedUserCompany).subscribe(
+          (response) => {
+            console.log('Appointments fetched successfully:', response);
+      
+            const appointments = response.data;
+            console.log('Appointments:', appointments);
+      
+            const events: EventInput[] = appointments.flatMap((appointment: Appointment) => {
+              const startDate = new Date(appointment.date).toISOString().split('T')[0];
+              const startDateTime = new Date(`${startDate}T${appointment.time}`);
+              const endDateTime = new Date(startDateTime);
+              endDateTime.setHours(endDateTime.getHours() + 1);
+              
+              const gapStart = new Date(endDateTime);
+              const gapEnd = new Date(gapStart);
+              gapEnd.setMinutes(gapEnd.getMinutes() + 30);
+      
+              if (appointment.userId?.['_id'] !== currentUserId && connectedUserType === 'external') {
+                return [
+                  {
+                    start: startDateTime.toISOString(),
+                    end: endDateTime.toISOString(),
+                    display: 'background',
+                    editable: false,
+                    backgroundColor: 'grey',
+                  },
+                  {
+                    start: gapStart.toISOString(),
+                    end: gapEnd.toISOString(),
+                    display: 'background',
+                    editable: false,
+                    backgroundColor: 'grey',
+                  },
+                ];
+              }
+      
+              // Secretary or internal user view
+              let title = `${appointment.userId?.name || 'Unknown User'} with ${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
+              console.log('Appointment Title:', title);
+      
+              if (appointment.status === 'pending') {
+                // External user view
+                if (connectedUserType === 'external') {
+                  title = `${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
+                }
+      
+                return [
+                  {
+                    id: appointment._id,
+                    title: title,
+                    start: startDateTime.toISOString(),
+                    end: endDateTime.toISOString(),
+                    allDay: false,
+                    color: '#fbbf24', // Orange for pending
+                  },
+                  {
+                    start: gapStart.toISOString(),
+                    end: gapEnd.toISOString(),
+                    display: 'background',
+                    editable: false,
+                    backgroundColor: 'grey',
+                  },
+                ];
+              }
+      
+              return [
+                {
+                  id: appointment._id,
+                  title: title,
+                  start: startDateTime.toISOString(),
+                  end: endDateTime.toISOString(),
+                  allDay: false,
+                  color: 'green', // Green for confirmed appointments
+                },
+                {
+                  start: gapStart.toISOString(),
+                  end: gapEnd.toISOString(),
+                  display: 'background',
+                  editable: false,
+                  backgroundColor: 'grey',
+                },
+              ];
+            });
+      
+            // Updating calendar with the events
+            const calendarApi = this.calendarComponent.getApi();
+            calendarApi.removeAllEvents();
+            calendarApi.addEventSource(events);
+            calendarApi.updateSize();
+          },
+          (error) => {
+            console.error('Error fetching appointments:', error);
+          }
         );
-    }
+      }
     updateCalendarEvents(events: EventInput[]): void {
         const calendarApi = this.calendarComponent.getApi();
         calendarApi.addEventSource(events); 
@@ -552,7 +590,7 @@ this.initializeCalendarOptions();
                     petId: appointment.petId._id,      
                     companyId: appointment.companyId,  
                     date: updatedStart.split('T')[0],  
-                    time: updatedStart.split('T')[1],  
+                    time: updatedStart.split('T')[1]?.split('+')[0]?.substring(0, 5), 
                            
                 };
     
