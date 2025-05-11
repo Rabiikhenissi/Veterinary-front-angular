@@ -4,6 +4,7 @@ import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import {FeatureCodes} from "./shared/enums/feature-codes";
 import { IsAuthorizedGuard } from 'app/core/auth/guards/isAuthorized.guard';
+import { DetailsComponent } from './modules/landing/home/details/details.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -33,6 +34,7 @@ export const appRoutes: Route[] = [
             {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes')},
             {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes')},
             {path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes')},
+            
         ]
     },
 
@@ -47,6 +49,13 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes')},
+             {
+                        path: 'company-details/:id',
+                        component: DetailsComponent,  // Make sure to use the correct component for the details
+                        data: {
+                            breadcrumb: 'Company Details'
+                        }
+                    },
         ]
     },
 
@@ -59,6 +68,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
+            
         ]
     },
 
@@ -254,6 +264,7 @@ export const appRoutes: Route[] = [
                     },
                         loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/medicalServices/medicalServices.routing'),
                     },
+                    
                     
                     
                 ],
