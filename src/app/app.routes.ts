@@ -232,6 +232,17 @@ export const appRoutes: Route[] = [
                     },
                         loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/pets/pets.routing'),
                     },
+
+                    {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'dashboard-veterinarian',
+                        data: {
+                            breadcrumb: 'Dashboard Veterinarian',
+                            feature: FeatureCodes.dashboard_veterinarian,
+                        },
+                        loadChildren: () => import('app/modules/Veterinarian/apps/dashboard/dashboard.routes'),
+                    },
 {
                         canActivate: [IsAuthorizedGuard],
                         canActivateChild: [IsAuthorizedGuard],

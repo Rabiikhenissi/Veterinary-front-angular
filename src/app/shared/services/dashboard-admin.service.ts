@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 import { project } from './mock-api/data';
 
 @Injectable({providedIn: 'root'})
-export class ProjectService
+export class dashboardAdminService
 {
     private _data: BehaviorSubject<any> = new BehaviorSubject(null);
 

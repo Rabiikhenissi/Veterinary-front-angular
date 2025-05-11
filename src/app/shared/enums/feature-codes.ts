@@ -23,6 +23,7 @@ export enum FeatureCodes {
   appointments_history='appointments-history',
   dashboard='dashboard',
   pet_species='pet-species',
+  dashboard_veterinarian='dashboard-veterinarian',
   medical_services='medical-services',
 }
 
@@ -49,5 +50,6 @@ export const listFeatureActions: RefList<FeatureCodes>[] = [
   { key: FeatureCodes.appointments_history, value: 'Appointments History' },
   { key: FeatureCodes.dashboard, value: 'Dashboard' },
   { key: FeatureCodes.pet_species, value: 'Pet Species' },
+  { key: FeatureCodes.dashboard_veterinarian, value: 'Dashboard Veterinarian' },
   { key: FeatureCodes.medical_services, value: 'Medical Services' },
 ];
