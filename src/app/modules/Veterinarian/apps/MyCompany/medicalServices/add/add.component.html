@@ -1,1 +1,46 @@
-<p>add works!</p>
+<div class="w-full max-w-7xl mx-auto px-10 py-10 bg-green-50 border border-green-100 rounded-3xl shadow-2xl">
+  <h2 class="text-3xl font-bold text-blue-800 mb-6">➕ Add New Service</h2>
+
+  <form (ngSubmit)="submit()" #serviceForm="ngForm" class="space-y-6">
+    <!-- Service Name -->
+    <div>
+      <label class="block text-blue-700 font-medium mb-2">Service</label>
+      <select
+        class="w-full border border-blue-200 rounded-xl px-4 py-2 text-gray-800"
+        [(ngModel)]="selectedService"
+        name="name"
+        required
+      >
+        <option value="" disabled>Select a service</option>
+        <option *ngFor="let service of predefinedServices" [value]="service.name">
+          {{ service.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Price -->
+    <div>
+      <label class="block text-blue-700 font-medium mb-2">Price</label>
+      <input
+        type="number"
+        class="w-full border border-blue-200 rounded-xl px-4 py-2 text-gray-800"
+        [(ngModel)]="price"
+        name="price"
+        required
+        min="0"
+        step="0.01"
+      />
+    </div>
+
+    <!-- Submit -->
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        [disabled]="!serviceForm.form.valid"
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl text-lg font-semibold shadow-md transition-all duration-300"
+      >
+        ✅ Save Service
+      </button>
+    </div>
+  </form>
+</div>

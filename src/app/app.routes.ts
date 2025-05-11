@@ -232,6 +232,7 @@ export const appRoutes: Route[] = [
                     },
                         loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/pets/pets.routing'),
                     },
+
                     {
                         canActivate: [IsAuthorizedGuard],
                         canActivateChild: [IsAuthorizedGuard],
@@ -242,8 +243,17 @@ export const appRoutes: Route[] = [
                         },
                         loadChildren: () => import('app/modules/Veterinarian/apps/dashboard/dashboard.routes'),
                     },
+{
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
 
-
+                        path:'medical-services',
+                        data: {
+                            breadcrumb: 'Medical Services',
+                            feature: FeatureCodes.medical_services,
+                    },
+                        loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/medicalServices/medicalServices.routing'),
+                    },
                     
                     
                 ],

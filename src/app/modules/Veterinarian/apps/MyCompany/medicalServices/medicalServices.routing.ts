@@ -1,5 +1,4 @@
 import { Route } from '@angular/router';
-import { DetailsComponent } from './list/components/details/details.component';
 import { AddComponent } from './add/add.component';
 import { EditComponent } from './list/components/edit/edit.component';
 import {ListComponent} from "./list/list.component";
@@ -11,9 +10,7 @@ export default [
       {
         path: '',
         component: ListComponent,
-        data: {
-          breadcrumb: 'Companies',
-        },
+      
       },
       {
         path: 'add',
@@ -25,13 +22,7 @@ export default [
       {
         path: ':id',
         children: [
-          {
-            path: '',
-            component: DetailsComponent,
-            data: {
-              breadcrumb: 'details',
-            },
-          },
+        
           {
             path: 'edit',
             component: EditComponent,
