@@ -1,22 +1,15 @@
 <div class="flex flex-col items-center justify-center w-full h-full">
-    <div class="w-full max-w-3xl">
-        <div class="max-w-none mx-auto prose prose-sm">
-            <img
-                class="w-20"
-                src="assets/images/logo/logo.svg"
-                alt="Logo image">
-            <h1>Landing Module</h1>
-            <p>
-                This can be the landing or the welcome page of your application. If you have an SSR (Server Side Rendering) setup, or if you don't need to have Search engine
-                visibility and optimizations, you can even use this page as your primary landing page.
-            </p>
-            <p>
-                This is a separate "module", it has its own directory and routing setup and also it's completely separated from the actual application. This is also a simple example of
-                a multiple applications setup that uses the same codebase. You can have different entry points and essentially have different applications within the same codebase.
-            </p>
-        </div>
-        <div>
-            <a
+  <div class="w-full">
+    <div class="min-h-screen bg-gradient-to-br from-purple-100 via-white to-blue-100">
+      <!-- Hero Banner -->
+      <div class="w-full text-center py-16 bg-white shadow-md mb-10">
+        <h1 class="text-4xl sm:text-5xl font-bold text-indigo-700 mb-4">
+          Welcome to Zoovana!
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-600">
+          Discover and connect with amazing veterinary companies 🐾
+        </p>
+        <a
                 class="mt-8"
                 mat-flat-button
                 [color]="'primary'"
@@ -25,7 +18,32 @@
                 <mat-icon
                     class="ml-2 icon-size-5"
                     [svgIcon]="'heroicons_mini:arrow-long-right'"></mat-icon>
-            </a>
+        </a> 
+      </div>
+
+      <!-- Company Cards Grid -->
+      <!-- Company Cards Grid -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div
+      *ngFor="let company of companies"
+      class="bg-white rounded-2xl shadow-md hover:shadow-indigo-300 transition-all duration-300 border border-gray-200 flex flex-col items-center p-6"
+    >
+      <!-- Wrap each card with a click event that triggers details() -->
+      <div (click)="details(company)" class="flex flex-col items-center cursor-pointer">
+        <div class="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-4 shadow-sm">
+          <img
+            [src]="defaultLogo"
+            alt="Company Logo"
+            class="w-16 h-16 object-contain"
+          />
         </div>
+        <h2 class="text-indigo-800 text-lg font-semibold">{{ company.name }}</h2>
+      </div>
     </div>
+  </div>
 </div>
+    </div>
+  </div>
+</div>
+

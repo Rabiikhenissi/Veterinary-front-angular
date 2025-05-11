@@ -3,6 +3,7 @@ export class Company {
   code?: string;
   name?: string;
   firstCalendarDay?: string;
+  visitPrice?: number;
   latitude?: number;
   longitude?: number;
   services?: Service[];
