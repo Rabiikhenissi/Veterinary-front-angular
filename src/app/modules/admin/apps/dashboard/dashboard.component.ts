@@ -12,7 +12,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { User } from 'app/shared/models/user';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { AuthService } from 'app/shared/services/auth.service';
-import { ProjectService } from 'app/shared/services/dashboard.service';
+import { dashboardAdminService } from 'app/shared/services/dashboard-admin.service';
 import { UserService } from 'app/shared/services/user.service';
 import { ApexChart, ApexNonAxisChartSeries, ApexOptions, ApexResponsive, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject } from 'rxjs';
@@ -97,7 +97,7 @@ stats = {
      * Constructor
      */
     constructor(
-        private _projectService: ProjectService,
+        private _projectService: dashboardAdminService,
         private _router: Router,
         private _appointmentService: AppointmentService,
     )

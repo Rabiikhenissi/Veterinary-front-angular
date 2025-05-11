@@ -22,6 +22,19 @@ cart$ = this.cart.asObservable();
   getCart(): Observable<Cart> {
     return this.http.get<Cart>(`${this.endpoint}/`);
   }
+  getList(
+    page: number,
+    limit: number,
+    companyId: string
+  ): Observable<any> {
+    return this.http.get<any>(`${this.endpoint}/list`, {
+      params: {
+        page: page.toString(),
+        limit: limit.toString(),
+        companyId
+      }
+  })}
+
 
   addToCart( productId: string, quantity: number): Observable<Cart> {
     return this.http.post<Cart>(`${this.endpoint}`, { productId, quantity });

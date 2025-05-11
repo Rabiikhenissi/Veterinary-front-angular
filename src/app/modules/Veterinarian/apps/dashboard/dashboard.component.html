@@ -244,50 +244,50 @@
                                         </div>
                                     </div>
                                     <!-- Overview -->
-                                    <div class="flex flex-col">
+                                    <div  class="flex flex-col">
                                         <div class="font-medium text-secondary">Overview</div>
-                                        <div class="flex-auto grid grid-cols-4 gap-4 mt-6">
+                                        <div  class="flex-auto grid grid-cols-4 gap-4 mt-6" >
                                             <!-- New issues -->
                                             <div class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-indigo-50 text-indigo-800 dark:bg-white dark:bg-opacity-5 dark:text-indigo-400">
-                                                <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
-                                                    {{data.githubIssues.overview[githubIssuesWeekSelector.value]['new-issues']}}
+                                                <div  class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
+                                                    {{stats.stats?.total}}
                                                 </div>
-                                                <div class="mt-1 text-sm sm:text-lg font-medium">New Issues</div>
+                                                <div class="mt-1 text-sm sm:text-lg font-medium">all appointments</div>
                                             </div>
                                             <!-- Closed -->
                                             <div class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500">
                                                 <div class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
-                                                    {{data.githubIssues.overview[githubIssuesWeekSelector.value]['closed-issues']}}
+                                                    {{stats.stats?.completed + stats.stats?.confirmed}}
                                                 </div>
-                                                <div class="mt-1 text-sm sm:text-lg font-medium">Closed</div>
+                                                <div class="mt-1 text-sm sm:text-lg font-medium">confirmed </div>
                                             </div>
                                             <!-- Fixed -->
                                             <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
                                                 <div class="text-5xl font-semibold leading-none tracking-tight">
-                                                    {{data.githubIssues.overview[githubIssuesWeekSelector.value]['fixed']}}
+                                                    {{stats.stats?.pending}}
                                                 </div>
-                                                <div class="mt-1 text-sm font-medium text-center">Fixed</div>
+                                                <div class="mt-1 text-sm font-medium text-center">pending </div>
                                             </div>
                                             <!-- Won't fix -->
                                             <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
                                                 <div class="text-5xl font-semibold leading-none tracking-tight">
-                                                    {{data.githubIssues.overview[githubIssuesWeekSelector.value]['wont-fix']}}
+                                                    {{stats.stats?.canceled}}
                                                 </div>
-                                                <div class="mt-1 text-sm font-medium text-center">Won't Fix</div>
+                                                <div class="mt-1 text-sm font-medium text-center"> canceled</div>
                                             </div>
                                             <!-- Re-opened -->
                                             <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
                                                 <div class="text-5xl font-semibold leading-none tracking-tight">
-                                                    {{data.githubIssues.overview[githubIssuesWeekSelector.value]['re-opened']}}
+                                                    {{stats.stats?.completed}}
                                                 </div>
-                                                <div class="mt-1 text-sm font-medium text-center">Re-opened</div>
+                                                <div class="mt-1 text-sm font-medium text-center">completed</div>
                                             </div>
                                             <!-- Needs triage -->
                                             <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
                                                 <div class="text-5xl font-semibold leading-none tracking-tight">
-                                                    {{data.githubIssues.overview[githubIssuesWeekSelector.value]['needs-triage']}}
+                                                    {{stats.stats?.confirmed}}
                                                 </div>
-                                                <div class="mt-1 text-sm font-medium text-center">Needs Triage</div>
+                                                <div class="mt-1 text-sm font-medium text-center">not completed</div>
                                             </div>
                                         </div>
                                     </div>
@@ -338,41 +338,36 @@
                             <!-- Schedule -->
                             <div class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="flex flex-col sm:flex-row items-start justify-between">
-                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Schedule</div>
-                                    <div class="mt-3 sm:mt-0 sm:ml-2">
-                                        <mat-button-toggle-group
-                                            value="today"
-                                            #scheduleDaySelector="matButtonToggleGroup">
-                                            <mat-button-toggle value="today">Today</mat-button-toggle>
-                                            <mat-button-toggle value="tomorrow">Tomorrow</mat-button-toggle>
-                                        </mat-button-toggle-group>
-                                    </div>
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">last {{stats.recentAppointments.length}} appointments</div>
+                                    
                                 </div>
                                 <div class="flex flex-col mt-2 divide-y">
-                                    <ng-container *ngFor="let scheduleItem of data.schedule[scheduleDaySelector.value]; trackBy: trackByFn">
+                                    <ng-container *ngFor="let appointment of stats.recentAppointments; trackBy: trackByFn">
                                         <div class="flex flex-row items-center justify-between py-4 px-0.5">
                                             <div class="flex flex-col">
-                                                <div class="font-medium">{{scheduleItem.title}}</div>
+                                                <div class="font-medium">{{appointment.petId.name}}</div>
                                                 <div class="flex flex-col sm:flex-row sm:items-center -ml-0.5 mt-2 sm:mt-1 space-y-1 sm:space-y-0 sm:space-x-3">
-                                                    <ng-container *ngIf="scheduleItem.time">
+                                                    <ng-container >
                                                         <div class="flex items-center">
                                                             <mat-icon
                                                                 class="icon-size-5 text-hint"
                                                                 [svgIcon]="'heroicons_solid:clock'"></mat-icon>
-                                                            <div class="ml-1.5 text-md text-secondary">{{scheduleItem.time}}</div>
+                                                            <div class="ml-1.5 text-md text-secondary">{{appointment.time}}</div>
                                                         </div>
                                                     </ng-container>
-                                                    <ng-container *ngIf="scheduleItem.location">
+                                                    <ng-container >
                                                         <div class="flex items-center">
-                                                            <mat-icon
-                                                                class="icon-size-5 text-hint"
-                                                                [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-                                                            <div class="ml-1.5 text-md text-secondary">{{scheduleItem.location}}</div>
+                                                            <mat-icon  
+                                                            class="icon-size-5 text-hint"  
+                                                            [svgIcon]="'heroicons_solid:calendar-days'"></mat-icon>
+                                                            <div class="ml-1.5 text-md text-secondary">{{appointment.date | date}}</div>
                                                         </div>
                                                     </ng-container>
                                                 </div>
                                             </div>
-                                            <button mat-icon-button>
+                                            <button mat-icon-button 
+                                             [routerLink]="['/home/appointments', appointment._id]"
+                                            >
                                                 <mat-icon [svgIcon]="'heroicons_mini:chevron-right'"></mat-icon>
                                             </button>
                                         </div>
@@ -387,24 +382,28 @@
                 <mat-tab label="Budget">
                     <ng-template matTabContent>
                         <div class="grid grid-cols-1 sm:grid-cols-6 gap-6 w-full min-w-0">
-                            <!-- Budget distribution -->
-                            <div class="sm:col-span-3 lg:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                                <div class="text-lg font-medium tracking-tight leading-6 truncate">Budget Distribution</div>
-                                <div class="flex flex-col flex-auto">
-                                    <apx-chart
-                                        class="flex-auto w-full h-80"
-                                        [chart]="chartBudgetDistribution.chart"
-                                        [colors]="chartBudgetDistribution.colors"
-                                        [dataLabels]="chartBudgetDistribution.dataLabels"
-                                        [markers]="chartBudgetDistribution.markers"
-                                        [plotOptions]="chartBudgetDistribution.plotOptions"
-                                        [series]="chartBudgetDistribution.series"
-                                        [stroke]="chartBudgetDistribution.stroke"
-                                        [tooltip]="chartBudgetDistribution.tooltip"
-                                        [xaxis]="chartBudgetDistribution.xaxis"
-                                        [yaxis]="chartBudgetDistribution.yaxis"></apx-chart>
-                                </div>
-                            </div>
+                            <!-- Most Sold Categories -->
+<!-- Most Sold Categories Radar -->
+<div class="sm:col-span-3 lg:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+  <div class="text-lg font-medium tracking-tight leading-6 truncate">Most Sold Categories</div>
+  <div class="flex flex-col flex-auto">
+    <apx-chart
+      class="flex-auto w-full h-80"
+      [chart]="chartMostSoldCategories.chart"
+      [colors]="chartMostSoldCategories.colors"
+      [dataLabels]="chartMostSoldCategories.dataLabels"
+      [markers]="chartMostSoldCategories.markers"
+      [plotOptions]="chartMostSoldCategories.plotOptions"
+      [series]="chartMostSoldCategories.series"
+      [stroke]="chartMostSoldCategories.stroke"
+      [tooltip]="chartMostSoldCategories.tooltip"
+      [xaxis]="chartMostSoldCategories.xaxis"
+      [yaxis]="chartMostSoldCategories.yaxis">
+    </apx-chart>
+  </div>
+</div>
+
+
                             <!-- Expense -->
                             <div class="sm:col-span-3 lg:col-span-2 grid grid-cols-1 gap-y-6">
                                 <!-- Weekly expenses -->

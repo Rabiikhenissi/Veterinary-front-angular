@@ -1,4 +1,4 @@
-import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -7,8 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { AppointmentService } from 'app/shared/services/appointment.service';
 import { dashboardVetService } from 'app/shared/services/dashboard-vet.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject, takeUntil } from 'rxjs';
@@ -18,7 +19,7 @@ import { Subject, takeUntil } from 'rxjs';
     templateUrl    : './dashboard.component.html',
     encapsulation  : ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports        : [TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe],
+    imports        : [RouterLink,TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,DatePipe],
 })
 export class DashboardComponent implements OnInit, OnDestroy
 {
@@ -28,16 +29,34 @@ export class DashboardComponent implements OnInit, OnDestroy
     chartWeeklyExpenses: ApexOptions = {};
     chartMonthlyExpenses: ApexOptions = {};
     chartYearlyExpenses: ApexOptions = {};
-    data: any;
     selectedProject: string = 'ACME Corp. Backend App';
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-
+    companyId: string = '';
+    chartMostSoldCategories: any;
+    data:any = {
+    mostSoldCategories: {
+      categories: ['Category 1', 'Category 2', 'Category 3'], // 3 Categories
+      series: [
+        { name: 'Sold Quantity', data: [120, 200, 150] } // Example sold quantities
+      ]
+    }
+  };
+    appointments: any[] = [];
+    stats = {
+    total: 0,
+    confirmed: 0,
+    canceled: 0,
+    pending: 0,
+    completed: 0,
+    recentAppointments: [],
+  };
     /**
      * Constructor
      */
     constructor(
         private _dashboardVetService: dashboardVetService,
         private _router: Router,
+        private _appointmentService: AppointmentService,
     )
     {
     }
@@ -51,6 +70,32 @@ export class DashboardComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
+        this.companyId=localStorage.getItem('connectedUserCompany') || '';
+        this._dashboardVetService.getDashboardStats(this.companyId).subscribe({
+            next: (data) =>
+            {
+                this.stats = data;
+                console.log('stats', this.stats);
+            },
+            error: () =>
+            {
+                // Redirect to the 404 page
+                this._router.navigate(['/pages/errors/404']);
+            }
+        })
+
+        this._appointmentService.getAllByCompany(this.companyId).subscribe({
+            next: (data) =>
+            {
+                this.appointments = data;
+            },
+            error: () =>
+            {
+                // Redirect to the 404 page
+                this._router.navigate(['/pages/errors/404']);
+            },
+        })
+
         // Get the data
         this._dashboardVetService.getData().subscribe({
             next: (data) =>
@@ -66,6 +111,64 @@ export class DashboardComponent implements OnInit, OnDestroy
                 this._router.navigate(['/pages/errors/404']);
             },
         })
+this._dashboardVetService
+    .getMostSoldCategories(this.companyId)
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe((result) => {
+      // result is sorted desc by totalQuantity already
+      const categories = result.map(r => r._id);
+      const quantities = result.map(r => r.totalQuantity);
+
+      // Build radar chart config
+      this.chartMostSoldCategories = {
+        chart: {
+          fontFamily: 'inherit',
+          foreColor: 'inherit',
+          height: '100%',
+          type: 'radar',
+          sparkline: { enabled: true },
+        },
+        colors: ['#818CF8'],
+        dataLabels: {
+          enabled: true,
+          formatter: (val: number) => `${val}`,
+          textAnchor: 'start',
+          style: { fontSize: '13px', fontWeight: 500 },
+          background: { borderWidth: 0, padding: 4 },
+          offsetY: -15,
+        },
+        markers: { strokeColors: '#818CF8', strokeWidth: 4 },
+        plotOptions: {
+          radar: {
+            polygons: {
+              strokeColors: 'var(--fuse-border)',
+              connectorColors: 'var(--fuse-border)',
+            },
+          },
+        },
+        series: [
+          { name: 'Sold Quantity', data: quantities }
+        ],
+        stroke: { width: 2 },
+        tooltip: {
+          theme: 'dark',
+          y: { formatter: (val: number) => `${val} sold` },
+        },
+        xaxis: {
+          categories,
+          labels: { show: true, style: { fontSize: '12px', fontWeight: '500' } },
+        },
+        yaxis: {
+          max: (max: number) => parseInt((max + 10).toFixed(0), 10),
+          tickAmount: 5,
+        },
+      };
+
+      // Optionally: grab the top category
+      const top = result[0];
+      console.log(`Top category: ${top._id} (${top.totalQuantity} sold)`);
+    });
+
     }
 
     /**
@@ -398,37 +501,6 @@ export class DashboardComponent implements OnInit, OnDestroy
             },
         };
 
-        // Yearly expenses
-        this.chartYearlyExpenses = {
-            chart  : {
-                animations: {
-                    enabled: false,
-                },
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'line',
-                sparkline : {
-                    enabled: true,
-                },
-            },
-            colors : ['#FB7185'],
-            series : this.data.yearlyExpenses.series,
-            stroke : {
-                curve: 'smooth',
-            },
-            tooltip: {
-                theme: 'dark',
-            },
-            xaxis  : {
-                type      : 'category',
-                categories: this.data.yearlyExpenses.labels,
-            },
-            yaxis  : {
-                labels: {
-                    formatter: (val): string => `$${val}`,
-                },
-            },
-        };
+        
     }
 }

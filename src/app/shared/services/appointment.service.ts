@@ -40,6 +40,8 @@ export class AppointmentService {
     return this.http.get<any>(`${this.endpoint}/all`);
   }
 
+  
+
   getTopCompaniesComparison()  {
     return this.http.get<any[]>(`${this.endpoint}/top-companies-comparison`);
   }
@@ -89,7 +91,10 @@ export class AppointmentService {
       { params: searchParams }
     );
   }
-  
+  getAllByCompany(
+    companyId: string,): Observable<Appointment[]> {
+      return this.http.get<Appointment[]>(`${this.endpoint}/all-by-company/${companyId}`);
+  }
 
 
   createAppointment(appointment: Appointment): Observable<Appointment> {
