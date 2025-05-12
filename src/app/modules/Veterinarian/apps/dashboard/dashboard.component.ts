@@ -1,15 +1,17 @@
 import { CurrencyPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { CartService } from 'app/shared/services/cart.service';
 import { dashboardVetService } from 'app/shared/services/dashboard-vet.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject, takeUntil } from 'rxjs';
@@ -19,10 +21,14 @@ import { Subject, takeUntil } from 'rxjs';
     templateUrl    : './dashboard.component.html',
     encapsulation  : ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports        : [RouterLink,TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,DatePipe],
+    imports        : [MatPaginator,RouterLink,TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,DatePipe],
 })
 export class DashboardComponent implements OnInit, OnDestroy
 {
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+currentSize = 10;
+  currentPage = 1;
+total = 0;
     chartGithubIssues: ApexOptions = {};
     chartTaskDistribution: ApexOptions = {};
     chartBudgetDistribution: ApexOptions = {};
@@ -41,8 +47,18 @@ export class DashboardComponent implements OnInit, OnDestroy
       ]
     }
   };
+displayedColumns: string[] = ['num', 'clientName', 'totalProd', 'totalMoney', 'date'];
+cartList:any;
+
+
+overviewStats: any = {
+    clientsCount: 0,
+    petsCount: 0,
+    productsCount: 0,
+    appointmentsLast7Days: 0}
+
     appointments: any[] = [];
-    stats = {
+    appointmentData = {
     total: 0,
     confirmed: 0,
     canceled: 0,
@@ -57,6 +73,7 @@ export class DashboardComponent implements OnInit, OnDestroy
         private _dashboardVetService: dashboardVetService,
         private _router: Router,
         private _appointmentService: AppointmentService,
+        private _cartService: CartService,
     )
     {
     }
@@ -71,11 +88,10 @@ export class DashboardComponent implements OnInit, OnDestroy
     ngOnInit(): void
     {
         this.companyId=localStorage.getItem('connectedUserCompany') || '';
-        this._dashboardVetService.getDashboardStats(this.companyId).subscribe({
+        this._dashboardVetService.getAppointmentStats(this.companyId).subscribe({
             next: (data) =>
             {
-                this.stats = data;
-                console.log('stats', this.stats);
+                this.appointmentData = data;
             },
             error: () =>
             {
@@ -83,6 +99,26 @@ export class DashboardComponent implements OnInit, OnDestroy
                 this._router.navigate(['/pages/errors/404']);
             }
         })
+
+        // Get the overview stats
+        this._dashboardVetService.getOverviewStats().subscribe({
+            next: (data) =>
+            {
+                this.overviewStats = data;
+                console.log('Overview stats:', this.overviewStats);
+            },
+            error: (err) =>
+            {
+                // see error
+                console.log('Error fetching overview stats:', err);
+            },
+        })
+
+        // Get the cart list
+this.getCartList();
+
+        
+
 
         this._appointmentService.getAllByCompany(this.companyId).subscribe({
             next: (data) =>
@@ -226,6 +262,38 @@ this._dashboardVetService
                 el.setAttribute('fill', `url(${currentURL}${attrVal.slice(attrVal.indexOf('#'))}`);
             });
     }
+ getCartList(): void {
+    this._cartService.getList(this.currentPage,
+         this.currentSize,
+          this.companyId
+        
+        ).subscribe({
+            next: (res) =>
+            {
+                this.cartList = res.data;
+                console.log('Cart list:', this.cartList);
+                this.total = res.total; // total number of items for pagination
+            },
+            error: () =>
+            {
+                // Redirect to the 404 page
+                this._router.navigate(['/pages/errors/404']);
+            },
+        })
+    }
+
+    pageChanged(event: PageEvent ): void {
+          let { pageIndex } = event;
+          const { pageSize } = event;
+          pageIndex++;
+          if (pageSize !== this.currentSize) {
+            pageIndex = 1;
+            this.paginator.firstPage();
+          }
+          this.currentSize = pageSize;
+          this.currentPage = pageIndex;
+          this.getCartList();
+        }
 
     /**
      * Prepare the chart data from the data
