@@ -1,11 +1,14 @@
 import { CurrencyPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRippleModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router, RouterLink } from '@angular/router';
@@ -21,7 +24,7 @@ import { Subject, takeUntil } from 'rxjs';
     templateUrl    : './dashboard.component.html',
     encapsulation  : ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports        : [MatPaginator,RouterLink,TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,DatePipe],
+    imports        : [MatSelectModule,MatFormFieldModule,FormsModule,MatPaginator,RouterLink,TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,DatePipe],
 })
 export class DashboardComponent implements OnInit, OnDestroy
 {
@@ -39,6 +42,13 @@ total = 0;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     companyId: string = '';
     chartMostSoldCategories: any;
+
+    
+    selectedMonth: string = this.getCurrentMonth(); // Default to the current month
+  appointmentPerDayData: any = {}; // Stores the data for the chart
+  chartAppointmentsPerDay: any = {}; // Initialize with an empty object to prevent 'undefined' error
+  availableMonths: string[] = [];
+
     data:any = {
     mostSoldCategories: {
       categories: ['Category 1', 'Category 2', 'Category 3'], // 3 Categories
@@ -87,6 +97,11 @@ overviewStats: any = {
      */
     ngOnInit(): void
     {
+        this.generateMonthOptions();
+this.getAppointmentsPerDay();
+
+
+
         this.companyId=localStorage.getItem('connectedUserCompany') || '';
         this._dashboardVetService.getAppointmentStats(this.companyId).subscribe({
             next: (data) =>
@@ -138,8 +153,6 @@ this.getCartList();
             {
                 this.data = data;
 
-                // Prepare the chart data
-                this._prepareChartData();
             },
             error: () =>
             {
@@ -147,6 +160,10 @@ this.getCartList();
                 this._router.navigate(['/pages/errors/404']);
             },
         })
+
+
+
+
 this._dashboardVetService
     .getMostSoldCategories(this.companyId)
     .pipe(takeUntil(this._unsubscribeAll))
@@ -164,7 +181,7 @@ this._dashboardVetService
           type: 'radar',
           sparkline: { enabled: true },
         },
-        colors: ['#818CF8'],
+        colors: ['#34D399'],
         dataLabels: {
           enabled: true,
           formatter: (val: number) => `${val}`,
@@ -173,7 +190,7 @@ this._dashboardVetService
           background: { borderWidth: 0, padding: 4 },
           offsetY: -15,
         },
-        markers: { strokeColors: '#818CF8', strokeWidth: 4 },
+        markers: { strokeColors: '#34D399', strokeWidth: 4 },
         plotOptions: {
           radar: {
             polygons: {
@@ -199,6 +216,67 @@ this._dashboardVetService
           tickAmount: 5,
         },
       };
+
+      this._dashboardVetService.getPetCountBySpecies().subscribe({
+    next: (result) => {
+        
+        const labels = result.map((item: any) => item._id);
+        const series = result.map((item: any) => item.count);
+
+        this.chartTaskDistribution = {
+            chart: {
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'polarArea',
+                toolbar: { show: false },
+                zoom: { enabled: false },
+            },
+            labels: labels,
+            legend: { position: 'bottom' },
+            plotOptions: {
+                polarArea: {
+                    spokes: { connectorColors: 'var(--fuse-border)' },
+                    rings: { strokeColor: 'var(--fuse-border)' },
+                },
+            },
+            series: series,
+            states: {
+                hover: {
+                    filter: {
+                        type: 'darken',
+                        value: 0.75,
+                    },
+                },
+            },
+            stroke: { width: 2 },
+            theme: {
+                monochrome: {
+                    enabled: true,
+                    color: '#34D399',
+                    shadeIntensity: 0.75,
+                    shadeTo: 'dark',
+                },
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        colors: 'var(--fuse-text-secondary)',
+                    },
+                },
+            },
+        };
+        
+    },
+    error: (err) => {
+        console.error('Failed to fetch pet count by species:', err);
+    }
+});
+
 
       // Optionally: grab the top category
       const top = result[0];
@@ -282,6 +360,28 @@ this._dashboardVetService
         })
     }
 
+    getCurrentMonth(): string {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Adding leading zero if needed
+    return `${year}-${month}`;
+  }
+  generateMonthOptions(): void {
+    const months: string[] = [];
+  const today = new Date();
+
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    months.push(this.formatMonth(date));
+  }
+
+  this.availableMonths = months;
+}
+
+formatMonth(date: Date): string {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+}
+
     pageChanged(event: PageEvent ): void {
           let { pageIndex } = event;
           const { pageSize } = event;
@@ -295,280 +395,96 @@ this._dashboardVetService
           this.getCartList();
         }
 
+        
+
+        getAppointmentsPerDay(): void {
+    this._dashboardVetService.getAppointmentsPerDay(this.selectedMonth).subscribe({
+  next: (data) => {
+    this.appointmentPerDayData = data;
+
+    this.chartAppointmentsPerDay = {
+      chart: {
+        fontFamily: 'inherit',
+        foreColor: 'inherit',
+        height: '100%',
+        type: 'bar',
+        toolbar: { show: false },
+        zoom: { enabled: false },
+      },
+      colors: ['#22c55e'],
+      dataLabels: {
+        enabled: true,
+        enabledOnSeries: [0],
+        background: { borderWidth: 0 },
+      },
+      grid: {
+        borderColor: 'var(--fuse-border)',
+      },
+      labels: this.appointmentPerDayData.labels,
+      legend: { show: false },
+      plotOptions: {
+        bar: { columnWidth: '50%' },
+      },
+      series: [
+        {
+          name: 'Appointments',
+          data: this.appointmentPerDayData.series,
+        },
+      ],
+      states: {
+        hover: {
+          filter: {
+            type: 'darken',
+            value: 0.75,
+          },
+        },
+      },
+      stroke: { width: [3, 0] },
+      tooltip: {
+        followCursor: true,
+        theme: 'dark',
+      },
+      xaxis: {
+        categories: this.appointmentPerDayData.labels,
+        axisBorder: { show: false },
+        axisTicks: { color: 'var(--fuse-border)' },
+        labels: { style: { colors: 'var(--fuse-text-secondary)' } },
+        tooltip: { enabled: false },
+      },
+      yaxis: {
+        labels: {
+          offsetX: -16,
+          style: { colors: 'var(--fuse-text-secondary)' },
+        },
+      },
+    };
+    
+  },
+
+  error: (err) => {
+    console.error('Error fetching data:', err);
+  }
+});
+
+  }
+
+
+     
+
+onMonthChange(selectedMonth: string): void {
+    this.selectedMonth = selectedMonth;
+    console.log('Selected month:', this.selectedMonth);
+    
+    this.getAppointmentsPerDay(); // Re-fetch the data for the selected month
+    
+  }
+
+        
+
     /**
      * Prepare the chart data from the data
      *
      * @private
      */
-    private _prepareChartData(): void
-    {
-        // Github issues
-        this.chartGithubIssues = {
-            chart      : {
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'line',
-                toolbar   : {
-                    show: false,
-                },
-                zoom      : {
-                    enabled: false,
-                },
-            },
-            colors     : ['#64748B', '#94A3B8'],
-            dataLabels : {
-                enabled        : true,
-                enabledOnSeries: [0],
-                background     : {
-                    borderWidth: 0,
-                },
-            },
-            grid       : {
-                borderColor: 'var(--fuse-border)',
-            },
-            labels     : this.data.githubIssues.labels,
-            legend     : {
-                show: false,
-            },
-            plotOptions: {
-                bar: {
-                    columnWidth: '50%',
-                },
-            },
-            series     : this.data.githubIssues.series,
-            states     : {
-                hover: {
-                    filter: {
-                        type : 'darken',
-                        value: 0.75,
-                    },
-                },
-            },
-            stroke     : {
-                width: [3, 0],
-            },
-            tooltip    : {
-                followCursor: true,
-                theme       : 'dark',
-            },
-            xaxis      : {
-                axisBorder: {
-                    show: false,
-                },
-                axisTicks : {
-                    color: 'var(--fuse-border)',
-                },
-                labels    : {
-                    style: {
-                        colors: 'var(--fuse-text-secondary)',
-                    },
-                },
-                tooltip   : {
-                    enabled: false,
-                },
-            },
-            yaxis      : {
-                labels: {
-                    offsetX: -16,
-                    style  : {
-                        colors: 'var(--fuse-text-secondary)',
-                    },
-                },
-            },
-        };
-
-        // Task distribution
-        this.chartTaskDistribution = {
-            chart      : {
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'polarArea',
-                toolbar   : {
-                    show: false,
-                },
-                zoom      : {
-                    enabled: false,
-                },
-            },
-            labels     : this.data.taskDistribution.labels,
-            legend     : {
-                position: 'bottom',
-            },
-            plotOptions: {
-                polarArea: {
-                    spokes: {
-                        connectorColors: 'var(--fuse-border)',
-                    },
-                    rings : {
-                        strokeColor: 'var(--fuse-border)',
-                    },
-                },
-            },
-            series     : this.data.taskDistribution.series,
-            states     : {
-                hover: {
-                    filter: {
-                        type : 'darken',
-                        value: 0.75,
-                    },
-                },
-            },
-            stroke     : {
-                width: 2,
-            },
-            theme      : {
-                monochrome: {
-                    enabled       : true,
-                    color         : '#93C5FD',
-                    shadeIntensity: 0.75,
-                    shadeTo       : 'dark',
-                },
-            },
-            tooltip    : {
-                followCursor: true,
-                theme       : 'dark',
-            },
-            yaxis      : {
-                labels: {
-                    style: {
-                        colors: 'var(--fuse-text-secondary)',
-                    },
-                },
-            },
-        };
-
-        // Budget distribution
-        this.chartBudgetDistribution = {
-            chart      : {
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'radar',
-                sparkline : {
-                    enabled: true,
-                },
-            },
-            colors     : ['#818CF8'],
-            dataLabels : {
-                enabled   : true,
-                formatter : (val: number): string | number => `${val}%`,
-                textAnchor: 'start',
-                style     : {
-                    fontSize  : '13px',
-                    fontWeight: 500,
-                },
-                background: {
-                    borderWidth: 0,
-                    padding    : 4,
-                },
-                offsetY   : -15,
-            },
-            markers    : {
-                strokeColors: '#818CF8',
-                strokeWidth : 4,
-            },
-            plotOptions: {
-                radar: {
-                    polygons: {
-                        strokeColors   : 'var(--fuse-border)',
-                        connectorColors: 'var(--fuse-border)',
-                    },
-                },
-            },
-            series     : this.data.budgetDistribution.series,
-            stroke     : {
-                width: 2,
-            },
-            tooltip    : {
-                theme: 'dark',
-                y    : {
-                    formatter: (val: number): string => `${val}%`,
-                },
-            },
-            xaxis      : {
-                labels    : {
-                    show : true,
-                    style: {
-                        fontSize  : '12px',
-                        fontWeight: '500',
-                    },
-                },
-                categories: this.data.budgetDistribution.categories,
-            },
-            yaxis      : {
-                max       : (max: number): number => parseInt((max + 10).toFixed(0), 10),
-                tickAmount: 7,
-            },
-        };
-
-        // Weekly expenses
-        this.chartWeeklyExpenses = {
-            chart  : {
-                animations: {
-                    enabled: false,
-                },
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'line',
-                sparkline : {
-                    enabled: true,
-                },
-            },
-            colors : ['#22D3EE'],
-            series : this.data.weeklyExpenses.series,
-            stroke : {
-                curve: 'smooth',
-            },
-            tooltip: {
-                theme: 'dark',
-            },
-            xaxis  : {
-                type      : 'category',
-                categories: this.data.weeklyExpenses.labels,
-            },
-            yaxis  : {
-                labels: {
-                    formatter: (val): string => `$${val}`,
-                },
-            },
-        };
-
-        // Monthly expenses
-        this.chartMonthlyExpenses = {
-            chart  : {
-                animations: {
-                    enabled: false,
-                },
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'line',
-                sparkline : {
-                    enabled: true,
-                },
-            },
-            colors : ['#4ADE80'],
-            series : this.data.monthlyExpenses.series,
-            stroke : {
-                curve: 'smooth',
-            },
-            tooltip: {
-                theme: 'dark',
-            },
-            xaxis  : {
-                type      : 'category',
-                categories: this.data.monthlyExpenses.labels,
-            },
-            yaxis  : {
-                labels: {
-                    formatter: (val): string => `$${val}`,
-                },
-            },
-        };
-
-        
-    }
+    
 }

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { project } from './mock-api/data';
@@ -41,6 +41,15 @@ export class dashboardVetService
 
 getOverviewStats(): Observable<any> {
   return this._httpClient.get(`${this.endpoint}/overviewStats`);
+}
+
+getPetCountBySpecies(): Observable<any> {
+  return this._httpClient.get(`${this.endpoint}/pet-count-by-species`);
+}
+
+getAppointmentsPerDay(month: string): Observable<any> {
+  const params = new HttpParams().set('month', month);
+  return this._httpClient.get<any>(`${this.endpoint}/appointment-per-day`, { params });
 }
 
 
