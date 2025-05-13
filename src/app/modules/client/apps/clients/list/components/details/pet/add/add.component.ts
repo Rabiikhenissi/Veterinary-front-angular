@@ -51,12 +51,14 @@ today: string = new Date().toISOString().split('T')[0];
       });
     }
   
+
   selectIcon(iconData: { icon: string; name: string }) {
     this.petForm.patchValue({
       icon: iconData.icon,
       species: iconData.name,
     });
   }
+
   onSubmit() {
     if (this.petForm.valid) {
       this.petForm.patchValue({ ownerId: this.userId });
