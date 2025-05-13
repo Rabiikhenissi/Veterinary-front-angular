@@ -9,6 +9,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { NotificationService } from 'app/shared/services/notification.service';
 @Component({
   selector: 'app-details',
   imports: [DatePipe,MatPaginator,FeaturesDirective],
@@ -28,6 +29,7 @@ export class DetailsComponent {
   ];
   _authService= inject(AuthService);
     _userService= inject(UserService);
+    _notificationService= inject(NotificationService);
     router= inject(Router);
     route= inject(ActivatedRoute);
     _petService= inject(PetService);
@@ -38,6 +40,7 @@ export class DetailsComponent {
     filterStatus: string[] = [];
     filterSearch: string;
     total = 0;
+    connectedUser: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
@@ -68,17 +71,7 @@ pageChanged(event: PageEvent ): void {
       this.currentPage = pageIndex;
       this.getList();
     }
-  // saveProfile(): void {
-    
-  //   this.userService.updateMyAvatar( this.user.id,this.user.avatar ).subscribe({
-  //     next: (updatedUser) => {
-  //       console.log('Profile avatar updated:', updatedUser);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error updating avatar:', err);
-  //     },
-  //   });
-  // }
+
 
   logout(): void {
     this.router.navigate(['/sign-out']);
@@ -118,5 +111,66 @@ pageChanged(event: PageEvent ): void {
       error: err => console.error(err)
     });
   }
+
+  approveArchiveRequest(pet: any, isRequestApproval: boolean) {
+    console.log('Pet to archive:', pet);
+  this._petService.Archive(pet._id).subscribe({
+    next: () => {
+      this.getList();
+
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString();
+      const formattedTime = now.toLocaleTimeString();
+
+      let title = '';
+      let message = '';
+      let subject = '';
+
+      if (isRequestApproval) {
+        title = 'Archive Request Approved';
+        subject = 'Your Archive Request Was Approved';
+        message = `Hello,\n\nYour archive request for your pet ${pet.name} (${pet.species}) was approved on ${formattedDate} at ${formattedTime}.\n\nRegards,\nThe Clinic Team`;
+      } else {
+        title = 'Pet Archived by Clinic';
+        subject = 'Your Pet Has Been Archived';
+        message = `Hello,\n\nYour pet ${pet.name} (${pet.species}) was archived directly by the clinic on ${formattedDate} at ${formattedTime}.\nIf you have any questions, please contact us.\n\nRegards,\nThe Clinic Team`;
+      }
+
+      const notification = {
+        userId: pet.ownerId._id,
+        title,
+        message,
+        type: 'Pet Archive'
+      };
+
+      this._notificationService.createNotification(notification).subscribe({
+        next: () => {
+          console.log('Notification created');
+          
+          // Then send email
+          this._notificationService.sendEmailNotification(
+            pet.ownerId.email,  // Make sure you have this info
+            subject,
+            message
+          ).subscribe({
+            next: () => console.log('Email sent'),
+            error: err => console.error('Email failed:', err)
+          });
+
+        },
+        error: err => console.error('Notification failed:', err)
+      });
+    },
+    error: err => console.error('Archiving failed:', err),
+  });
+}
+
+
+cancelArchiveRequest(petId: string) {
+  this._petService.cancelArchiveRequest(petId).subscribe({
+    next: () => this.getList(),
+    error: err => console.error(err),
+  });
+}
 
 }

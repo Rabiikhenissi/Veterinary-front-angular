@@ -120,6 +120,27 @@ export class ProfileComponent {
       });
     }
     
+    requestArchive(petId: string): void {
+  this._petService.requestArchive(petId).subscribe({
+    next: () => {
+      // Refresh or optimistically update pet state
+      this.userPets = this.userPets.map(p =>
+        p._id === petId ? { ...p, isArchiveRequested: true } : p
+      );
+    },
+    error: err => console.error('Request archive failed', err)
+  });
+}
 
+cancelArchiveRequest(petId: string): void {
+  this._petService.cancelArchiveRequest(petId).subscribe({
+    next: () => {
+      this.userPets = this.userPets.map(p =>
+        p._id === petId ? { ...p, isArchiveRequested: false } : p
+      );
+    },
+    error: err => console.error('Cancel request failed', err)
+  });
+}
     
 }

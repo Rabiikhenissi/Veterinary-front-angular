@@ -28,12 +28,12 @@ today: string = new Date().toISOString().split('T')[0];
   
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
-      name: ['', Validators.required],
-      species: ['', Validators.required],
-      birthDate: ['', Validators.required],
-      icon: ['', Validators.required], // or optional
-      ownerId: [''], 
-    });
+  name: ['', Validators.required],
+  birthDate: ['', Validators.required],
+  icon: ['', Validators.required], 
+  species: ['', Validators.required],
+  ownerId: [''],
+});
 
     this.userId=this.route.snapshot.paramMap.get('id') || '';
   
@@ -51,16 +51,14 @@ today: string = new Date().toISOString().split('T')[0];
       });
     }
   
-    selectIcon(iconData: { icon: string; name: string }) {
-      console.log('name',iconData.name); // <-- Check the iconData object
-      
-      this.petForm.patchValue({
-        icon: iconData.icon,
-        species: iconData.name,
-        
-      });
-      console.log(this.petForm.value); // <-- See if icon/species are set
-    }
+
+  selectIcon(iconData: { icon: string; name: string }) {
+    this.petForm.patchValue({
+      icon: iconData.icon,
+      species: iconData.name,
+    });
+  }
+
   onSubmit() {
     if (this.petForm.valid) {
       this.petForm.patchValue({ ownerId: this.userId });

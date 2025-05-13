@@ -61,4 +61,20 @@ export class PetService {
     return this.http.get<Pet>(`${this.endpoint}/${petId}/${id}`, {
     });
   }
+
+  requestArchive(petId: string): Observable<any> {
+  return this.http.patch(`/api/pets/${petId}/request-archive`, {});
+}
+
+cancelArchiveRequest(petId: string): Observable<any> {
+  return this.http.patch(`${this.endpoint}/${petId}/cancel-archive-request`, {});
+}
+ Archive(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/archive`, {});
+  }
+
+  rejectArchive(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/reject-archive`, {});
+  }
+
 }
