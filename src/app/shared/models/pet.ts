@@ -5,4 +5,6 @@ export class Pet {
   species: string;
   birthDate: string;
   icon:string;
+  isArchiveRequested: boolean;
+  archived: boolean;
 }

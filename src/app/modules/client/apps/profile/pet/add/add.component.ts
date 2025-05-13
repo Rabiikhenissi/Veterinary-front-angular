@@ -27,12 +27,12 @@ today: string = new Date().toISOString().split('T')[0];
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
-      name: ['', Validators.required],
-      species: ['', Validators.required],
-      birthDate: ['', Validators.required],
-      icon: ['', Validators.required], // or optional
-      ownerId: [''], 
-    });
+  name: ['', Validators.required],
+  birthDate: ['', Validators.required],
+  icon: ['', Validators.required], // acts as the species selection
+  species: ['', Validators.required],
+  ownerId: [''],
+});
   console.log(this.router.config)
   }
   
@@ -48,11 +48,13 @@ today: string = new Date().toISOString().split('T')[0];
         }
       });
     }
-  selectIcon(iconData: { icon: string; label: string }) {
+  selectIcon(iconData: { icon: string; name: string }) {
     this.petForm.patchValue({
       icon: iconData.icon,
-      species: iconData.label,
+      species: iconData.name,
     });
+    console.log('Selected icon:', iconData.name);
+    console.log('petForm value:', this.petForm.value);
   }
   onSubmit() {
     if (this.petForm.valid) {
