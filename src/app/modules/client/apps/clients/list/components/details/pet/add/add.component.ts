@@ -51,12 +51,16 @@ today: string = new Date().toISOString().split('T')[0];
       });
     }
   
-  selectIcon(iconData: { icon: string; label: string }) {
-    this.petForm.patchValue({
-      icon: iconData.icon,
-      species: iconData.label,
-    });
-  }
+    selectIcon(iconData: { icon: string; name: string }) {
+      console.log('name',iconData.name); // <-- Check the iconData object
+      
+      this.petForm.patchValue({
+        icon: iconData.icon,
+        species: iconData.name,
+        
+      });
+      console.log(this.petForm.value); // <-- See if icon/species are set
+    }
   onSubmit() {
     if (this.petForm.valid) {
       this.petForm.patchValue({ ownerId: this.userId });
