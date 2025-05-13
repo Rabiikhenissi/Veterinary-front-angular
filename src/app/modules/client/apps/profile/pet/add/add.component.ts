@@ -48,10 +48,10 @@ today: string = new Date().toISOString().split('T')[0];
         }
       });
     }
-  selectIcon(iconData: { icon: string; label: string }) {
+  selectIcon(iconData: { icon: string; name: string }) {
     this.petForm.patchValue({
       icon: iconData.icon,
-      species: iconData.label,
+      species: iconData.name,
     });
   }
   onSubmit() {
