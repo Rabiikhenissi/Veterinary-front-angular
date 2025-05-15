@@ -108,6 +108,7 @@ export class AuthService {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('connectedSite');
 
+        localStorage.clear();
         // Set the authenticated flag to false
         this._authenticated = false;
         // Return the observable
