@@ -60,6 +60,13 @@
                                 </mat-error>
                             }
                         </div>
+                        <!-- phone -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
+                                <input [(ngModel)]="user.phone" matInput name="phone" type="tel" readonly />
+                            </mat-form-field>
+                        </div>
                         <!-- group -->
                         <div class="sm:col-span-3">
                             <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
@@ -88,6 +95,27 @@
                                     {{ 'This field is required' | transloco }}
                                 </mat-error>
                             }
+                        </div>
+                        <!-- status -->
+                        <div class="sm:col-span-3">
+                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                                <mat-label class="capitalize">{{ 'status' | transloco }}</mat-label>
+                                <mat-select
+                                  [(ngModel)]="user.status"
+                                  name="status"
+                                  disabled
+                                  >
+                                    <mat-option value="verified" style="color:#16a34a; font-weight:600;">
+                                        {{ 'Verified' | transloco }}
+                                    </mat-option>
+                                    <mat-option value="pending" style="color:#d97706; font-weight:600;">
+                                        {{ 'Pending' | transloco }}
+                                    </mat-option>
+                                    <mat-option value="locked" style="color:#dc2626; font-weight:600;">
+                                        {{ 'Locked' | transloco }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>

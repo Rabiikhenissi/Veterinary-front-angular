@@ -1,0 +1,133 @@
+<div class="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0">
+  <div class="md:flex md:items-center md:justify-end w-full sm:w-auto md:h-full md:w-1/2 py-8 px-4 sm:p-12 md:p-16 sm:rounded-2xl md:rounded-none sm:shadow md:shadow-none sm:bg-card">
+    <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
+      <!-- Logo -->
+      <div class="w-50">
+        <img class="w-40 ml-20" src="assets/images/logo/logo.svg" alt="Logo">
+      </div>
+
+      <!-- Title and Go to Home Link -->
+      <div class="mt-8 flex items-center justify-between">
+        <div class="text-4xl font-extrabold tracking-tight leading-tight">
+          Sign Up
+        </div>
+        <a class="text-md font-medium text-primary-500 hover:underline cursor-pointer" [routerLink]="['/home']">
+          Go to Home
+        </a>
+      </div>
+
+      <!-- Alert -->
+      <div *ngIf="showAlert" class="mt-4">
+        <div [ngClass]="{'text-green-600': alert.type === 'success', 'text-red-600': alert.type === 'error'}">
+          {{ alert.message }}
+        </div>
+      </div>
+
+      <!-- Sign Up Form -->
+      <form [formGroup]="signUpForm" (ngSubmit)="signUp()" class="mt-8">
+        <!-- Full Name -->
+        <mat-form-field class="w-full">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName" placeholder="Enter your full name">
+          <mat-error *ngIf="signUpForm.get('fullName')?.hasError('required')">
+            Full name is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field class="w-full">
+          <mat-label>Email Address</mat-label>
+          <input matInput formControlName="email" placeholder="Enter your email">
+          <mat-error *ngIf="signUpForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('email')?.hasError('email')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Phone Number -->
+        <mat-form-field class="w-full">
+          <mat-label>Phone Number</mat-label>
+          <input matInput formControlName="phone" placeholder="Enter your phone number">
+          <mat-error *ngIf="signUpForm.get('phone')?.hasError('required')">
+            Phone number is required
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('phone')?.hasError('pattern')">
+            Please enter a valid phone number
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field class="w-full">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Enter your password">
+          <mat-error *ngIf="signUpForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('password')?.hasError('minlength')">
+            Password must be at least 6 characters long
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Confirm Password -->
+        <mat-form-field class="w-full">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" placeholder="Confirm your password">
+          <mat-error *ngIf="signUpForm.get('confirmPassword')?.hasError('required')">
+            Confirm password is required
+          </mat-error>
+          <mat-error *ngIf="signUpForm.hasError('passwordMismatch') && signUpForm.get('confirmPassword')?.touched">
+            Passwords do not match
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Submit Button -->
+        <button mat-flat-button color="primary" class="w-full mt-6" type="submit" [disabled]="signUpForm.invalid">
+          Sign Up
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right Side Content -->
+  <div class="relative hidden md:flex flex-auto items-center justify-center w-1/2 h-full p-16 lg:px-28 overflow-hidden bg-gray-800 dark:border-l">
+    <!-- Background Elements -->
+    <svg class="absolute inset-0 pointer-events-none" viewBox="0 0 960 540" width="100%" height="100%" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+      <g class="text-gray-700 opacity-25" fill="none" stroke="currentColor" stroke-width="100">
+        <circle r="234" cx="196" cy="23"></circle>
+        <circle r="234" cx="790" cy="491"></circle>
+      </g>
+    </svg>
+    <svg class="absolute -top-16 -right-16 text-gray-700" viewBox="0 0 220 192" width="220" height="192" fill="none">
+      <defs>
+        <pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <rect x="0" y="0" width="4" height="4" fill="currentColor"></rect>
+        </pattern>
+      </defs>
+      <rect width="220" height="192" fill="url(#pattern)"></rect>
+    </svg>
+
+    <!-- Welcome Text -->
+    <div class="z-10 relative w-full max-w-2xl">
+      <div class="text-7xl font-bold leading-none text-gray-100">
+        <div>Welcome to</div>
+        <div>ZOOVANA</div>
+      </div>
+      <div class="mt-6 text-lg tracking-tight leading-6 text-gray-400">
+        Where Pets Come First🐾
+      </div>
+      <div class="flex items-center mt-8">
+        <div class="flex flex-0 items-center -space-x-1.5">
+          <img class="flex-0 w-10 h-10 rounded-full ring-4 ring-offset-1 ring-gray-800 ring-offset-gray-800 object-cover" src="assets/images/avatars/female-18.jpg" alt="img">
+          <img class="flex-0 w-10 h-10 rounded-full ring-4 ring-offset-1 ring-gray-800 ring-offset-gray-800 object-cover" src="assets/images/avatars/female-11.jpg" alt="img">
+          <img class="flex-0 w-10 h-10 rounded-full ring-4 ring-offset-1 ring-gray-800 ring-offset-gray-800 object-cover" src="assets/images/avatars/male-09.jpg" alt="img">
+          <img class="flex-0 w-10 h-10 rounded-full ring-4 ring-offset-1 ring-gray-800 ring-offset-gray-800 object-cover" src="assets/images/avatars/male-16.jpg" alt="img">
+        </div>
+        <div class="ml-4 font-medium tracking-tight text-gray-400">
+          More than 17k people joined us, it's your turn
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
