@@ -52,6 +52,9 @@ getAppointmentsPerDay(month: string): Observable<any> {
   return this._httpClient.get<any>(`${this.endpoint}/appointment-per-day`, { params });
 }
 
+getCompanyTeam(): Observable<any> {
+  return this._httpClient.get(`${this.endpoint}/team`);
+}
 
 
     // -----------------------------------------------------------------------------------------------------

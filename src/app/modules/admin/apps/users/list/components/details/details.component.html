@@ -64,9 +64,22 @@
                         <div class="sm:col-span-3">
                             <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
                                 <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
-                                <input [(ngModel)]="user.phone" matInput name="phone" type="tel" readonly />
+
+                                <input [(ngModel)]="user.phone" matInput name="phone" type="text" readonly />
                             </mat-form-field>
                         </div>
+                        @if ( myForm.controls['phone'] && (myForm.controls['phone'].dirty || myForm.submitted) ) {
+                            @if (myForm.controls['phone'].hasError('required')) {
+                                <mat-error>
+                                    {{ 'This field is required' | transloco }}
+                                </mat-error>
+                            }
+                            @if (myForm.controls['phone'].hasError('pattern')) {
+                                <mat-error>
+                                    {{ 'Invalid phone format' | transloco }}
+                                </mat-error>
+                            }
+                        }
                         <!-- group -->
                         <div class="sm:col-span-3">
                             <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">

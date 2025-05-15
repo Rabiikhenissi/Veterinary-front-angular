@@ -45,10 +45,10 @@ export class EditComponent {
   speciesOptions: PetSpecies[] = []; 
   
 
-  selectIcon(iconData: { icon: string; label: string }) {
+  selectIcon(iconData: { icon: string; name: string }) {
     this.petForm.patchValue({
       icon: iconData.icon,
-      species: iconData.label,
+      species: iconData.name,
     });
   }
 

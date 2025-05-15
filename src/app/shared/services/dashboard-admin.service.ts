@@ -44,7 +44,7 @@ export class dashboardAdminService
               features: {
                 total: featureData.length,
                 inactive: featureData.filter(f => f.archived).length
-              },
+              },  
               veterinarians: {
                 total: veterinarianData.length,
                 inactive: veterinarianData.filter(v => v.archived).length
