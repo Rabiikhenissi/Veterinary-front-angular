@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Company } from 'app/shared/models/company';
+import { AuthService } from 'app/shared/services/auth.service';
 import { CompanyService } from 'app/shared/services/company.service';
 
 @Component({
@@ -13,14 +14,21 @@ import { CompanyService } from 'app/shared/services/company.service';
     imports: [MatButtonModule,CommonModule, MatIconModule,RouterLink]
 })
 export class LandingHomeComponent implements OnInit {
+  _authService = inject(AuthService);
     _router = inject(Router);
     _route = inject(ActivatedRoute);
   companies: Company[] = [];
   defaultLogo = 'assets/images/logo/logo.svg';
+  connectedUserId: string | null = null;
+  connectedCompanyId: string | null = null;
 
   constructor(private companyService: CompanyService) {}
 
   ngOnInit(): void {
+     this.connectedUserId = localStorage.getItem('connectedUserId');
+    this.connectedCompanyId = localStorage.getItem('connectedUserCompany');
+    console.log('connectedCompanyId', this.connectedCompanyId);
+    console.log('connectedUserId', this.connectedUserId);    
     this.companyService.getAll().subscribe({
       next: (res) => {
         this.companies = res.data;
@@ -33,4 +41,10 @@ export class LandingHomeComponent implements OnInit {
 
     details(company: Company) {
 this._router.navigate([`/company-details/${company._id}`]);  }
+  isConnectedCompany(companyId: string): boolean {
+    return this.connectedCompanyId === companyId;
+  }
+    isConnected(): boolean {
+    return !this.connectedUserId;
+  }
 }

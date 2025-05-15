@@ -127,6 +127,11 @@ export class UserService {
       user,
     });
   }
+   signUp(user: User): Observable<User> {
+    return this.http.post<User>(`${this.endpointAuth}/signUp`, {
+      user,
+    });
+  }
   getUsers(
     limit: string,
     page: string,
@@ -244,4 +249,13 @@ export class UserService {
   getSecretaries(): Observable<{ data: User[], total: number }> {
     return this.http.get<{ data: User[], total: number }>(`${this.endpointAuth}/secretaries`);
   }
+  switchCompany(userId: string, newCompanyId: string): Observable<User> {
+  return this.http.patch<User>(`${this.endpointAuth}/switch-company/${userId}`, {
+    newCompanyId,
+  }).pipe(
+    tap((updatedUser) => {
+      this._user.next(updatedUser);
+    })
+  );
+}
 }

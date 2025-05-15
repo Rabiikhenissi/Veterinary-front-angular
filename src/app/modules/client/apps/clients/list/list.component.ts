@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -35,7 +36,8 @@ import { UserService } from 'app/shared/services/user.service';
           MatMenuItem,
           MatPaginator,
           TranslocoPipe,
-          FeaturesDirective],
+          FeaturesDirective,
+        CommonModule],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })

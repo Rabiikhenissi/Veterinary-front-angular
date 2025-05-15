@@ -1,107 +1,139 @@
 @if (user) {
-<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+
+  <div
+    class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+  >
     <form class="w-full" #myForm="ngForm" ngForm="ngForm">
-        <!-- Header -->
-        <div class="flex flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
-            <div class=" flex gap-2 w-1/4 text-4xl font-extrabold text-white ">
-                <span>{{ 'Edit' | transloco }}</span>
-                <span class="hidden sm:flex">{{ 'User' | transloco }}</span>
-            </div>
-            <div class="flex w-3/4 items-center justify-end">
-                <!-- clear project button -->
-                <button class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
-                    mat-stroked-button type="button" (click)="deleteOne(user)">
-                    <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
-                </button>
-                <!-- cancel project button -->
-                <button class="mr-2 text-amber-500 hover:bg-amber-500 hover:text-gray-900 transition-all duration-400"
-                    mat-stroked-button (click)="cancelEdit(myForm)">
-                    <span class="ml-2 mr-1">{{ 'Cancel' | transloco }}</span>
-                </button>
-                <!-- save project button -->
-                <button class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
-                    mat-stroked-button type="submit" (click)="updateOne(myForm)">
-                    <span class="ml-2 mr-1">{{ 'Save' | transloco }}</span>
-                </button>
-            </div>
+      <!-- Header -->
+      <div class="flex flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900">
+        <div class="flex gap-2 w-1/4 text-4xl font-extrabold text-white">
+          <span>{{ 'Edit' | transloco }}</span>
+          <span class="hidden sm:flex">{{ 'User' | transloco }}</span>
         </div>
-        <!-- Main -->
-        <div class="flex flex-col flex-auto h-[calc(100vh-8rem)] bg-gray-100  overflow-y-auto">
-            <div class="flex flex-col mb-6 w-full">
-                <div class="grid sm:grid-cols-9 gap-6 p-3">
-                    <!-- name -->
-                    <div class="sm:col-span-3">
-                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                            <mat-label class="capitalize">{{ 'name' | transloco }}</mat-label>
-                            <input [(ngModel)]="user.name" matInput name="name" type="text" required />
-                        </mat-form-field>
-                        @if ( myForm.controls['name'] && (myForm.controls['name'].dirty || myForm.submitted) &&
-                        myForm.controls['name'].hasError('required') ) {
-                        <mat-error>
-                            {{ 'This field is required' | transloco }}
-                        </mat-error>
-                        }
-                    </div>
-                    <!-- email -->
-                    <div class="sm:col-span-3">
-                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                            <mat-label class="capitalize">{{ 'email' | transloco }}</mat-label>
-                            <input [(ngModel)]="user.email" matInput name="email" type="text" required />
-                        </mat-form-field>
-                        @if ( myForm.controls['email'] && (myForm.controls['email'].dirty || myForm.submitted)
-                        && myForm.controls['email'].hasError('required') ) {
-                        <mat-error>
-                            {{ 'This field is required' | transloco }}
-                        </mat-error>
-                        }
-                    </div>
-                    <!-- phone -->
-                    <div class="sm:col-span-3">
-                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                            <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
-                            <input [(ngModel)]="user.phone" matInput name="phone" type="text" required />
-                        </mat-form-field>
-
-                        @if (
-                        myForm.controls['phone'] &&
-                        (myForm.controls['phone'].dirty || myForm.submitted) &&
-                        myForm.controls['phone'].hasError('required')
-                        ) {
-                        <mat-error>
-                            {{ 'This field is required' | transloco }}
-                        </mat-error>
-                        }
-                    </div>
-
-
-                    <!-- group -->
-                    <div class="sm:col-span-3">
-                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                            <mat-label class="capitalize">{{ 'group' | transloco }}</mat-label>
-                            <mat-select placeholder="select group" [(ngModel)]="user.groupsId" name="groupsId" required>
-                                @for (item of listGroups; track item) {
-                                <mat-option [value]="item">
-                                    <div class="font-medium items-center flex flex-row">
-                                        <span class="">
-                                            {{ item.label }}
-                                        </span>
-                                    </div>
-                                </mat-option>
-                                }
-                            </mat-select>
-                        </mat-form-field>
-
-                        @if ( myForm.controls['groupsId'] && (myForm.controls['groupsId'].dirty || myForm.submitted)
-                        && myForm.controls['groupsId'].hasError('required') ) {
-                        <mat-error>
-                            {{ 'This field is required' | transloco }}
-                        </mat-error>
-                        }
-                    </div>
-
-                </div>
-            </div>
+        <div class="flex w-3/4 items-center justify-end">
+          <!-- delete button -->
+          <button
+            class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+            mat-stroked-button
+            type="button"
+            (click)="deleteOne(user)"
+          >
+            <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
+          </button>
+          <!-- cancel button -->
+          <button
+            class="mr-2 text-amber-500 hover:bg-amber-500 hover:text-gray-900 transition-all duration-400"
+            mat-stroked-button
+            (click)="cancelEdit(myForm)"
+          >
+            <span class="ml-2 mr-1">{{ 'Cancel' | transloco }}</span>
+          </button>
+          <!-- save button -->
+          <button
+            class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+            mat-stroked-button
+            type="submit"
+            (click)="updateOne(myForm)"
+          >
+            <span class="ml-2 mr-1">{{ 'Save' | transloco }}</span>
+          </button>
         </div>
+      </div>
+
+      <!-- Main -->
+      <div class="flex flex-col flex-auto h-[calc(100vh-8rem)] bg-gray-100 overflow-y-auto">
+        <div class="flex flex-col mb-6 w-full">
+          <div class="grid sm:grid-cols-9 gap-6 p-3">
+
+            <!-- Name -->
+            <div class="sm:col-span-3">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                <mat-label class="capitalize">{{ 'name' | transloco }}</mat-label>
+                <input [(ngModel)]="user.name" matInput name="name" type="text" required />
+              </mat-form-field>
+              @if (
+                myForm.controls['name'] &&
+                (myForm.controls['name'].dirty || myForm.submitted) &&
+                myForm.controls['name'].hasError('required')
+              ) {
+                <mat-error>{{ 'This field is required' | transloco }}</mat-error>
+              }
+            </div>
+
+            <!-- Email -->
+            <div class="sm:col-span-3">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                <mat-label class="capitalize">{{ 'email' | transloco }}</mat-label>
+                <input [(ngModel)]="user.email" matInput name="email" type="text" required />
+              </mat-form-field>
+              @if (
+                myForm.controls['email'] &&
+                (myForm.controls['email'].dirty || myForm.submitted) &&
+                myForm.controls['email'].hasError('required')
+              ) {
+                <mat-error>{{ 'This field is required' | transloco }}</mat-error>
+              }
+            </div>
+
+            <!-- Phone -->
+            <div class="sm:col-span-3">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
+                <input [(ngModel)]="user.phone" matInput name="phone" type="tel" />
+              </mat-form-field>
+            </div>
+
+            <!-- Group -->
+            <div class="sm:col-span-3">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                <mat-label class="capitalize">{{ 'group' | transloco }}</mat-label>
+                <mat-select placeholder="select group" [(ngModel)]="user.groupsId" name="groupsId" required>
+                  @for (item of listGroups; track item) {
+                    <mat-option [value]="item">
+                      <div class="font-medium items-center flex flex-row">
+                        <span>{{ item.label }}</span>
+                      </div>
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              @if (
+                myForm.controls['groupsId'] &&
+                (myForm.controls['groupsId'].dirty || myForm.submitted) &&
+                myForm.controls['groupsId'].hasError('required')
+              ) {
+                <mat-error>{{ 'This field is required' | transloco }}</mat-error>
+              }
+            </div>
+
+            <!-- Status -->
+            <div class="sm:col-span-3">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                <mat-label class="capitalize">{{ 'status' | transloco }}</mat-label>
+                <mat-select [(ngModel)]="user.status" name="status" required placeholder="{{ 'select status' | transloco }}">
+                  <mat-option value="verified" style="color: #13883e; font-weight: 600;">
+                    {{ 'Verified' | transloco }}
+                  </mat-option>
+                  <mat-option value="pending" style="color: #7b880b; font-weight: 600;">
+                    {{ 'Pending' | transloco }}
+                  </mat-option>
+                  <mat-option value="locked" style="color: #dc2626; font-weight: 600;">
+                    {{ 'Locked' | transloco }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              @if (
+                myForm.controls['status'] &&
+                (myForm.controls['status'].dirty || myForm.submitted) &&
+                myForm.controls['status'].hasError('required')
+              ) {
+                <mat-error>{{ 'This field is required' | transloco }}</mat-error>
+              }
+            </div>
+
+          </div>
+        </div>
+      </div>
     </form>
-</div>
+  </div>
 }

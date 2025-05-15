@@ -5,6 +5,7 @@ import { LayoutComponent } from 'app/layout/layout.component';
 import {FeatureCodes} from "./shared/enums/feature-codes";
 import { IsAuthorizedGuard } from 'app/core/auth/guards/isAuthorized.guard';
 import { DetailsComponent } from './modules/landing/home/details/details.component';
+import { JoinVetComponent } from './modules/landing/home/details/join-vet/join-vet.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -49,13 +50,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes')},
-             {
-                        path: 'company-details/:id',
-                        component: DetailsComponent,  // Make sure to use the correct component for the details
-                        data: {
-                            breadcrumb: 'Company Details'
-                        }
-                    },
+       
         ]
     },
 
@@ -68,7 +63,20 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
-            
+              {
+                        path: 'company-details/:id',
+                        component: DetailsComponent,  
+                        data: {
+                            breadcrumb: 'Company Details'
+                        }
+                    },
+                    {
+                        path: 'join-vet/:id',
+                        component: JoinVetComponent,  
+                        data: {
+                            breadcrumb: 'Join Veterinary'
+                        }
+                    },
         ]
     },
 

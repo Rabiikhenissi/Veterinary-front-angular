@@ -1,138 +1,156 @@
 <div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-white dark:bg-transparent">
   <!-- Header -->
-  <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-green-700">
-      <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white">{{ 'Clients' | transloco }}</div>
-      <div class="flex w-full md:w-3/4 items-start md:items-center justify-between">
-          <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript md:mt-5 w-3/4">
-              <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:search'"></mat-icon>
-              <input
-                  matInput
-                  [(ngModel)]="filterSearch"
-                  (ngModelChange)="updateSearch()"
-                  [autocomplete]="'off'"
-                  placeholder="{{ 'Search' | transloco }}"
-                  class="rounded-md border-gray-300 text-gray-800 focus:ring-2 focus:ring-green-500"
-              />
-          </mat-form-field>
-          <button *appFeatures="[
-              {
-                  code: featureCodes.clients,
-                  actions: [featureActions.create]
-              }
-          ]"
-              class="mr-2 text-white bg-green-700 hover:bg-green-800 transition-all duration-300 rounded-md py-2 px-4"
-              mat-stroked-button
-              (click)="addOne()">
-              <span class="mx-1.5 block">{{ 'Add' | transloco }}</span>
-          </button>
-      </div>
+  <div class="flex flex-col md:flex-row md:gap-2 items-center px-4 h-fit md:h-14 border-b bg-green-700">
+    <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white">
+      {{ 'Clients' | transloco }}
+    </div>
+    <div class="flex w-full md:w-3/4 items-start md:items-center justify-between">
+      <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript md:mt-5 w-3/4">
+        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:search'"></mat-icon>
+        <input
+          matInput
+          [(ngModel)]="filterSearch"
+          (ngModelChange)="updateSearch()"
+          autocomplete="off"
+          placeholder="{{ 'Search' | transloco }}"
+          class="rounded-md border-gray-300 text-gray-800 focus:ring-2 focus:ring-green-500"
+        />
+      </mat-form-field>
+      <button
+        *appFeatures="[{ code: featureCodes.clients, actions: [featureActions.create] }]"
+        class="mr-2 text-white bg-green-700 hover:bg-green-800 transition-all duration-300 rounded-md py-2 px-4"
+        mat-stroked-button
+        (click)="addOne()"
+      >
+        <span class="mx-1.5 block">{{ 'Add' | transloco }}</span>
+      </button>
+    </div>
   </div>
 
   <!-- Main Content -->
   <div class="flex flex-auto overflow-hidden">
-      <div class="flex flex-col flex-auto sm:mb-18">
-          @if (displayedList?.data?.length > 0) {
-              <!-- Table Header -->
-              <div class="row-grid grid z-10 top-0 shadow items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-green-100 dark:bg-black dark:bg-opacity-5">
-                  <div class="hidden sm:flex">N°</div>
-                  <div class="flex">{{ 'name' | transloco }}</div>
-                  <div class="flex">{{ 'email' | transloco }}</div>
-                  <div class="hidden sm:flex">{{ 'phone' | transloco }}</div>
+    <div class="flex flex-col flex-auto sm:mb-18">
+      @if (displayedList?.data?.length > 0) {
+        <!-- Table Header -->
+        <div
+          class="row-grid grid z-10 top-0 shadow items-center gap-1 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-green-100 dark:bg-black dark:bg-opacity-5"
+          style="grid-template-columns: 40px 1fr 2fr 1.5fr 1fr auto;"
+        >
+          <div class="hidden sm:flex">N°</div>
+          <div class="flex">{{ 'name' | transloco }}</div>
+          <div class="flex">{{ 'email' | transloco }}</div>
+          <div class="hidden sm:flex">{{ 'phone' | transloco }}</div>
+          <div class="hidden sm:flex">{{ 'Status' | transloco }}</div>
+          <div class="flex justify-end">
+            <button mat-icon-button (click)="openFilter = true">
+              <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
+            </button>
+          </div>
+        </div>
 
-                  <div class="flex">
-                      <button mat-icon-button (click)="openFilter = true">
-                          <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
+        <!-- Client Rows -->
+        <div class="flex-1 overflow-hidden sm:overflow-y-auto">
+          <div class="flex-1 sm:grid sm:flex-0">
+            <ng-container>
+              @for (row of displayedList?.data; track row) {
+                <div
+                  class="row-grid grid items-center gap-1 py-1 px-4 md:px-6 border-b"
+                  style="grid-template-columns: 40px 1fr 2fr 1.5fr 1fr auto;"
+                  (click)="isScreenSmall ? openShow(row) : null"
+                >
+                  <div class="hidden sm:flex">{{ $index + 1 }}</div>
+                  <div class="truncate">{{ row.name }}</div>
+                  <div class="truncate">{{ row.email }}</div>
+                  <div class="hidden sm:flex truncate">{{ row.phone }}</div>
+                  <div class="hidden sm:flex">
+                    <span
+                      class="px-2 py-1 rounded-full text-xs font-semibold"
+                      [ngClass]="{
+                        'bg-green-100 text-green-800': row.status === 'verified',
+                        'bg-yellow-100 text-yellow-800': row.status === 'pending',
+                        'bg-red-100 text-red-800': row.status === 'locked'
+                      }"
+                    >
+                      {{ row.status | titlecase }}
+                    </span>
+                  </div>
+                  <div class="flex justify-end">
+                    <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
+                      <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
+                    </button>
+                    <mat-menu #budgetMenu="matMenu">
+                      <button
+                        *appFeatures="[{ code: featureCodes.clients, actions: [featureActions.read] }]"
+                        mat-menu-item
+                        class="flex justify-between"
+                        (click)="openShow(row)"
+                      >
+                        <span class="ml-2 mr-1 block">{{ 'Show' | transloco }}</span>
+                        <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                       </button>
+                      <button
+                        *appFeatures="[{ code: featureCodes.clients, actions: [featureActions.update] }]"
+                        mat-menu-item
+                        class="flex justify-between"
+                        (click)="openEdit(row)"
+                      >
+                        <span class="ml-2 mr-1 block">{{ 'Edit' | transloco }}</span>
+                        <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                      </button>
+                      
+                      <button
+                        *appFeatures="[{ code: featureCodes.clients, actions: [featureActions.delete] }]"
+                        mat-menu-item
+                        class="flex justify-between"
+                        (click)="deleteOne(row)"
+                      >
+                        <span class="ml-2 mr-1 block">{{ 'Delete' | transloco }}</span>
+                        <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                      </button>
+                    </mat-menu>
                   </div>
-              </div>
+                </div>
+              }
+            </ng-container>
+          </div>
+        </div>
 
-              <!-- Client Rows -->
-              <div class="flex-1 overflow-hidden sm:overflow-y-auto">
-                  <div class="flex-1 sm:grid sm:flex-0">
-                      <!-- Rows -->
-                      <ng-container>
-                          @for (row of displayedList?.data; track row) {
-                          <div class="row-grid grid items-center gap-4 py-1 px-4 md:px-6 border-b" (click)="isScreenSmall ? openShow(row) : null">
-                              <div class="hidden sm:flex">{{ $index + 1 }}</div>
-                              <div class="truncate">{{ row.name }}</div>
-                              <div class="truncate">{{ row.email }}</div>
-                              <div class="hidden sm:flex truncate">{{ row.phone }}</div>
-
-                              <div class="flex">
-                                  <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
-                                      <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
-                                  </button>
-                                  <mat-menu #budgetMenu="matMenu">
-                                      <button *appFeatures="[
-                                          {
-                                              code: featureCodes.clients,
-                                              actions: [featureActions.read]
-                                          }
-                                      ]"
-                                      mat-menu-item class="flex justify-between" (click)="openShow(row)">
-                                          <span class="ml-2 mr-1 block">{{ 'Show' | transloco }}</span>
-                                          <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
-                                      </button>
-                                      <button *appFeatures="[
-                                          {
-                                              code: featureCodes.clients,
-                                              actions: [featureActions.update]
-                                          }
-                                      ]"
-                                      mat-menu-item class="flex justify-between" (click)="openEdit(row)">
-                                          <span class="ml-2 mr-1 block">{{ 'Edit' | transloco }}</span>
-                                          <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
-                                      </button>
-                                      <button *appFeatures="[
-                                          {
-                                              code: featureCodes.clients,
-                                              actions: [featureActions.delete]
-                                          }
-                                      ]"
-                                      mat-menu-item class="flex justify-between" (click)="deleteOne(row)">
-                                          <span class="ml-2 mr-1 block">{{ 'Delete' | transloco }}</span>
-                                          <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-                                      </button>
-                                  </mat-menu>
-                              </div>
-                          </div>
-                          }
-                      </ng-container>
-                  </div>
-              </div>
-
-              <!-- Pagination -->
-              <mat-paginator
-                  class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-green-50 dark:bg-transparent"
-                  [showFirstLastButtons]="true"
-                  (page)="pageChanged($event)"
-                  [length]="displayedList?.total"
-                  [pageSize]="currentSize"
-                  [pageSizeOptions]="[5, 10, 20, 50, 100]"
-              ></mat-paginator>
-          }
-      </div>
+        <!-- Pagination -->
+        <mat-paginator
+          class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-green-50 dark:bg-transparent"
+          [showFirstLastButtons]="true"
+          (page)="pageChanged($event)"
+          [length]="displayedList?.total"
+          [pageSize]="currentSize"
+          [pageSizeOptions]="[5, 10, 20, 50, 100]"
+        ></mat-paginator>
+      }
+    </div>
   </div>
 
   <!-- Filter Sidebar -->
-  <div class="h-[calc(100vh-11rem)] md:h-[calc(100vh-7.5rem)] absolute top-28 md:top-14 right-0 flex flex-col justify-start items-center z-99 bg-green-200 transition-all duration-500" [class.w-full]="openFilter" [class.w-0]="!openFilter">
-      @if(openFilter) {
-          <div class="text-white text-2xl font-bold uppercase flex items-center py-2 gap-2">
-              <button mat-stroked-button (click)="getList()">
-                  <span>Activate filters</span>
-              </button>
-              <button mat-icon-button (click)="openFilter = false">
-                  <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
-              </button>
-          </div>
-          <div class="w-full grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-              <div class="border w-full rounded-md p-2 bg-white shadow-md">
-                  <!-- Filter Content -->
-              </div>
-              <div class="border w-full rounded-md p-2 bg-white shadow-md">
-                  <!-- Filter Content -->
-              </div>
-          </div>
-      }
+  <div
+    class="h-[calc(100vh-11rem)] md:h-[calc(100vh-7.5rem)] absolute top-28 md:top-14 right-0 flex flex-col justify-start items-center z-50 bg-green-200 transition-all duration-500"
+    [class.w-full]="openFilter"
+    [class.w-0]="!openFilter"
+  >
+    @if(openFilter) {
+      <div class="text-white text-2xl font-bold uppercase flex items-center py-2 gap-2">
+        <button mat-stroked-button (click)="getList()">
+          <span>Activate filters</span>
+        </button>
+        <button mat-icon-button (click)="openFilter = false">
+          <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
+        </button>
+      </div>
+      <div class="w-full grid sm:grid-cols-2 md:grid-cols-3 gap-1 p-4">
+        <div class="border w-full rounded-md p-2 bg-white shadow-md">
+          <!-- Filter Content -->
+        </div>
+        <div class="border w-full rounded-md p-2 bg-white shadow-md">
+          <!-- Filter Content -->
+        </div>
+      </div>
+    }
   </div>
 </div>
