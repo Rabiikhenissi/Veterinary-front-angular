@@ -49,13 +49,7 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes')},
-             {
-                        path: 'company-details/:id',
-                        component: DetailsComponent,  // Make sure to use the correct component for the details
-                        data: {
-                            breadcrumb: 'Company Details'
-                        }
-                    },
+       
         ]
     },
 
@@ -68,7 +62,13 @@ export const appRoutes: Route[] = [
         },
         children: [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes')},
-            
+              {
+                        path: 'company-details/:id',
+                        component: DetailsComponent,  
+                        data: {
+                            breadcrumb: 'Company Details'
+                        }
+                    },
         ]
     },
 
