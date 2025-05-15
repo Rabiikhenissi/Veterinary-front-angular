@@ -5,6 +5,7 @@ import { LayoutComponent } from 'app/layout/layout.component';
 import {FeatureCodes} from "./shared/enums/feature-codes";
 import { IsAuthorizedGuard } from 'app/core/auth/guards/isAuthorized.guard';
 import { DetailsComponent } from './modules/landing/home/details/details.component';
+import { JoinVetComponent } from './modules/landing/home/details/join-vet/join-vet.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -67,6 +68,13 @@ export const appRoutes: Route[] = [
                         component: DetailsComponent,  
                         data: {
                             breadcrumb: 'Company Details'
+                        }
+                    },
+                    {
+                        path: 'join-vet/:id',
+                        component: JoinVetComponent,  
+                        data: {
+                            breadcrumb: 'Join Veterinary'
                         }
                     },
         ]

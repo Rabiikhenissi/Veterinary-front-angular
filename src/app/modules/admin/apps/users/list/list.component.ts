@@ -20,6 +20,7 @@ import { Company } from 'app/shared/models/company';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -37,7 +38,8 @@ import { FeaturesDirective } from 'app/shared/directives/features.directive';
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
-        FeaturesDirective
+        FeaturesDirective,
+        CommonModule
     ],
 })
 export class ListComponent implements OnInit {

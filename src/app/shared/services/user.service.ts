@@ -127,6 +127,11 @@ export class UserService {
       user,
     });
   }
+   signUp(user: User): Observable<User> {
+    return this.http.post<User>(`${this.endpointAuth}/signUp`, {
+      user,
+    });
+  }
   getUsers(
     limit: string,
     page: string,

@@ -162,9 +162,9 @@ export class DetailsComponent implements OnInit {
     }
 
     requestToGo() {
-        console.log('Request sent to go to this veterinary');
-        // Add logic like opening a dialog or API call
-    }
+      this._router.navigate([`/join-vet/${this.company._id}`]);  }
+
+    
     isConnected(): boolean {
         return !!this.connectedUserId;
     }
@@ -201,6 +201,8 @@ export class DetailsComponent implements OnInit {
                             }
                         }).afterClosed().subscribe(() => {
                             this._authService.signOut();
+                             this._router.navigate(['/sign-in']);
+
                         });
                     },
                         error: (err) => {
