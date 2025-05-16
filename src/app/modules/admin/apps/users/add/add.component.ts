@@ -68,22 +68,22 @@ export class AddComponent implements OnInit{
 
     ngOnInit(): void {
         this._loadingService.show();
-        forkJoin([
-            this._groupService.getAll()
-            
-        ]).subscribe({
-            next:(result: [Group[]]) => {
-              
-                this.listGroups = result[0];
-                console.log(this.listGroups),
-                this._loadingService.hide();
-            },
-            error: () => {
-                this._loadingService.hide();
-            }
-        })
-      this.getList();
-    }
+       forkJoin([
+        this._groupService.getList('1000', '1', '', '', '', 'internal'),
+        this._groupService.getList('1000', '1', '', '', '', 'super')
+    ]).subscribe({
+        next: ([internalGroups, externalGroups]) => {
+            this.listGroups = [...internalGroups.data, ...externalGroups.data];
+            console.log(this.listGroups);
+            this._loadingService.hide();
+        },
+        error: () => {
+            this._loadingService.hide();
+        }
+    });
+
+    this.getList();
+}
     getList(): void {
       this._loadingService.show();
       this._companyService

@@ -3,6 +3,7 @@ import { DetailsComponent } from './list/components/details/details.component';
 import { AddComponent } from './add/add.component';
 import { EditComponent } from './list/components/edit/edit.component';
 import {ListComponent} from "./list/list.component";
+import { EditDetailsComponent } from './list/components/edit-details/edit-details.component';
 
 export default [
   {
@@ -30,6 +31,13 @@ export default [
             component: DetailsComponent,
             data: {
               breadcrumb: 'Profile',
+            },
+          },
+          {
+            path: 'editDetails',
+            component: EditDetailsComponent,
+            data: {
+              breadcrumb: 'Edit Details',
             },
           },
           {

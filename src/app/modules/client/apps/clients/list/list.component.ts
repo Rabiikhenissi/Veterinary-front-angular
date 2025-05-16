@@ -147,6 +147,9 @@ authService= inject(AuthService);
   openEdit(row: User) {
     this._router.navigate([`${row._id}/edit`], { relativeTo: this._route }).then();
   }
+  openEditDetails(row: User) {
+    this._router.navigate([`${row._id}/editDetails`], { relativeTo: this._route }).then();
+  }
   updateSearch() {
     clearTimeout(this.typingTimer);
     this.filterOptions.search = this.filterSearch;

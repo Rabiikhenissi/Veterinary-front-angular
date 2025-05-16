@@ -4,4 +4,5 @@ export class Group {
   _id?: string;
   code?: string;
   label?: string;
+  type?: string;
 }

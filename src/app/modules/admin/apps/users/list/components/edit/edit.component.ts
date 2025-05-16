@@ -14,6 +14,7 @@ import {GroupService} from "../../../../../../../shared/services/group.service";
 import {Group} from "../../../../../../../shared/models/group";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
+import { Pagination } from 'app/shared/models/pagination';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -43,25 +44,30 @@ export class EditComponent implements OnInit {
     id = this._route.snapshot.paramMap.get('id') || undefined;
     user: User;
     listGroups: Group[];
-    ngOnInit(): void {
-        if (this.id) {
-            this._loadingService.show()
-            forkJoin([
-                this._userService.getOne(this.id),
-                this._groupService.getAll(),
-            ]).subscribe({
-                next: (result:[User, Group[]]) => {
-                    this.user = result[0];
-                    this.listGroups = result[1];
-                    this.user.groupsId = this.listGroups.filter((el)=>el._id === this.user.groupsId._id)[0];
-                    this._loadingService.hide()
-                },
-                error: () => {
-                    this._loadingService.hide()
-                }
-            });
-        }
+ ngOnInit(): void {
+  if (this.id) {
+    this._loadingService.show();
+
+    this._userService.getOne(this.id).subscribe({
+      next: (user: User) => {
+        this.user = user;
+        this._groupService.getList('1000', '1', '', '', '', this.user.type).subscribe({
+          next: (pagination: Pagination<Group>) => {
+            this.listGroups = pagination.data;
+            this.user.groupsId = this.listGroups.find(el => el._id === this.user.groupsId._id);
+            this._loadingService.hide();
+          },
+          error: () => {
+            this._loadingService.hide();
+          }
+        });
+      },
+      error: () => {
+        this._loadingService.hide();
       }
+    });
+  }
+}
     updateOne(myForm: NgForm) {
         if (myForm.valid) {
             this._userService.updateOne(this.user).subscribe(() => {

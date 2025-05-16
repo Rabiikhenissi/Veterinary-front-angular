@@ -19,6 +19,7 @@ export class GroupService {
       search: string,
       filterType:string,
       filterStatus:string,
+      type?:string
   ): Observable<Pagination<Group>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
@@ -31,6 +32,9 @@ export class GroupService {
     }
     if (filterStatus) {
       searchParams = searchParams.append('filterStatus', filterStatus);
+    }
+    if (type) {
+      searchParams = searchParams.append('type', type);
     }
     return this.http.get<Pagination<Group>>(`${this.endpoint}`, {
       params: searchParams,

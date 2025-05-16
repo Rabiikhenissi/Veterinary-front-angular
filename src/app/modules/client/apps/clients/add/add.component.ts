@@ -22,6 +22,7 @@ import { listFeatureType } from 'app/shared/enums/featureType';
 import { Group } from 'app/shared/models/group';
 import { User } from 'app/shared/models/user';
 import { AuthService } from 'app/shared/services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-details',
@@ -29,7 +30,7 @@ import { AuthService } from 'app/shared/services/auth.service';
     styleUrls: ['./add.component.scss'],
     animations: fuseAnimations,
     imports: [
-        FormsModule,
+          FormsModule,
         MatButton,
         MatFormField,
         MatLabel,
@@ -37,6 +38,9 @@ import { AuthService } from 'app/shared/services/auth.service';
         MatError,
         ReactiveFormsModule,
         TranslocoPipe,
+        MatOption,
+        MatSelect,
+        CommonModule
         
     ],
 })
@@ -69,9 +73,9 @@ export class AddComponent implements OnInit {
     ngOnInit(): void {
         this._loadingService.show();
 
-        forkJoin([this._groupService.getAll()]).subscribe({
-            next: (result: [Group[]]) => {
-                this.listGroups = result[0];
+        forkJoin([  this._groupService.getList('1000', '1','','','','external') ,]).subscribe({
+            next: (result: [Pagination<Group>]) => {
+                this.listGroups = result[0].data;
                 console.log(this.listGroups), this._loadingService.hide();
             },
             error: () => {
@@ -102,38 +106,24 @@ export class AddComponent implements OnInit {
                 },
             });
     }
+   
     addOne(myForm: NgForm): void {
-        if (myForm.valid) {
-            this.user.type="external"
-            let connectedUser: any = this._authService._userService.decodeToken(
-                this._authService.accessToken
+    if (myForm.valid) {
+      console.log(this.user);
+      this.user.type="external"
+        this._userService.addUser(this.user).subscribe({
+          next: (result) => {
+            this._router.navigate([], { relativeTo: this._route }).then();
+          },
+          error: () => {
+            this._snackBarService.openSnackBar(
+              'Error creating user',
             );
-            this._userService.getOne(connectedUser.id).subscribe({
-                next: (results) => {
-                    this.user.companyId = results.companyId;
-                    this.user.groupsId = {
-                        _id: '67edbe0231071ebeaf1eda2e', // Replace with actual Client group ID
-                        code: 'client',
-                        label: 'Client'
-                      };
-                    this._userService.addUser(this.user).subscribe({
-                        next: (result) => {
-                            this._router
-                                .navigate([`../`], { relativeTo: this._route })
-                                .then();
-                        },
-                        error: () => {
-                            this._snackBarService.openSnackBar('Error creating user');
-                            this._loadingService.hide();
-                        },
-                    });
-                },
-                error: (err) => console.error(err),
-            });
-           
-            
-        }
+            this._loadingService.hide();
+          },
+        })
     }
+  }
     resetForm(myForm: NgForm, event) {
         event.stopPropagation();
         if (myForm.pristine) {

@@ -67,20 +67,52 @@
             </mat-error>
             }
           </div>
+
+          <!-- phone -->
+          <div class="sm:col-span-3">
+            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+              <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
+              <input [(ngModel)]="user.phone" matInput name="phone" type="text" required />
+            </mat-form-field>
+            @if ( myForm.controls['phone'] && (myForm.controls['phone'].dirty || myForm.submitted)
+            && myForm.controls['phone'].hasError('required') ) {
+            <mat-error>
+              {{ 'This field is required' | transloco }}
+            </mat-error>
+            }
+          </div>
+
             <!-- group -->
-            <div class="sm:col-span-3">
-                <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                  <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
-                  <input [(ngModel)]="user.phone" matInput name="phone" type="text" required />
-                </mat-form-field>
-                @if ( myForm.controls['phone'] && (myForm.controls['phone'].dirty || myForm.submitted) &&
-                myForm.controls['phone'].hasError('required') ) {
-                <mat-error>
-                  {{ 'This field is required' | transloco }}
-                </mat-error>
-                }
-              </div>
-                      
+          <div class="sm:col-span-3">
+              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+                  <mat-label class="capitalize">{{ 'group' | transloco }}</mat-label>
+                  <mat-select
+                      placeholder="select group"
+                      [(ngModel)]="user.groupsId"
+                      name="groupsId"
+                      required
+                  >
+                      @for (item of listGroups; track item) {
+                          <mat-option [value]="item">
+                              <div class="font-medium items-center flex flex-row">
+                                                        <span class="">
+                                                          {{ item.label }}
+                                                        </span>
+                              </div>
+                          </mat-option>
+                      }
+                  </mat-select>
+              </mat-form-field>
+
+            @if ( myForm.controls['groupsId'] && (myForm.controls['groupsId'].dirty || myForm.submitted)
+            && myForm.controls['groupsId'].hasError('required') ) {
+            <mat-error>
+              {{ 'This field is required' | transloco }}
+            </mat-error>
+            }
+            
+          </div>
+                
         </div>
       </div>
     </div>

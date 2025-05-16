@@ -67,6 +67,24 @@
             </mat-error>
             }
           </div>
+                    <!-- type -->
+
+          <div class="sm:col-span-3">
+    <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+      <mat-label class="capitalize">{{ 'type' | transloco }}</mat-label>
+      <mat-select [(ngModel)]="group.type" name="type" required>
+        <mat-option [value]="'internal'">{{ 'Internal' | transloco }}</mat-option>
+        <mat-option [value]="'external'">{{ 'External' | transloco }}</mat-option>
+        <mat-option [value]="'super'">{{ 'Super' | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    @if ( myForm.controls['type'] && (myForm.controls['type'].dirty || myForm.submitted) &&
+    myForm.controls['type'].hasError('required') ) {
+      <mat-error>
+        {{ 'This field is required' | transloco }}
+      </mat-error>
+    }
+  </div>
         </div>
       </div>
       <div class="flex flex-col mb-6 w-full bg-gray-100">
