@@ -218,7 +218,7 @@ export class DetailsComponent implements OnInit {
     );
   }
  editAppointment(): void {
-  this._router.navigate([`/home/calendar/${this.appointment._id}/edit`]).then();
+  this._router.navigate([`/home/appointments/${this.appointment._id}/edit`]).then();
  }
  addAppointmentInfo(): void {
   this._router.navigate(['info'], { relativeTo: this._route }).then(); 
