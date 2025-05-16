@@ -23,6 +23,7 @@ _userService= inject(UserService);
 _petService= inject(PetService);
 _notificationService = inject(NotificationService); 
 _formBuilder= inject(FormBuilder);
+  isSubmitted = false;
 selectedTime: string = '';
   appointmentForm!: FormGroup;
   clients: any[] = [];
@@ -77,8 +78,8 @@ selectedTime: string = '';
  
   
   submit(): void {
-    if (this.appointmentForm.invalid) return;
-
+    if (this.appointmentForm.invalid || this.isSubmitted ) return;
+    this.isSubmitted = true; // Prevent multiple submissions
     console.log('Form values:', this.appointmentForm.value);
 
     const petId = this.appointmentForm.value.petId;
