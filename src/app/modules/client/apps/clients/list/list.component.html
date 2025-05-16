@@ -94,10 +94,18 @@
                         class="flex justify-between"
                         (click)="openEdit(row)"
                       >
+                        <span class="ml-2 mr-1 block">{{ 'Edit profile' | transloco }}</span>
+                        <mat-icon [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                      </button>
+                      <button
+                        *appFeatures="[{ code: featureCodes.clients, actions: [featureActions.update] }]"
+                        mat-menu-item
+                        class="flex justify-between"
+                        (click)="openEditDetails(row)"
+                      >
                         <span class="ml-2 mr-1 block">{{ 'Edit' | transloco }}</span>
                         <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
                       </button>
-                      
                       <button
                         *appFeatures="[{ code: featureCodes.clients, actions: [featureActions.delete] }]"
                         mat-menu-item

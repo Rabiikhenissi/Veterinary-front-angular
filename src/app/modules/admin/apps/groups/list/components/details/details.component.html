@@ -63,6 +63,19 @@
                                 </mat-error>
                             }
                         </div>
+                        <!-- type -->
+<div class="sm:col-span-3">
+    <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+        <mat-label class="capitalize">{{ 'type' | transloco }}</mat-label>
+        <input [(ngModel)]="group.type" matInput name="type" type="text" readonly />
+    </mat-form-field>
+    @if ( myForm.controls['type'] && (myForm.controls['type'].dirty || myForm.submitted) &&
+    myForm.controls['type'].hasError('required') ) {
+        <mat-error>
+            {{ 'This field is required' | transloco }}
+        </mat-error>
+    }
+</div>
                     </div>
                 </div>
                 <div class="flex flex-col w-full border p-2 ">
