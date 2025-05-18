@@ -12,12 +12,13 @@ import { Subject, takeUntil } from 'rxjs';
 import {MenuService} from "../../../../shared/services/menu.service";
 import { BreadcrumbsComponent } from "../../../../shared/components/breadcrumbs/breadcrumbs.component";
 import { CartService } from 'app/shared/services/cart.service';
+import { NotificationsComponent } from "../../../common/notifications/notifications.component";
 
 @Component({
     selector: 'classy-layout',
     templateUrl: './classy.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [FuseVerticalNavigationComponent, MatIconModule, MatButtonModule, RouterOutlet, BreadcrumbsComponent]
+    imports: [FuseVerticalNavigationComponent, MatIconModule, MatButtonModule, RouterOutlet, BreadcrumbsComponent, NotificationsComponent]
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy
 {

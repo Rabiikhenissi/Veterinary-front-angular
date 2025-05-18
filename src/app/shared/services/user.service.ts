@@ -178,9 +178,10 @@ export class UserService {
   enableAccount(id: string): Observable<User> {
     return this.http.get<User>(`${this.endpointAuth}/${id}/enable-disable`);
   }
-   deleteOne(id: string): Observable<null> {
-    return this.http.delete<null>(`${this.endpointAuth}/${id}`);
+   deleteOne(id: string): Observable<any> {
+    return this.http.patch(`${this.endpointAuth}/archive/${id}`,{});
   }
+  
   updateAvatar(data: FormData, id: string): Observable<User> {
     return this.http.post<User>(`${this.endpointAuth}/${id}/avatar`, data).pipe(
       tap((user) => {

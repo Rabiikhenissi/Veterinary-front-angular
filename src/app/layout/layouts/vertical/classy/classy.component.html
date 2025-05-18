@@ -6,11 +6,30 @@
     [navigation]="navigation"
     [opened]="!isScreenSmall"
 >
-    <!-- Navigation header hook -->
-    <ng-container fuseVerticalNavigationContentHeader>
-        <!-- Logo -->
+   <!-- Navigation header hook -->
+  <ng-container fuseVerticalNavigationContentHeader>
+    <div
+      class="flex items-center justify-between w-full px-4 py-2"
+      style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
+    >
+      <!-- Left: ZooVana with styling -->
+      <div
+        style="
+          font-weight: 700;
+          font-size: 1.5rem;
+          color: #A3E635; /* bright lime-green */
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+          letter-spacing: 0.05em;
+          font-style: italic;
+        "
+      >
+        ZooVana
+      </div>
 
-    </ng-container>
+      <!-- Right: Notifications with margin-left auto to push right -->
+      <notifications style="margin-left: auto;"></notifications>
+    </div>
+  </ng-container>
     <!-- Navigation footer hook -->
     <ng-container fuseVerticalNavigationContentFooter>
         <div
@@ -29,30 +48,23 @@
         <button mat-icon-button (click)="toggleNavigation('mainNavigation')">
             <mat-icon svgIcon="heroicons_outline:bars-3"></mat-icon>
         </button>
+
         <app-breadcrumbs></app-breadcrumbs>
 
         <ng-template #separatorTemplate>
             <mat-icon svgIcon="heroicons_outline:chevron-right"></mat-icon>
         </ng-template>
-        <!-- Components -->
-        <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
 
+        <!-- Right-side header components -->
+        <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
+           
         </div>
     </div>
 
     <!-- Content -->
     <div class="flex flex-col flex-auto">
-        <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
-        Otherwise, layout changes won't be registered and the view won't be updated! -->
         @if (true) {
             <router-outlet></router-outlet>
         }
     </div>
-
-    <!-- Footer -->
-    <!--<div class="relative flex flex-0 items-center justify-start w-full h-14 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
-    <span class="font-medium text-secondary">Fuse &copy; {{currentYear}}</span>
-  </div>-->
 </div>
-
-<!-- Quick chat -->

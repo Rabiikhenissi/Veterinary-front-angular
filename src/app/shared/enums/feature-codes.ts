@@ -25,6 +25,7 @@ export enum FeatureCodes {
   pet_species='pet-species',
   dashboard_veterinarian='dashboard-veterinarian',
   medical_services='medical-services',
+  notifications='notifications',
 }
 
 export const listFeatureActions: RefList<FeatureCodes>[] = [
@@ -52,4 +53,5 @@ export const listFeatureActions: RefList<FeatureCodes>[] = [
   { key: FeatureCodes.pet_species, value: 'Pet Species' },
   { key: FeatureCodes.dashboard_veterinarian, value: 'Dashboard Veterinarian' },
   { key: FeatureCodes.medical_services, value: 'Medical Services' },
+  { key: FeatureCodes.notifications, value: 'Notifications' },
 ];

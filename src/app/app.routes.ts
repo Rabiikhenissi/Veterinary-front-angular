@@ -6,6 +6,7 @@ import {FeatureCodes} from "./shared/enums/feature-codes";
 import { IsAuthorizedGuard } from 'app/core/auth/guards/isAuthorized.guard';
 import { DetailsComponent } from './modules/landing/home/details/details.component';
 import { JoinVetComponent } from './modules/landing/home/details/join-vet/join-vet.component';
+import { NotificationsComponent } from './shared/components/notifications/notifications.component';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -272,6 +273,17 @@ export const appRoutes: Route[] = [
                     },
                         loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/medicalServices/medicalServices.routing'),
                     },
+                     {
+                        canActivate: [IsAuthorizedGuard],
+                        canActivateChild: [IsAuthorizedGuard],
+                        path:'notifications',
+                        data: {
+                            breadcrumb: 'Notifications',
+                            feature: FeatureCodes.notifications,
+                        },
+                        component: NotificationsComponent,   
+                                       },
+                   
                     
                     
                     
