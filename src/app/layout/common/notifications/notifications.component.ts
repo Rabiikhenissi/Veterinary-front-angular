@@ -6,8 +6,8 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
-import { Notification } from 'app/layout/common/notifications/notifications.types';
+import { Notification } from 'app/shared/models/notifications';
+import { NotificationService } from 'app/shared/services/notification.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -33,7 +33,7 @@ export class NotificationsComponent implements OnInit, OnDestroy
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _notificationsService: NotificationsService,
+        private _notificationsService: NotificationService, 
         private _overlay: Overlay,
         private _viewContainerRef: ViewContainerRef,
     )
@@ -48,22 +48,26 @@ export class NotificationsComponent implements OnInit, OnDestroy
      * On init
      */
     ngOnInit(): void
-    {
-        // Subscribe to notification changes
-        this._notificationsService.notifications$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((notifications: Notification[]) =>
-            {
-                // Load the notifications
-                this.notifications = notifications;
+{
+    // Subscribe to notification changes
+    this._notificationsService.notifications$
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((notifications: Notification[]) =>
+        {
+            console.log('Notifications received:', notifications);  // <-- Log received notifications
 
-                // Calculate the unread count
-                this._calculateUnreadCount();
+            // Load the notifications
+            this.notifications = notifications;
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-    }
+            // Calculate the unread count
+            this._calculateUnreadCount();
+
+            console.log('Unread notifications count:', this.unreadCount); // <-- Log unread count
+
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
+}
 
     /**
      * On destroy
@@ -88,23 +92,24 @@ export class NotificationsComponent implements OnInit, OnDestroy
     /**
      * Open the notifications panel
      */
-    openPanel(): void
-    {
-        // Return if the notifications panel or its origin is not defined
-        if ( !this._notificationsPanel || !this._notificationsOrigin )
-        {
-            return;
-        }
+openPanel(): void {
+  if (!this._notificationsPanel || !this._notificationsOrigin) {
+    return;
+  }
 
-        // Create the overlay if it doesn't exist
-        if ( !this._overlayRef )
-        {
-            this._createOverlay();
-        }
+  console.log('Opening panel with notifications:', this.notifications);
 
-        // Attach the portal to the overlay
-        this._overlayRef.attach(new TemplatePortal(this._notificationsPanel, this._viewContainerRef));
-    }
+  if (!this._overlayRef) {
+    this._createOverlay();
+  }
+
+  if (this._overlayRef.hasAttached()) {
+    this._overlayRef.detach();
+  }
+
+  this._overlayRef.attach(new TemplatePortal(this._notificationsPanel, this._viewContainerRef));
+  this._changeDetectorRef.detectChanges();
+}
 
     /**
      * Close the notifications panel
@@ -117,11 +122,23 @@ export class NotificationsComponent implements OnInit, OnDestroy
     /**
      * Mark all notifications as read
      */
-    markAllAsRead(): void
-    {
-        // Mark all as read
-        this._notificationsService.markAllAsRead().subscribe();
-    }
+   markAllAsRead(): void
+{
+    // Optimistically update local state
+    this.notifications = this.notifications.map(notification => ({
+        ...notification,
+        read: true
+    }));
+
+    // Recalculate unread count
+    this._calculateUnreadCount();
+
+    // Trigger change detection to update UI
+    this._changeDetectorRef.markForCheck();
+
+    // Send the update to the backend
+    this._notificationsService.markAllAsRead().subscribe();
+}
 
     /**
      * Toggle read status of the given notification
@@ -132,16 +149,20 @@ export class NotificationsComponent implements OnInit, OnDestroy
         notification.read = !notification.read;
 
         // Update the notification
-        this._notificationsService.update(notification.id, notification).subscribe();
+        this._notificationsService.update(notification._id, notification).subscribe();
     }
 
     /**
-     * Delete the given notification
+     * Archive the given notification
      */
-    delete(notification: Notification): void
+    archive(notification: Notification): void
     {
-        // Delete the notification
-        this._notificationsService.delete(notification.id).subscribe();
+        this._notificationsService.archiveNotification(notification._id).subscribe(() => {
+            // Remove archived notification from the list locally
+            this.notifications = this.notifications.filter(n => n._id !== notification._id);
+            this._calculateUnreadCount();
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     /**
