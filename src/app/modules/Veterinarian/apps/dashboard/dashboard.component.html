@@ -36,17 +36,50 @@
                 </div>
                 <!-- Actions -->
                 <div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
-                    <button
-                        class="bg-accent"
-                        mat-flat-button
-                        [color]="'accent'"
-                    >
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_solid:envelope'"
-                        ></mat-icon>
-                        <span class="ml-2">Messages</span>
-                    </button>
+                   <button
+  class="bg-accent text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md hover:bg-accent-dark transition"
+  mat-flat-button
+  [color]="'accent'"
+  id="messagesButton"
+  (click)="openUserList()"
+>
+  <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
+  <span>Mail a client</span>
+</button>
+                   <div *ngIf="isUserListOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-lg w-80 max-h-96 overflow-auto p-6">
+    <h3 class="text-xl font-semibold mb-4">Select a user to message</h3>
+    <ul>
+     <li
+  *ngFor="let user of users.data"
+  class="py-2 px-3 rounded cursor-pointer hover:bg-accent hover:text-white transition flex justify-between items-center"
+>
+  <span (click)="selectUser(user)">
+    {{ user.name }}
+  </span>
+  <a *ngIf="user.email"
+     [href]="'mailto:' + user.email"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="flex items-center hover:text-white"
+     (click)="$event.stopPropagation()"  
+  >
+    <mat-icon
+      class="icon-size-5 text-hint"
+      [svgIcon]="'heroicons_solid:envelope'"
+    ></mat-icon>
+    <span class="ml-2">Email</span>
+  </a>
+</li>
+    </ul>
+    <button
+      (click)="isUserListOpen = false"
+      class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow"
+    >
+      Close
+    </button>
+  </div>
+</div>
                     <button mat-flat-button [color]="'primary'">
                         <mat-icon
                             class="icon-size-5"

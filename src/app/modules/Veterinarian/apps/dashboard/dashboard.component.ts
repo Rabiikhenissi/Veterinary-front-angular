@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -19,6 +19,8 @@ import { dashboardVetService } from 'app/shared/services/dashboard-vet.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject, takeUntil } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
+import { User } from 'app/shared/models/user';
+import { UserService } from 'app/shared/services/user.service';
 @Component({
     selector       : 'dashboard-vet',
     templateUrl    : './dashboard.component.html',
@@ -29,6 +31,9 @@ import { ChangeDetectorRef } from '@angular/core';
 export class DashboardComponent implements OnInit, OnDestroy
 {
     @ViewChild(MatPaginator) paginator: MatPaginator;
+     isUserListOpen = false;
+  users: User[] = [];
+_userService=inject(UserService);
 currentSize = 10;
   currentPage = 1;
 total = 0;
@@ -94,6 +99,7 @@ overviewStats: any = {
      */
     ngOnInit(): void
     {
+      this.getExternalUsers();
       this.getCompanyTeam()
         this.generateMonthOptions();
 this.getAppointmentsPerDay();
@@ -493,5 +499,28 @@ onMonthChange(selectedMonth: string): void {
      *
      * @private
      */
-    
+
+
+    getExternalUsers(): void {
+    this._userService.getExternalUsers(localStorage.getItem('connectedUserCompany')).subscribe({
+      next: (response) => {
+        this.users = response;
+        console.log('External users:', this.users);
+      },
+      error: (err) => {
+        console.error('Failed to fetch external users:', err);
+      }
+    });
+  }
+    openUserList() {
+    this.isUserListOpen = true;
+  }
+
+  selectUser(user: any) {
+    this.selectedUser = user;
+    this.isUserListOpen = false;
+  }
+
+  selectedUser: any = null;
+
 }
