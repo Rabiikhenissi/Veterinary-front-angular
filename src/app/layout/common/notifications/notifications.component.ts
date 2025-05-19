@@ -47,28 +47,27 @@ export class NotificationsComponent implements OnInit, OnDestroy
     /**
      * On init
      */
-    ngOnInit(): void
-{
-    // Subscribe to notification changes
-    this._notificationsService.notifications$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((notifications: Notification[]) =>
-        {
-            console.log('Notifications received:', notifications);  // <-- Log received notifications
+ngOnInit(): void {
+    let previousUnreadCount = 0;
 
-            // Load the notifications
-            this.notifications = notifications;
+this._notificationsService.notifications$
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe((notifications: Notification[]) => {
+        this.notifications = notifications;
+        
+        const currentUnreadCount = notifications.filter(n => !n.read).length;
 
-            // Calculate the unread count
-            this._calculateUnreadCount();
+        // Play sound only if there's an increase in unread notifications
+        if (currentUnreadCount > previousUnreadCount) {
+            this.playNotificationSound();
+        }
 
-            console.log('Unread notifications count:', this.unreadCount); // <-- Log unread count
+        previousUnreadCount = currentUnreadCount;
 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+        this._calculateUnreadCount();
+        this._changeDetectorRef.markForCheck();
+    });
 }
-
     /**
      * On destroy
      */
@@ -92,6 +91,12 @@ export class NotificationsComponent implements OnInit, OnDestroy
     /**
      * Open the notifications panel
      */
+
+    private playNotificationSound(): void {
+    const audio = new Audio('assets/sounds/notification.wav');
+    audio.load();
+    audio.play().catch(err => console.warn('Notification sound error:', err));
+}
 openPanel(): void {
   if (!this._notificationsPanel || !this._notificationsOrigin) {
     return;
@@ -143,6 +148,7 @@ openPanel(): void {
     /**
      * Toggle read status of the given notification
      */
+
     toggleRead(notification: Notification): void
     {
         // Toggle the read status
@@ -150,6 +156,10 @@ openPanel(): void {
 
         // Update the notification
         this._notificationsService.update(notification._id, notification).subscribe();
+        this._calculateUnreadCount();
+            this._changeDetectorRef.markForCheck();
+
+
     }
 
     /**
