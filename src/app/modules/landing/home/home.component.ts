@@ -33,6 +33,8 @@ searchText: string = '';
 minPrice: number | null = null;
 maxPrice: number | null = null;
 locationText: string = '';
+showFilters = false;
+
   constructor(private _companyService: CompanyService,private _userService: UserService) {}
 
   ngOnInit(): void {

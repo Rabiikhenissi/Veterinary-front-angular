@@ -6,9 +6,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { Company } from 'app/shared/models/company';
+
 import { AuthService } from 'app/shared/services/auth.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { LoadingService } from 'app/shared/services/loading.service';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { UserService } from 'app/shared/services/user.service';
 import mapboxgl from 'mapbox-gl';
 
@@ -32,8 +34,9 @@ export class DetailsComponent implements OnInit {
     _router = inject(Router);
     _route = inject(ActivatedRoute);
     _loadingService = inject(LoadingService);
+    _petSpeciesService=inject(PetSpeciesService)
     id = this._route.snapshot.paramMap.get('id') || undefined;
-
+petSpecies: any[] = [];
     company: Company = new Company();
     map: mapboxgl.Map | undefined;
     address: string | undefined;
@@ -44,10 +47,10 @@ export class DetailsComponent implements OnInit {
         this.connectedUserId = localStorage.getItem('connectedUserId');
         this.connectedCompanyId = localStorage.getItem('connectedUserCompany');
         console.log(this.isConnected());
-
         if (this.id) {
+        
             this._loadingService.show();
-
+this.fetchPetSpecies();
             // Directly subscribe to the service without using forkJoin (only one request here)
             this._companyService.getOne(this.id).subscribe({
                 next: (result: Company) => {
@@ -215,5 +218,18 @@ export class DetailsComponent implements OnInit {
 
     goBack() {
   this._router.navigate(['/home']); // Adjust the route if your home path is different
+}
+
+fetchPetSpecies() {
+    this._petSpeciesService.getList().subscribe({
+  next: (res) => {
+    this.petSpecies = res.data; // Assuming Pagination<T> has a `data` array
+    console.log('Pet species:', this.petSpecies);
+  },
+  error: (err) => {
+    console.error('Error fetching pet species:', err);
+  }
+});
+this._loadingService.hide();
 }
 }
