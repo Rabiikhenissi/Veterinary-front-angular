@@ -6,69 +6,87 @@
   <title>Veterinary Details</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen font-sans">
 
-  <!-- Top Banner -->
-  <div class="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white text-center py-6 rounded-t-2xl shadow-lg mb-[-48px] z-10 relative">
-    <h1 class="text-3xl md:text-4xl font-bold">Veterinary Details</h1>
-    <p class="text-lg mt-2">Find out more about this veterinary and its services</p>
+  <!-- Top Banner with Return Button -->
+  <div class="bg-gradient-to-r from-green-400 to-blue-500 text-white py-6 px-6 shadow-lg mb-[-48px] z-10 relative flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-bold">🐾 Veterinary Details</h1>
+      <p class="text-lg mt-1">Everything you need to know about this clinic</p>
+    </div>
+    
+    <button
+      (click)="goBack()"
+      class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-full hover:bg-gray-100 transition duration-200 shadow"
+    >
+      ← Return Home
+    </button>
   </div>
 
-  <!-- Hero Banner -->
-  <div class="flex flex-col md:flex-row gap-24 px-4 sm:px-6 lg:px-8 py-24 bg-white rounded-2xl shadow-2xl w-full text-[150%] mt-12">
+  <!-- Main Content -->
+  <div class="flex flex-col md:flex-row gap-12 px-4 sm:px-6 lg:px-12 py-24 bg-white rounded-3xl shadow-2xl w-full text-[110%] mt-20 max-w-7xl mx-auto">
 
     <!-- Map Section -->
-<div class="md:w-1/2 w-full h-[500px] md:h-[900px] bg-gray-100 rounded-2xl shadow-inner overflow-hidden">
+    <div class="md:w-1/2 w-full h-[400px] md:h-[600px] bg-gray-200 rounded-3xl shadow-inner overflow-hidden">
       <div id="map" class="w-full h-full rounded-lg"></div>
     </div>
 
-    <!-- Company Details Section -->
-    <div class="md:w-1/2 w-full flex flex-col gap-12 justify-start">
+    <!-- Details Section -->
+    <div class="md:w-1/2 w-full flex flex-col gap-8 justify-start">
 
-      <!-- Company Name -->
-      <h2 class="text-4xl md:text-5xl font-bold text-gray-800">
-        {{ company.name }}
-      </h2>
+      <!-- Name -->
+      <h2 class="text-4xl font-extrabold text-blue-900">{{ company.name }}</h2>
 
-      <!-- Address Section -->
-      <div class="flex items-center text-xl text-gray-600">
-        <span class="font-semibold w-64">{{ 'Address' | transloco }}:</span>
-        <span class="ml-4 text-gray-800">{{ address || 'Address not available' }}</span>
+      <!-- Address -->
+      <div class="flex items-start text-lg text-gray-700 gap-2">
+        <span class="font-semibold w-32">📍 Address:</span>
+        <span class="text-gray-800">{{ address || 'Address not available' }}</span>
       </div>
 
       <!-- Visit Price -->
-      <div class="flex items-center text-xl text-gray-600">
-        <span class="font-semibold w-64">{{ 'Visit Price' | transloco }}:</span>
-        <span class="ml-4 text-gray-800">{{ company.visitPrice | number:'1.2-2' }}TND</span>
+      <div class="flex items-start text-lg text-gray-700 gap-2">
+        <span class="font-semibold w-32">💸 Visit Price:</span>
+        <span class="text-gray-800">{{ company.visitPrice | number:'1.2-2' }} TND</span>
       </div>
 
-      <!-- Services Section -->
+      <!-- Pet Species -->
+      <div *ngIf="petSpecies?.length > 0">
+        <h3 class="text-2xl font-semibold text-blue-800 mb-2">🐶 Pet Species Treated</h3>
+        <div class="flex flex-wrap gap-3">
+          <div *ngFor="let specie of petSpecies" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2 shadow-sm">
+            <img *ngIf="specie.icon" [src]="specie.icon" alt="{{ specie.name }}" class="w-5 h-5 rounded-full" />
+            <span class="text-sm font-medium">{{ specie.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services -->
       <div>
-        <h3 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">{{ 'Services' | transloco }}</h3>
-        <ul class="list-disc pl-8 space-y-3">
-          <li *ngFor="let service of company.services" class="text-lg text-gray-700">
-            <span class="font-medium">{{ service.name }}</span> – {{ service.price | number:'1.2-2' }}TND
+        <h3 class="text-2xl font-semibold text-blue-800 mb-2">🛠️ Services</h3>
+        <ul class="space-y-2 pl-5">
+          <li *ngFor="let service of company.services" class="text-gray-700 bg-gray-100 px-4 py-2 rounded-xl shadow-sm">
+            <span class="font-medium text-blue-700">{{ service.name }}</span> — {{ service.price | number:'1.2-2' }} TND
           </li>
         </ul>
       </div>
 
-      <!-- Bottom Button -->
-      <div class="mt-8">
+      <!-- Action Button -->
+      <div class="mt-6">
         <button
           *ngIf="!isConnected(); else switchVet"
           (click)="requestToGo()"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl text-xl transition duration-200"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-full text-lg transition duration-200 shadow-md"
         >
-          Request to go to this veterinary
+          🐾 Request to go to this veterinary
         </button>
 
         <ng-template #switchVet>
           <button
-          *ngIf="this.connectedCompanyId !== company._id"
+            *ngIf="this.connectedCompanyId !== company._id"
             (click)="switchVeterinary()"
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl text-xl transition duration-200"
+            class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-full text-lg transition duration-200 shadow-md"
           >
-            Switch to this veterinary
+            🔄 Switch to this veterinary
           </button>
         </ng-template>
       </div>

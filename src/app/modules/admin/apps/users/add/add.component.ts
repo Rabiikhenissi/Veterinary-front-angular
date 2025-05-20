@@ -76,6 +76,7 @@ export class AddComponent implements OnInit{
             this.listGroups = [...internalGroups.data, ...externalGroups.data];
             console.log(this.listGroups);
             this._loadingService.hide();
+            
         },
         error: () => {
             this._loadingService.hide();
@@ -99,6 +100,7 @@ export class AddComponent implements OnInit{
                 this.listCompany = results.data; 
                 this.openFilter = false;
                 this._loadingService.hide();
+                console.log(this.listCompany);
             },
             error: () => {
                 this._loadingService.hide();
@@ -110,7 +112,7 @@ export class AddComponent implements OnInit{
     if (myForm.valid) {
       console.log(this.user);
       this.user.type="internal"
-        this._userService.addUser(this.user).subscribe({
+        this._userService.createInternalUser(this.user).subscribe({
           next: (result) => {
             this._router.navigate([`../`], { relativeTo: this._route }).then();
           },
