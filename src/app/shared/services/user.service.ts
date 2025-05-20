@@ -132,6 +132,11 @@ export class UserService {
       user,
     });
   }
+  createInternalUser(user: User): Observable<User> {
+    return this.http.post<User>(`${this.endpointAuth}/internal`, {
+      user,
+    });
+  }
   getUsers(
     limit: string,
     page: string,

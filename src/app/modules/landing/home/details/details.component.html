@@ -8,11 +8,20 @@
 </head>
 <body class="bg-gray-100">
 
-  <!-- Top Banner -->
-  <div class="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white text-center py-6 rounded-t-2xl shadow-lg mb-[-48px] z-10 relative">
+  <!-- Top Banner with Return Button -->
+<div class="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white py-6 px-6  shadow-lg mb-[-48px] z-10 relative flex justify-between items-center">
+  <div>
     <h1 class="text-3xl md:text-4xl font-bold">Veterinary Details</h1>
     <p class="text-lg mt-2">Find out more about this veterinary and its services</p>
   </div>
+  
+  <button
+    (click)="goBack()"
+    class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg hover:bg-gray-100 transition duration-200"
+  >
+    ← Return Home
+  </button>
+</div>
 
   <!-- Hero Banner -->
   <div class="flex flex-col md:flex-row gap-24 px-4 sm:px-6 lg:px-8 py-24 bg-white rounded-2xl shadow-2xl w-full text-[150%] mt-12">

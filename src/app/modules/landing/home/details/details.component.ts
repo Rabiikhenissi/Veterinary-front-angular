@@ -212,4 +212,8 @@ export class DetailsComponent implements OnInit {
             }
         });
     }
+
+    goBack() {
+  this._router.navigate(['/home']); // Adjust the route if your home path is different
+}
 }
