@@ -25,15 +25,17 @@ _fuseConfirmationService = inject(FuseConfirmationService);
 
   // Fetch all pet species
   getSpeciesList() {
-    this._petSpeciesService.getList().subscribe(
-      (data) => {
-        this.speciesList = data.data;  
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
+      next: (res) => {
+        this.speciesList = res.data;
+        console.log(this.speciesList);
       },
-      (error) => {
-        console.error('Error fetching pet species:', error);
+      error: (err) => {
+        console.error('Failed to fetch species', err);
       }
-    );
+    });
   }
+      
    // Handle the species selection
    selectSpecies(species: PetSpecies) {
     this.selectedSpeciesId = species._id;

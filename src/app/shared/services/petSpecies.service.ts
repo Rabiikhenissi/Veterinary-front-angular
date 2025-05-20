@@ -12,9 +12,8 @@ export class PetSpeciesService {
   endpoint = `${environment.api}/petSpecies`;
     http = inject(HttpClient);
 
-  getList(limit?: string, page?: string, search?: string): Observable<Pagination<PetSpecies>> {
+  getList(companyId: string, limit?: string, page?: string, search?: string): Observable<Pagination<PetSpecies>> {
     let params = new HttpParams();
-    const companyId = localStorage.getItem('connectedUserCompany'); 
     if (companyId) params = params.append('companyId', companyId);
     if (limit) params = params.append('limit', limit);
     if (page) params = params.append('page', page);

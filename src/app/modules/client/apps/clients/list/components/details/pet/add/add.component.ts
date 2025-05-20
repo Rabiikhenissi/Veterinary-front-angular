@@ -41,7 +41,7 @@ today: string = new Date().toISOString().split('T')[0];
  speciesOptions: PetSpecies[] = []; 
   
     ngOnInit() {
-      this._petSpeciesService.getList().subscribe({
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
         next: (res) => {
           this.speciesOptions = res.data;
         },

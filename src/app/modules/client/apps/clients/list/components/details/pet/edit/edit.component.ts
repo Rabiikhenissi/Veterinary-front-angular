@@ -63,7 +63,7 @@ export class EditComponent {
         console.error('Error loading pet:', err);
       },
     });
-    this._petSpeciesService.getList().subscribe({
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
       next: (res) => {
         this.speciesOptions = res.data;
       },

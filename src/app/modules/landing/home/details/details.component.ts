@@ -19,7 +19,6 @@ import mapboxgl from 'mapbox-gl';
     imports: [
         FormsModule,
         ReactiveFormsModule,
-        TranslocoPipe,
         MatDatepickerModule,
         CommonModule,
     ],
@@ -50,12 +49,12 @@ petSpecies: any[] = [];
         if (this.id) {
         
             this._loadingService.show();
-this.fetchPetSpecies();
             // Directly subscribe to the service without using forkJoin (only one request here)
             this._companyService.getOne(this.id).subscribe({
                 next: (result: Company) => {
                     this.company = result;
                     console.log(this.company);
+            this.fetchPetSpecies();
 
                     if (this.company.firstCalendarDay) {
                         this.company.firstCalendarDay = this.formatDateForInput(
@@ -72,6 +71,7 @@ this.fetchPetSpecies();
                     console.error('Error loading company details');
                 },
             });
+
         }
     }
 
@@ -221,9 +221,10 @@ this.fetchPetSpecies();
 }
 
 fetchPetSpecies() {
-    this._petSpeciesService.getList().subscribe({
+    console.log('Fetching pet species...',this.company);
+    this._petSpeciesService.getList(this.company._id).subscribe({
   next: (res) => {
-    this.petSpecies = res.data; // Assuming Pagination<T> has a `data` array
+    this.petSpecies = res.data; 
     console.log('Pet species:', this.petSpecies);
   },
   error: (err) => {

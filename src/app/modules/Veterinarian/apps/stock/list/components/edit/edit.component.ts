@@ -36,7 +36,7 @@ export class EditComponent implements OnInit {
     this._productService.getOne(this.id).subscribe(product => {
       this.initForm(product);
     });
-    this._petSpeciesService.getList().subscribe({
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
       next: (res) => {
         this.species = res.data;
       },
