@@ -32,8 +32,8 @@ export class DashboardComponent implements OnInit, OnDestroy
 {
     @ViewChild(MatPaginator) paginator: MatPaginator;
      isUserListOpen = false;
+     user:any;
   users: User[] = [];
-_userService=inject(UserService);
 currentSize = 10;
   currentPage = 1;
 total = 0;
@@ -86,6 +86,7 @@ overviewStats: any = {
         private _appointmentService: AppointmentService,
         private _cartService: CartService,
         private _cdr: ChangeDetectorRef,
+        private _userService:UserService
     )
     {
     }
@@ -99,6 +100,16 @@ overviewStats: any = {
      */
     ngOnInit(): void
     {
+      const id=localStorage.getItem('connectedUserId');
+      this.user=this._userService.getOne(id).subscribe({
+        next:(user:User)=>{
+          this.user=user;
+          console.log('user',this.user);
+        },
+        error:(err)=>{
+          console.log('error',err);
+        }
+      })
       this.getExternalUsers();
       this.getCompanyTeam()
         this.generateMonthOptions();
