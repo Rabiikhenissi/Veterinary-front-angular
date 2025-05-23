@@ -38,7 +38,7 @@ _petSpeciesService = inject(PetSpeciesService);
   speciesOptions: PetSpecies[] = []; 
 
   ngOnInit() {
-    this._petSpeciesService.getList().subscribe({
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
       next: (res) => {
         this.speciesOptions = res.data;
       },

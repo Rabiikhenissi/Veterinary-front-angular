@@ -7,6 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Company } from 'app/shared/models/company';
 import { AuthService } from 'app/shared/services/auth.service';
 import { CompanyService } from 'app/shared/services/company.service';
+import { GroupService } from 'app/shared/services/group.service';
 import { UserService } from 'app/shared/services/user.service';
 
 
@@ -20,6 +21,9 @@ export class LandingHomeComponent implements OnInit {
   _authService = inject(AuthService);
     _router = inject(Router);
     _route = inject(ActivatedRoute);
+  _companyService = inject(CompanyService);
+  _userService = inject(UserService);
+  _groupService = inject(GroupService);
   companies: Company[] = [];
   defaultLogo = 'assets/images/logo/logo.svg';
   connectedUserId: string | null = null;
@@ -35,7 +39,6 @@ maxPrice: number | null = null;
 locationText: string = '';
 showFilters = false;
 
-  constructor(private _companyService: CompanyService,private _userService: UserService) {}
 
   ngOnInit(): void {
     
@@ -98,14 +101,49 @@ fetchCompanies() {
       },
     });
   }
-
-  fetchVeterinarians() {
-     this._userService.getVeterinarians().subscribe({
+getCompany(id: string) {
+  return this._companyService.getOne(id).subscribe({
+    next: (res) => {
+      console.log('Company details:', res);
+      return res.name
+    },
+    error: (err) => {
+      console.error('Failed to fetch company details', err);
+      return undefined;
+    }
+  });
+}
+fetchVeterinarians() {
+  console.log('Fetching veterinarians...');
+  
+  this._userService.getVeterinarians().subscribe({
     next: (vets) => {
+      console.log('Raw veterinarians data:', vets);
+
       this.veterinarians = vets.data.filter(vet => !vet?.archived);
-      this.filteredVeterinarians = [...this.veterinarians];
-    this.applyFilters();
-      console.log('Veterinarians:', this.veterinarians);
+      console.log('Non-archived veterinarians:', this.veterinarians);
+
+      const filteredVets: any[] = [];
+
+      this.veterinarians.forEach(vet => {
+        console.log(`Fetching group for vet ID ${vet._id}, groupId: ${vet.groupsId._id}`);
+        
+        this._groupService.getOne(vet.groupsId._id).subscribe({
+          next: (group) => {
+            console.log(`Group fetched for vet ID ${vet._id}:`, group);
+            
+            if (group.code && group.code.toLowerCase().includes('veterinarian')) {
+              console.log(`Vet ID ${vet._id} added to filtered list`);
+              filteredVets.push(vet);
+                this.filteredVeterinarians = [...filteredVets];
+              console.log('Current filteredVeterinarians:', this.filteredVeterinarians);
+            } 
+          },
+          error: (err) => {
+            console.error(`Error fetching group for vet ID ${vet._id}:`, err);
+          }
+        });
+      });
     },
     error: (err) => {
       console.error('Error fetching veterinarians:', err);

@@ -55,7 +55,7 @@ export class ShopComponent implements OnInit{
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
     this.fetchProducts();
-    this._petSpeciesService.getList().subscribe({
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
       next: (res) => {
         this.speciesList = res.data;
       },

@@ -106,7 +106,7 @@
               </h3>
               <ul class="list-disc list-inside space-y-1">
                 <li *ngFor="let service of company.services">
-                  {{ service.name }} - {{ service.price | currency }}
+                  {{ service.name }} - {{ service.price | currency:'TND':'symbol':'1.2-2' }}
                 </li>
               </ul>
             </div>
@@ -132,7 +132,7 @@
               <strong>Email:</strong> {{ vet.email }}
             </p>
             <p class="text-sm text-gray-600">
-              <strong>Company:</strong> {{ vet.company.name }}
+              <strong>Company:</strong> {{ this.getCompanyName(vet.companyId) }}
             </p>
             <button
               *ngIf="vet.company"
