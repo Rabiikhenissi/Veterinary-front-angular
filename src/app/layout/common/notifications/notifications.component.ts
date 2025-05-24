@@ -53,7 +53,7 @@ ngOnInit(): void {
 this._notificationsService.notifications$
     .pipe(takeUntil(this._unsubscribeAll))
     .subscribe((notifications: Notification[]) => {
-        this.notifications = notifications;
+          this.notifications = notifications.filter(n => n.userId === localStorage.getItem('connectedUserId'));
         
         const currentUnreadCount = notifications.filter(n => !n.read).length;
 
