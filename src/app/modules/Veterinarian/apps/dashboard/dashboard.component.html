@@ -10,7 +10,7 @@
                     <div class="flex-0 w-16 h-16 rounded-full overflow-hidden">
                         <img
                             class="w-full h-full object-cover"
-                            src="assets/images/avatars/brian-hughes.jpg"
+                            [src]="user.avatar"
                         />
                     </div>
                     <div class="flex flex-col min-w-0 ml-4">
@@ -21,17 +21,7 @@
                                 {{ t("welcome-back") }}, {{user.name}}!
                             </div>
                         </ng-container>
-                        <div class="flex items-center">
-                            <mat-icon
-                                class="icon-size-5"
-                                [svgIcon]="'heroicons_solid:bell'"
-                            ></mat-icon>
-                            <div
-                                class="ml-1.5 leading-6 truncate text-secondary"
-                            >
-                                You have 2 new messages and 15 new tasks
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
                 <!-- Actions -->
@@ -80,13 +70,7 @@
     </button>
   </div>
 </div>
-                    <button mat-flat-button [color]="'primary'">
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_solid:cog-8-tooth'"
-                        ></mat-icon>
-                        <span class="ml-2">Settings</span>
-                    </button>
+                    
                 </div>
             </div>
         </div>
@@ -134,16 +118,7 @@
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
                                     >
-                                        <div
-                                            class="text-md font-medium truncate"
-                                        >
-                                            Archived:
-                                        </div>
-                                        <div
-                                            class="ml-1.5 text-lg font-semibold"
-                                        >
-                                            9
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -173,16 +148,7 @@
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
                                     >
-                                        <div
-                                            class="text-md font-medium truncate"
-                                        >
-                                            Archived:
-                                        </div>
-                                        <div
-                                            class="ml-1.5 text-lg font-semibold"
-                                        >
-                                            9
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -212,16 +178,7 @@
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
                                     >
-                                        <div
-                                            class="text-md font-medium truncate"
-                                        >
-                                            Archived:
-                                        </div>
-                                        <div
-                                            class="ml-1.5 text-lg font-semibold"
-                                        >
-                                            19
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -253,16 +210,7 @@
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
                                     >
-                                        <div
-                                            class="text-md font-medium truncate"
-                                        >
-                                            Archived:
-                                        </div>
-                                        <div
-                                            class="ml-1.5 text-lg font-semibold"
-                                        >
-                                            no value
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>

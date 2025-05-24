@@ -37,12 +37,7 @@ export class DashboardComponent implements OnInit, OnDestroy
 currentSize = 10;
   currentPage = 1;
 total = 0;
-    chartGithubIssues: ApexOptions = {};
     chartTaskDistribution: ApexOptions = {};
-    chartBudgetDistribution: ApexOptions = {};
-    chartWeeklyExpenses: ApexOptions = {};
-    chartMonthlyExpenses: ApexOptions = {};
-    chartYearlyExpenses: ApexOptions = {};
     selectedProject: string = 'ACME Corp. Backend App';
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     companyId: string = '';
@@ -228,7 +223,7 @@ const quantities = allCategories.map(cat => quantitiesMap.get(cat) || 0);
           next: (result) => {
             const labels = result.map((item: any) => item._id);
             const series = result.map((item: any) => item.count);
-        
+            
             this.chartTaskDistribution = {
               chart: {
                 fontFamily: 'inherit',

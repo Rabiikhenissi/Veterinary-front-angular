@@ -37,49 +37,12 @@ export class DashboardComponent implements OnInit, OnDestroy
   _authService=inject(AuthService)
   veterinarians:User[] = [];
 admin: User;
-    chartAppointmentStats: any = {
-        chart: {
-          type: 'bar',
-          height: 350,
-        },
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '55%',
-          },
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent'],
-        },
-        xaxis: {
-          categories: [], // This will hold the names of the companies
-        },
-        yaxis: {
-          title: {
-            text: 'Appointments',
-          },
-        },
-        fill: {
-          opacity: 1,
-        },
-        tooltip: {
-          y: {
-            formatter: (val) => `${val} appointments`,
-          },
-        },
-        colors: ['#00b894', '#0984e3'], // Colors for completed and confirmed
-        series: [], // Data for confirmed and completed appointments
-      };
-    chartTopCompanies  : ApexOptions = {};
-    data: any;
-    selectedProject: string = 'ACME Corp. Backend App';
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
-    companiesCount = { total: 0, inactive: 0 };
+chartAppointmentStats: ApexOptions = { };
+chartTopCompanies  : ApexOptions = {};
+data: any;
+selectedProject: string = 'ACME Corp. Backend App';
+private _unsubscribeAll: Subject<any> = new Subject<any>();
+companiesCount = { total: 0, inactive: 0 };
 veterinariansCount = { total: 0, inactive: 0 };
 secretariesCount = { total: 0, inactive: 0 };
 featuresCount = { total: 0, inactive: 0 };
@@ -288,7 +251,9 @@ loadDashboardCounts(): void {
   const completedLastWeek = data.map(d =>
     d.stats.find(s => s.week === 'last-week' && s.status === 'completed')?.count || 0
   );
-
+  const allValues = [...confirmedThisWeek, ...confirmedLastWeek, ...completedThisWeek, ...completedLastWeek];
+const maxValue = Math.max(...allValues);
+const roundedMax = Math.ceil(maxValue / 5) * 5; // Round to nearest 5
   this.chartAppointmentStats = {
   chart: {
     type: 'bar',
@@ -321,16 +286,17 @@ loadDashboardCounts(): void {
     }
   },
   yaxis: {
+  min: 0,
+  max: roundedMax, // ✅ Adjust based on your actual data max (can be dynamic too)
+  tickAmount: 5, // ✅ Ensures distinct tick steps: 0, 2, 4, 6, 8, 10
   labels: {
     style: {
       fontSize: '12px'
     },
-    formatter: function (val) {
-      return Math.round(val); // or: return val.toFixed(0);
-    }
-  
+    formatter: (val) => val.toFixed(0) // ✅ Forces integer display
   }
-},
+}
+,
   tooltip: {
   shared: true,
   intersect: false,
@@ -351,27 +317,12 @@ loadDashboardCounts(): void {
     }
   },
   series: [
-    {
-      name: 'Confirmed (This Week)',
-      type: 'column',
-      data: confirmedThisWeek || [],
-    },
-    {
-      name: 'Confirmed (Last Week)',
-      type: 'column',
-      data: confirmedLastWeek || [],
-    },
-    {
-      name: 'Completed (This Week)',
-      type: 'line',
-      data: completedThisWeek || [],
-    },
-    {
-      name: 'Completed (Last Week)',
-      type: 'line',
-      data: completedLastWeek || [],
-    },
-  ]
+  { name: 'Confirmed (This Week)', type: 'column', data: confirmedThisWeek },
+  { name: 'Confirmed (Last Week)', type: 'column', data: confirmedLastWeek },
+  { name: 'Completed (This Week)', type: 'column', data: completedThisWeek },
+  { name: 'Completed (Last Week)', type: 'column', data: completedLastWeek},
+]
+
 };
 
 
