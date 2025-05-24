@@ -471,11 +471,17 @@ getCompanyTeam(): void {
         tooltip: { enabled: false },
       },
       yaxis: {
-        labels: {
-          offsetX: -16,
-          style: { colors: 'var(--fuse-text-secondary)' },
-        },
-      },
+  min: 0,
+  forceNiceScale: true, // Ensures clean intervals
+  decimalsInFloat: 0,   // No decimals on axis labels
+  labels: {
+    offsetX: -16,
+    style: {
+      colors: 'var(--fuse-text-secondary)'
+    },
+    formatter: (val) => Math.floor(val).toString(), // Ensures whole numbers
+  }
+},
     };
     
   },
