@@ -34,10 +34,21 @@
       <div class="space-y-8">
   
         <!-- Procedures -->
-        <div class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">🛠️ Procedures</h3>
-          <p>{{ appointment?.performedProcedures?.join(', ') || 'None' }}</p>
-        </div>
+<div class="bg-green-50 p-6 rounded-xl shadow-sm border">
+  <h3 class="text-2xl font-bold text-green-700 mb-4">🛠️ Procedures</h3>
+
+  <ng-container *ngIf="appointment?.performedProcedures?.length > 0; else noProcedures">
+    <ul class="list-disc list-inside space-y-1 text-green-800">
+      <li *ngFor="let procedure of appointment.performedProcedures">
+        {{ procedure.name }} – {{ procedure.price | currency:'TND ':'symbol':'1.0-2' }}
+      </li>
+    </ul>
+  </ng-container>
+
+  <ng-template #noProcedures>
+    <p class="text-gray-500">None</p>
+  </ng-template>
+</div>
   
         <!-- Prescription -->
         <div *ngIf="appointment?.prescriptionId" class="bg-green-50 p-6 rounded-xl shadow-sm border">
