@@ -1,3 +1,4 @@
+<ng-container *ngIf="!isLoading; else loading">
 <!-- Navigation -->
 <fuse-vertical-navigation
    class="bg-gradient-to-b from-green-900 via-green-800 to-green-600 text-white shadow-lg print:hidden "
@@ -68,3 +69,10 @@
         }
     </div>
 </div>
+</ng-container>
+<!-- Loading Placeholder -->
+<ng-template #loading>
+    <div class="flex items-center justify-center h-screen w-full">
+        <mat-spinner diameter="48" color="primary"></mat-spinner>
+    </div>
+</ng-template>
