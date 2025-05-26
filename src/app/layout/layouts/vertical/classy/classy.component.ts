@@ -13,12 +13,13 @@ import {MenuService} from "../../../../shared/services/menu.service";
 import { BreadcrumbsComponent } from "../../../../shared/components/breadcrumbs/breadcrumbs.component";
 import { CartService } from 'app/shared/services/cart.service';
 import { NotificationsComponent } from "../../../common/notifications/notifications.component";
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'classy-layout',
     templateUrl: './classy.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [FuseVerticalNavigationComponent, MatIconModule, MatButtonModule, RouterOutlet, BreadcrumbsComponent, NotificationsComponent]
+    imports: [FuseVerticalNavigationComponent, MatIconModule, MatButtonModule,CommonModule, RouterOutlet, BreadcrumbsComponent, NotificationsComponent]
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy
 {
@@ -58,9 +59,13 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
         this.menuService.getMenu().subscribe({
             next: (data) => {
                 this.navigation = data.menu;
+                this.isLoading = false;
                 console.log('this.navigation', this.navigation)
             },
-            error: () => {},
+            error: () => {
+                this.isLoading = false;
+                console.error('Failed to load menu');
+            },
         });
 
 
