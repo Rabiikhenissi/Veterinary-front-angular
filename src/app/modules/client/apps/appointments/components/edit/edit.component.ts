@@ -51,7 +51,7 @@ export class EditComponent implements OnInit {
         this.appointment = response;
         this.selectedDate = response.date.split('T')[0];
         this.selectedTime = response.time?.slice(0, 5) || '';
-        
+        this.updateAllowedTimes();
         this._userService.getOne(response.userId._id).subscribe({
           next: (userData) => {
             this.user = userData;
@@ -143,6 +143,8 @@ if (!this.isTimeWithinBusinessHours(this.selectedDate, this.selectedTime)) {
   this._companyService.getOne(companyId).subscribe({
     next: (company) => {
       this.companyBusinessHours = company.businessHours || [];
+      // Now that business hours are loaded, update allowedTimes
+      this.updateAllowedTimes();
     },
     error: (err) => {
       console.error('Failed to fetch company business hours:', err);
@@ -220,5 +222,9 @@ generateTimesForBusinessHours(date: string): string[] {
 }
 updateAllowedTimes() {
   this.allowedTimes = this.generateTimesForBusinessHours(this.selectedDate);
+  // Optionally reset selectedTime if it's not in allowedTimes
+  if (!this.allowedTimes.includes(this.selectedTime)) {
+    this.selectedTime = '';
+  }
 }
 }
