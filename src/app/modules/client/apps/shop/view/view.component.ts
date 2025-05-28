@@ -7,6 +7,7 @@ import { CartService } from 'app/shared/services/cart.service';
 import { ProductService } from 'app/shared/services/product.service';
 import { CartSidebarComponent } from "../cart-sidebar/cart-sidebar.component";
 import Swal from 'sweetalert2';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-view',
@@ -33,6 +34,12 @@ export class ViewComponent {
   
   getTotalItems(): number {
     return this.cart?.products?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
+  }
+
+  getProductImageUrl(imagePath: string): string {
+    const url = getImageUrl(imagePath);
+    console.log('getProductImageUrl called with:', imagePath, '-> returns:', url);
+    return url;
   }
 @ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;
   ngOnInit(): void {

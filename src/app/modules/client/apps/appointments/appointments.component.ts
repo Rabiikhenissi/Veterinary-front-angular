@@ -130,6 +130,7 @@ this.initializeCalendarOptions();
                 selectable: true,
         selectMirror: true,
         dayMaxEvents: true,
+        selectLongPressDelay: 100,
         fixedWeekCount: false,
         eventOverlap: false,
         slotMinTime: '06:00:00',
@@ -138,6 +139,8 @@ this.initializeCalendarOptions();
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
         eventDrop: this.handleEventDrop.bind(this),
+        handleWindowResize: true,
+windowResizeDelay: 150,
         businessHours: [
             {
                 daysOfWeek: [ 1, 2, 3, 4,5],
