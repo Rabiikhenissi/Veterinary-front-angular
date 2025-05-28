@@ -113,7 +113,7 @@ export class AddComponent implements OnInit {
       this.user.type="external"
         this._userService.addUser(this.user).subscribe({
           next: (result) => {
-            this._router.navigate([], { relativeTo: this._route }).then();
+            this._router.navigate([`../`], { relativeTo: this._route }).then();
           },
           error: () => {
             this._snackBarService.openSnackBar(

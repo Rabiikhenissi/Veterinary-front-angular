@@ -21,6 +21,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { User } from 'app/shared/models/user';
 import { UserService } from 'app/shared/services/user.service';
+import { CompanyService } from 'app/shared/services/company.service';
+import { BusinessHour } from 'app/shared/models/company';
 @Component({
     selector       : 'dashboard-vet',
     templateUrl    : './dashboard.component.html',
@@ -44,18 +46,22 @@ total = 0;
     chartMostSoldCategories: any;
 
     teamMembers: any[] = [];
-
     selectedMonth: string = this.getCurrentMonth(); // Default to the current month
-  appointmentPerDayData: any = {}; // Stores the data for the chart
-  chartAppointmentsPerDay: any = {}; // Initialize with an empty object to prevent 'undefined' error
-  availableMonths: string[] = [];
+    appointmentPerDayData: any = {}; // Stores the data for the chart
+    chartAppointmentsPerDay: any = {}; // Initialize with an empty object to prevent 'undefined' error
+    availableMonths: string[] = [];
+    
+    isBusinessHoursOpen = false;
+    daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    businessHours: BusinessHour[] = [];
+originalBusinessHours: BusinessHour[] = []; // to hold a copy
 
-    data:any = {
-    }
+data:any = {}
   
 displayedColumns: string[] = ['num', 'clientName', 'totalProd', 'totalMoney', 'date'];
 cartList:any;
 
+selectedUser: any = null;
 
 overviewStats: any = {
     clientsCount: 0,
@@ -81,7 +87,8 @@ overviewStats: any = {
         private _appointmentService: AppointmentService,
         private _cartService: CartService,
         private _cdr: ChangeDetectorRef,
-        private _userService:UserService
+        private _userService:UserService,
+        private _companyService:CompanyService
     )
     {
     }
@@ -95,6 +102,8 @@ overviewStats: any = {
      */
     ngOnInit(): void
     {
+      
+      this.companyId=localStorage.getItem('connectedUserCompany') || '';
       const id=localStorage.getItem('connectedUserId');
       this.user=this._userService.getOne(id).subscribe({
         next:(user:User)=>{
@@ -109,10 +118,8 @@ overviewStats: any = {
       this.getCompanyTeam()
         this.generateMonthOptions();
 this.getAppointmentsPerDay();
-
-
-
-        this.companyId=localStorage.getItem('connectedUserCompany') || '';
+this.getBusinessHours()
+this.initializeBusinessHours()
         this._dashboardVetService.getAppointmentStats(this.companyId).subscribe({
             next: (data) =>
             {
@@ -214,7 +221,7 @@ const quantities = allCategories.map(cat => quantitiesMap.get(cat) || 0);
           tickAmount: 5,
         },
       };
-
+      
     })
 
 
@@ -347,8 +354,8 @@ const quantities = allCategories.map(cat => quantitiesMap.get(cat) || 0);
                 const attrVal = el.getAttribute('fill');
                 el.setAttribute('fill', `url(${currentURL}${attrVal.slice(attrVal.indexOf('#'))}`);
             });
-    }
- getCartList(): void {
+          }
+          getCartList(): void {
     this._cartService.getList(this.currentPage,
          this.currentSize,
           this.companyId
@@ -533,6 +540,89 @@ onMonthChange(selectedMonth: string): void {
     this.isUserListOpen = false;
   }
 
-  selectedUser: any = null;
+openBusinessHours() {
+  this.isBusinessHoursOpen = true;
+}
 
+saveBusinessHours() {
+  const invalidDays = this.businessHours.filter(bh => bh.open && bh.close && bh.close <= bh.open);
+
+  if (invalidDays.length > 0) {
+    
+    return;
+  }
+  this.isBusinessHoursOpen = false;
+  this._companyService.updateBusinessHours(this.companyId, this.businessHours).subscribe({
+    next: () => console.log('Business hours updated!'),
+    error: (err) => console.error('Update error:', err),
+  });
+  console.log('Business hours saved:', this.businessHours);
+}
+
+getBusinessHours() {
+  this._companyService.getOne(this.companyId).subscribe({
+    next: (response) => {
+      const company = response;
+      this.businessHours = company.businessHours 
+      console.log("business Hours:",company)
+      this.initializeBusinessHours();
+      this.originalBusinessHours = JSON.parse(JSON.stringify(this.businessHours));
+    },
+    error: (error) => {
+      console.error('Error fetching company:', error);
+    }
+  });
+}
+
+  getBusinessHour(day: string): BusinessHour | undefined {
+  return this.businessHours.find(bh => bh.day === day);
+}
+updateBusinessHour(day: string, field: 'open' | 'close', value: string): void {
+  const bh = this.getBusinessHour(day);
+  if (bh) {
+    bh[field] = value;
+  } else {
+    this.businessHours.push({
+      day,
+      open: field === 'open' ? value : '',
+      close: field === 'close' ? value : '',
+    });
+  }
+}
+
+initializeBusinessHours() {
+  const defaultHours = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // Ensure businessHours is defined
+  if (!this.businessHours) {
+    this.businessHours = [];
+  }
+
+  for (const day of defaultHours) {
+    const exists = this.businessHours.find(bh => bh.day === day);
+    if (!exists) {
+      this.businessHours.push({ day, open: '', close: '' });
+    }
+  }
+
+  // Optional: sort by day order
+  this.businessHours.sort(
+    (a, b) => defaultHours.indexOf(a.day) - defaultHours.indexOf(b.day)
+  );
+}
+
+trackByDay(index: number, day: string) {
+  return day;
+}
+isTimeInvalid(day: string): boolean {
+  const bh = this.getBusinessHour(day);
+  if (!bh || !bh.open || !bh.close) return false;
+
+  return bh.close <= bh.open;
+}
+resetBusinessHours(): void {
+  // Restore original business hours
+  this.businessHours = JSON.parse(JSON.stringify(this.originalBusinessHours));
+  this.isBusinessHoursOpen = false; // optional: close the form
+}
 }

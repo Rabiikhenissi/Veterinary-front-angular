@@ -34,6 +34,9 @@ import { User } from 'app/shared/models/user';
 import { Pet } from 'app/shared/models/pet';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { LoadingService } from 'app/shared/services/loading.service';
+import { BusinessHour } from 'app/shared/models/company';
 
 @Component({
     selector: 'app-calendar',
@@ -49,6 +52,8 @@ export class CalendarComponent implements OnInit {
     _appointmentService = inject(AppointmentService);
     _userService = inject(UserService);
     _notificationService = inject(NotificationService);
+    _fuseConfirmationService=inject(FuseConfirmationService)
+    _loadingService=inject(LoadingService)
 _companyService = inject(CompanyService);
 _route= inject(ActivatedRoute);
     pets: any[] = [];
@@ -57,13 +62,14 @@ calendarFirstDate: string = '';
 userType: string = '';
 CalendarOptions!: CalendarOptions;
 connectedUser;
-    ngOnInit(): void {
-        this.loadAppointments();
-        this.loadPets();
-        const savedDate = localStorage.getItem('calendarDate');
-        
-        this.userType = localStorage.getItem('connectedUserType');
-        const connectedUserId = localStorage.getItem('connectedUserId');
+ngOnInit(): void {
+  this.loadAppointments();
+  this.loadPets();
+  const savedDate = localStorage.getItem('calendarDate');
+  const connectedUserCompany = localStorage.getItem('connectedUserCompany');
+  this.userType = localStorage.getItem('connectedUserType');
+  const connectedUserId = localStorage.getItem('connectedUserId');
+  
         this._userService.getOne(connectedUserId).subscribe({
             next: (user) => {
                 this.connectedUser = user;
@@ -73,8 +79,8 @@ connectedUser;
                 console.error('Error fetching connected user:', error);
             },
         });
-        const connectedUserCompany = localStorage.getItem('connectedUserCompany');
         console.log('connectedUserCompany', connectedUserCompany);//mrigla
+  this.getBusinessHours(connectedUserCompany);
 this._companyService.getOne(connectedUserCompany).subscribe({
     next: (company) => {
         console.log('Company:', company);
@@ -114,8 +120,10 @@ this.initializeCalendarOptions();
   
     calendarVisible = signal(true);
     initializeCalendarOptions(): void {
+      console.log("tesssssssssssss",typeof(this.businessHoursList))
         console.log('calendarFirstDate in initializeCalendarOptions:', this.calendarFirstDate); // Log here to check if it's set
-    this.CalendarOptions = {
+    const formattedBusinessHours = this.convertToBusinessHoursFormat(this.businessHoursList);
+        this.CalendarOptions = {
         plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
         headerToolbar: {
             left: 'prev,next today',
@@ -138,17 +146,7 @@ this.initializeCalendarOptions();
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
         eventDrop: this.handleEventDrop.bind(this),
-        businessHours: [
-            {
-                daysOfWeek: [ 1, 2, 3, 4,5],
-                startTime: '08:00', // 8am
-                endTime:'18:00'
-            },
-            {
-                daysOfWeek: [ 6], 
-                startTime: '10:00', // 10am
-                endTime: '16:00' // 4pm
-              }],
+        businessHours: formattedBusinessHours,
         // Set slot duration
         slotDuration: '0:30',
         slotLabelInterval: '0:30', 
@@ -389,11 +387,50 @@ this.initializeCalendarOptions();
           }
     }
     handleEventClick(clickInfo: EventClickArg) {
-        if (this.userType === 'external') {
-            return; 
-        }
         const appointmentId = clickInfo.event.id;
         console.log('Clicked appointment ID:', appointmentId);
+        if (this.userType === 'external') {
+            const confirmation = this._fuseConfirmationService.open({
+      title: 'Cancel Appointment',
+      message: 'Are you sure you want to cancel this appointment? This action cannot be undone.',
+      actions: {
+        confirm: {
+          label: 'Yes',
+        },
+        cancel: {
+          label: 'No',
+        },
+      },
+    });
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this._loadingService.show(); // Optional loading indicator
+        this._appointmentService.archiveAppointment(appointmentId).subscribe({
+          next: () => {
+            this._loadingService.hide();
+
+            // Optionally remove the event from calendar view
+            const calendarApi = this.calendarComponent.getApi();
+            calendarApi.getEventById(`${appointmentId}-gap`)?.remove();
+            calendarApi.getEventById(appointmentId)?.remove(); // Also remove the appointment event
+
+            // Remove the associated break event
+            const breakEvent = calendarApi.getEventById(`break-${appointmentId}`);
+            if (breakEvent) {
+            breakEvent.remove();
+            }
+          },
+          error: (error) => {
+            this._loadingService.hide();
+            console.error('Error canceling appointment:', error);
+            // You can also show a toast here
+          }
+        });
+      }
+    });
+            return; 
+        }
+        
         
         if (appointmentId) {
             const calendarApi = this.calendarComponent.getApi(); 
@@ -470,45 +507,66 @@ this.initializeCalendarOptions();
             const appointments = response.data;
             console.log('Appointments:', appointments);
       
-            const events: EventInput[] = appointments.flatMap((appointment: Appointment) => {
-              const startDate = new Date(appointment.date).toISOString().split('T')[0];
-              const startDateTime = new Date(`${startDate}T${appointment.time}`);
-              const endDateTime = new Date(startDateTime);
-              endDateTime.setHours(endDateTime.getHours() + 1);
-              
-              const gapStart = new Date(endDateTime);
-              const gapEnd = new Date(gapStart);
-              gapEnd.setMinutes(gapEnd.getMinutes() + 30);
-      
-              if (appointment.userId?.['_id'] !== currentUserId && connectedUserType === 'external') {
-                return [
-                  {
-                    start: startDateTime.toISOString(),
-                    end: endDateTime.toISOString(),
-                    display: 'background',
-                    editable: false,
-                    backgroundColor: 'grey',
-                  },
-                  {
-                    start: gapStart.toISOString(),
-                    end: gapEnd.toISOString(),
-                    display: 'background',
-                    editable: false,
-                    backgroundColor: 'grey',
-                  },
-                ];
-              }
-      
-              // Secretary or internal user view
-              let title = `${appointment.userId?.name || 'Unknown User'} with ${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
-              console.log('Appointment Title:', title);
-      
-              if (appointment.status === 'pending') {
-                // External user view
-                if (connectedUserType === 'external') {
-                  title = `${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
+            const events: EventInput[] = appointments
+              .map((appointment: Appointment) => {
+                const startDate = new Date(appointment.date).toISOString().split('T')[0];
+                const startDateTime = new Date(`${startDate}T${appointment.time}`);
+                const endDateTime = new Date(startDateTime);
+                endDateTime.setHours(endDateTime.getHours() + 1);
+                
+                const gapStart = new Date(endDateTime);
+                const gapEnd = new Date(gapStart);
+                gapEnd.setMinutes(gapEnd.getMinutes() + 30);
+        
+                if (appointment.userId?.['_id'] !== currentUserId && connectedUserType === 'external') {
+                  return [
+                    {
+                      start: startDateTime.toISOString(),
+                      end: endDateTime.toISOString(),
+                      display: 'background',
+                      editable: false,
+                      backgroundColor: 'grey',
+                    },
+                    {
+                      start: gapStart.toISOString(),
+                      end: gapEnd.toISOString(),
+                      display: 'background',
+                      editable: false,
+                      backgroundColor: 'grey',
+                    },
+                  ];
                 }
-      
+        
+                // Secretary or internal user view
+                let title = `${appointment.userId?.name || 'Unknown User'} with ${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
+                console.log('Appointment Title:', title);
+        
+                if (appointment.status === 'pending') {
+                  // External user view
+                  if (connectedUserType === 'external') {
+                    title = `${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
+                  }
+        
+                  return [
+                    {
+                      id: appointment._id,
+                      title: title,
+                      start: startDateTime.toISOString(),
+                      end: endDateTime.toISOString(),
+                      allDay: false,
+                      color: '#fbbf24', // Orange for pending
+                    },
+                    {
+                      id: `${appointment._id}-gap`, 
+                      start: gapStart.toISOString(),
+                      end: gapEnd.toISOString(),
+                      display: 'background',
+                      editable: false,
+                      backgroundColor: 'grey',
+                    },
+                  ];
+                }
+        
                 return [
                   {
                     id: appointment._id,
@@ -516,9 +574,10 @@ this.initializeCalendarOptions();
                     start: startDateTime.toISOString(),
                     end: endDateTime.toISOString(),
                     allDay: false,
-                    color: '#fbbf24', // Orange for pending
+                    color: 'green', // Green for confirmed appointments
                   },
                   {
+                  id: `${appointment._id}-gap`, 
                     start: gapStart.toISOString(),
                     end: gapEnd.toISOString(),
                     display: 'background',
@@ -526,26 +585,8 @@ this.initializeCalendarOptions();
                     backgroundColor: 'grey',
                   },
                 ];
-              }
-      
-              return [
-                {
-                  id: appointment._id,
-                  title: title,
-                  start: startDateTime.toISOString(),
-                  end: endDateTime.toISOString(),
-                  allDay: false,
-                  color: 'green', // Green for confirmed appointments
-                },
-                {
-                  start: gapStart.toISOString(),
-                  end: gapEnd.toISOString(),
-                  display: 'background',
-                  editable: false,
-                  backgroundColor: 'grey',
-                },
-              ];
-            });
+              })
+              .flat();
       
             // Updating calendar with the events
             const calendarApi = this.calendarComponent.getApi();
@@ -610,4 +651,51 @@ this.initializeCalendarOptions();
             }
         });
     }
+     private convertToBusinessHoursFormat(businessHours: BusinessHour[]): any[] {
+  const dayMap = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+
+  return businessHours
+    .filter(bh => bh.open && bh.close)
+    .map(bh => {
+      const normalizedDay = bh.day.charAt(0).toUpperCase() + bh.day.slice(1).toLowerCase();
+      const dayIndex = dayMap[normalizedDay];
+
+      if (dayIndex === undefined) {
+        console.warn(`Invalid day: ${bh.day}`);
+        return null;
+      }
+
+      return {
+        daysOfWeek: [dayIndex],
+        startTime: bh.open,
+        endTime: bh.close
+      };
+    })
+    .filter(Boolean); // Remove nulls
+}
+
+
+businessHoursList: BusinessHour[] = [];
+
+getBusinessHours(companyId) {
+  this._companyService.getOne(companyId).subscribe({
+    next: (response: any) => {
+      const company = response;
+      this.businessHoursList = company.businessHours || [];
+      
+      this.initializeCalendarOptions(); // 👈 Initialize calendar with company times
+    },
+    error: (error) => {
+      console.error('Error fetching company:', error);
+    }
+  });
+}
 }
