@@ -1,4 +1,5 @@
 <app-cart-sidebar></app-cart-sidebar>
+
 <button 
   (click)="sidebar.toggleCart()" 
   class="fixed top-4 right-4 z-50 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full shadow-lg "
@@ -11,6 +12,7 @@
     {{ getTotalItems() }}
   </span>
 </button>
+
 <div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
 
   <!-- Layout: Sidebar + Product Grid -->
@@ -18,13 +20,13 @@
 
     <!-- Left Sidebar Filters -->
     <div class="w-full lg:w-1/4 bg-white border border-green-100 rounded-lg p-4 space-y-6 shadow-sm">
-<!-- Search Field -->
-<div>
-  <input [(ngModel)]="searchQuery"
-         (ngModelChange)="onSearchChange()"
-         placeholder="🔍 Search products..."
-         class="w-full px-4 py-2 rounded-md border border-green-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
-</div>
+      <!-- Search Field -->
+      <div>
+        <input [(ngModel)]="searchQuery"
+               (ngModelChange)="onSearchChange()"
+               placeholder="🔍 Search products..."
+               class="w-full px-4 py-2 rounded-md border border-green-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300" />
+      </div>
       <!-- Species Filter -->
       <div>
         <h3 class="text-lg font-semibold text-green-800 mb-2">Pets:</h3>
@@ -54,10 +56,6 @@
           </label>
         </div>
       </div>
-
-
-      
-
     </div>
 
     <!-- Product Grid -->
@@ -75,14 +73,13 @@
             <p class="text-sm text-red-500 font-semibold" *ngIf="product.quantity === 0">Out of stock</p>
           </div>
           
-
-<!-- When on the view page -->
-<button
-  [disabled]="product?.quantity === 0"
-  (click)="addToCart(product); $event.stopPropagation()"
-  class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-500 ease-in-out disabled:opacity-50">
-  Add to Cart
-</button>
+          <!-- Add to Cart Button -->
+          <button
+            [disabled]="product?.quantity === 0"
+            (click)="addToCart(product); $event.stopPropagation()"
+            class="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-500 ease-in-out disabled:opacity-50">
+            Add to Cart
+          </button>
         </div>
       </div>
 

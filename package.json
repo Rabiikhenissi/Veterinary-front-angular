@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+"start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "19.1.7",
     "@angular/router": "19.1.7",
     "@capacitor/android": "^7.2.0",
+    "@capacitor/browser": "^7.0.1",
     "@capacitor/cli": "^7.2.0",
     "@capacitor/core": "^7.2.0",
     "@fullcalendar/angular": "^6.1.16",
@@ -68,6 +69,7 @@
     "@types/luxon": "3.3.4",
     "autoprefixer": "10.4.16",
     "chroma-js": "2.4.2",
+    "cypress": "^14.4.0",
     "jasmine-core": "5.1.1",
     "karma": "6.4.2",
     "karma-chrome-launcher": "3.2.0",

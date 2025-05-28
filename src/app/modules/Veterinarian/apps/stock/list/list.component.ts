@@ -11,6 +11,8 @@ import Swal from 'sweetalert2';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { getImageUrl } from 'app/shared/utils/image-utils';
+
 @Component({
   selector: 'app-list',
   imports: [MatPaginator,CommonModule,FormsModule,FeaturesDirective],
@@ -65,7 +67,11 @@ _route = inject(ActivatedRoute);
       });
   }
 
-
+getProductImageUrl(imagePath: string): string {
+  const url = getImageUrl(imagePath);
+  console.log('getProductImageUrl called with:', imagePath, '-> returns:', url);
+  return url;
+}
   onSearchChange() {
     clearTimeout(this.typingTimer);
     this.filterOptions.search = this.filterSearch;
