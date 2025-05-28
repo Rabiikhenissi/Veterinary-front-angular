@@ -339,11 +339,11 @@
                                         >
                                             <mat-select
                                                 [(ngModel)]="selectedMonth"
-                                                (selectionChange)="
-                                                    onMonthChange($event.value)
-                                                "
+                                               
                                             >
-                                                <mat-option value="all"
+                                                <mat-option     (click)="
+                                                onMonthChange('all')
+                                            " value="all"
                                                     >All Time</mat-option
                                                 >
                                                 <mat-option
@@ -351,6 +351,9 @@
                                                         let month of availableMonths
                                                     "
                                                     [value]="month"
+                                                    (click)="
+                                                    onMonthChange(month)
+                                                "
                                                 >
                                                     {{
                                                         month
@@ -364,8 +367,13 @@
                                 <div
                                     class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4"
                                 >
+                                <button #hidden class="hidden">
+
+                                </button>
                                     <!-- Chart Display -->
+                                     @if(!disabledChart()){
                                     <apx-chart
+                                        
                                         class="flex-auto w-full h-80"
                                         [chart]="chartAppointmentsPerDay.chart"
                                         [colors]="
@@ -398,7 +406,12 @@
                                         "
                                         [xaxis]="chartAppointmentsPerDay.xaxis"
                                         [yaxis]="chartAppointmentsPerDay.yaxis"
-                                    ></apx-chart>
+                                    ></apx-chart>}
+                                    @else {
+                                        <div class="w-full">
+                                            loading data ....
+                                        </div>
+                                    }
                                     <!-- Overview -->
                                     <div class="flex flex-col">
                                         <div class="font-medium text-secondary">

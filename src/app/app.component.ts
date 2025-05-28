@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 
 
 import { RouterOutlet } from '@angular/router';
+import { LoadingService } from './shared/services/loading.service';
 
 @Component({
     selector: 'app-root',
@@ -11,10 +12,17 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent
 {
+
+    loading = false;
+    _loadingService=inject(LoadingService);
     /**
      * Constructor
      */
     constructor()
     {
+        effect(()=>{
+            this.loading = this._loadingService.loading();
+
+        })
     }
 }

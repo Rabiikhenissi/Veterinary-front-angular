@@ -76,7 +76,8 @@ export class AddComponent implements OnInit {
         forkJoin([  this._groupService.getList('1000', '1','','','','external') ,]).subscribe({
             next: (result: [Pagination<Group>]) => {
                 this.listGroups = result[0].data;
-                console.log(this.listGroups), this._loadingService.hide();
+                console.log(this.listGroups);
+                 this._loadingService.hide();
             },
             error: () => {
                 this._loadingService.hide();
@@ -111,8 +112,10 @@ export class AddComponent implements OnInit {
     if (myForm.valid) {
       console.log(this.user);
       this.user.type="external"
+      this._loadingService.show();
         this._userService.addUser(this.user).subscribe({
           next: (result) => {
+            this._loadingService.hide();
             this._router.navigate([`../`], { relativeTo: this._route }).then();
           },
           error: () => {

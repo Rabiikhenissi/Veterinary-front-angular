@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -32,6 +32,7 @@ import { BusinessHour } from 'app/shared/models/company';
 })
 export class DashboardComponent implements OnInit, OnDestroy
 {
+  @ViewChild("hidden") hidden!:ElementRef<HTMLButtonElement>
     @ViewChild(MatPaginator) paginator: MatPaginator;
      isUserListOpen = false;
      user:any;
@@ -62,7 +63,7 @@ displayedColumns: string[] = ['num', 'clientName', 'totalProd', 'totalMoney', 'd
 cartList:any;
 
 selectedUser: any = null;
-
+disabledChart=signal(false)
 overviewStats: any = {
     clientsCount: 0,
     petsCount: 0,
@@ -424,10 +425,12 @@ getCompanyTeam(): void {
         
 
         getAppointmentsPerDay(): void {
+          console.log("selected month: ",this.selectedMonth)
+          this.disabledChart.set(true);
     this._dashboardVetService.getAppointmentsPerDay(this.selectedMonth).subscribe({
   next: (data) => {
     this.appointmentPerDayData = data;
-
+    
     this.chartAppointmentsPerDay = {
       chart: {
         fontFamily: 'inherit',
@@ -437,6 +440,7 @@ getCompanyTeam(): void {
         toolbar: { show: false },
         zoom: { enabled: false },
       },
+      
       colors: ['#22c55e'],
       dataLabels: {
         enabled: true,
@@ -490,7 +494,8 @@ getCompanyTeam(): void {
   }
 },
     };
-    
+    this.disabledChart.set(false);
+
   },
 
   error: (err) => {
@@ -506,7 +511,6 @@ getCompanyTeam(): void {
 onMonthChange(selectedMonth: string): void {
     this.selectedMonth = selectedMonth;
     console.log('Selected month:', this.selectedMonth);
-    
     this.getAppointmentsPerDay(); // Re-fetch the data for the selected month
     
   }
