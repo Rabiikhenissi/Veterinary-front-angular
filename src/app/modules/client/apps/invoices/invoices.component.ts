@@ -3,10 +3,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CartService } from 'app/shared/services/cart.service';
+import { Browser } from '@capacitor/browser';
 
 @Component({
   selector: 'app-invoices',
-  imports: [FormsModule,CommonModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './invoices.component.html',
   styleUrl: './invoices.component.scss'
 })
@@ -23,9 +25,7 @@ export class InvoicesComponent implements OnInit {
     this._cartService.getInvoices().subscribe(
       (data) => {
         console.log('Invoices:', data);
-        this.invoices = data; 
-        console.log('Invoices:', this.invoices);
-        
+        this.invoices = data;
       },
       (error) => {
         console.error('Error fetching invoices:', error);
@@ -35,9 +35,13 @@ export class InvoicesComponent implements OnInit {
 
   openInvoicePDF(invoiceId: string): void {
     this._cartService.getInvoicePdf(invoiceId).subscribe(
-      (pdfBlob) => {
+      async (pdfBlob) => {
         const pdfUrl = URL.createObjectURL(pdfBlob);
-        window.open(pdfUrl, '_blank');
+        try {
+          await Browser.open({ url: pdfUrl });
+        } catch (err) {
+          console.error('Error opening PDF in browser:', err);
+        }
       },
       (error) => {
         console.error('Error fetching invoice PDF:', error);

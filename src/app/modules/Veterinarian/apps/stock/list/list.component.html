@@ -67,7 +67,7 @@
               class="border-t border-green-100 hover:bg-green-50 transition"
               (click)="details(product._id)">
             <td class="px-5 py-4">
-              <img [src]="product.image "
+              <img [src]="getProductImageUrl(product.image) "
                    alt="{{ product.name }}"
                    class="w-16 h-16 rounded object-cover border border-green-200 shadow-sm" />
             </td>
@@ -108,7 +108,7 @@
            class="border border-green-100 bg-white rounded-lg p-4 shadow-sm"
            (click)="details(product._id)">
         <div class="flex items-center gap-4 mb-4">
-          <img [src]="product.image" alt="{{ product.name }}" class="w-16 h-16 rounded object-cover border border-green-200 shadow-sm">
+          <img [src]="getProductImageUrl(product.image) " alt="{{ product.name }}" class="w-16 h-16 rounded object-cover border border-green-200 shadow-sm">
           <div>
             <h3 class="text-lg font-bold text-green-800">{{ product.name }}</h3>
             <p class="text-sm text-green-700">{{ product.category }}</p>

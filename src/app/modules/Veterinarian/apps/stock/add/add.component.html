@@ -86,8 +86,7 @@
 
   <!-- Image Preview -->
   <div *ngIf="product.image" class="mt-4">
-    <img
-      [src]="product.image"
+   <img [src]="getProductImageUrl(product.image) "
       class="w-32 h-32 object-cover rounded border border-gray-300 shadow-sm"
       alt="Product Preview"
     />

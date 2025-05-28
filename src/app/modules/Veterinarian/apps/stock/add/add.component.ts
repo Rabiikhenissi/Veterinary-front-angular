@@ -10,6 +10,7 @@ import { PetSpecies } from 'app/shared/models/petSpecies';
 import { Product } from 'app/shared/models/product';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -64,16 +65,24 @@ _petSpeciesService = inject(PetSpeciesService);
     }
   }
 
-  onImageSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.product.image = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+ onImageSelected(event: any): void {
+  const file = event.target.files[0];
+  if (file) {
+    this._productService.uploadImage(file).subscribe({
+      next: (res) => {
+        this.product.image = res.imageUrl; // assume backend returns { imageUrl: '...' }
+      },
+      error: (err) => {
+        console.error('Image upload failed', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Image Upload Failed',
+          text: 'Please try uploading the image again.',
+        });
+      }
+    });
   }
+}
 
   addProduct() {
     console.log(this.product);
@@ -99,5 +108,8 @@ _petSpeciesService = inject(PetSpeciesService);
           }
         });
       }
-      
+      getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
     }
