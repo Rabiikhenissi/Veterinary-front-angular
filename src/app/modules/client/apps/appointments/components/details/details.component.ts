@@ -107,7 +107,7 @@ export class DetailsComponent implements OnInit {
 
 
     console.log('Updated Appointment:', updatedAppointment);
-      this._appointmentService.updateAppointment(updatedAppointment).subscribe({
+      this._appointmentService.updateAppointmentStatus(updatedAppointment).subscribe({
       next: () => {
         const title = 'Appointment Confirmed';
         const message = `Your appointment for ${this.appointment.petId.name} (${this.appointment.petId.species}) has been successfully scheduled for ${this.appointment.date} at ${this.appointment.time}.`;
@@ -161,11 +161,26 @@ export class DetailsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error confirming appointment:', err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong while confirming the appointment.',
-        });
+        if (err.status === 409) {
+  Swal.fire({
+    icon: 'warning',
+    title: 'Already updated',
+    text: 'This appointment has already been updated by another user.',
+  });
+   this._appointmentService.getAppointment(this.appointment._id).subscribe({
+    next: (updatedData) => {
+      this.appointment = updatedData;
+    },
+    error: () => {
+      console.error('Failed to refresh appointment');
+    }
+  });
+} else {
+  Swal.fire({
+    icon: 'error',
+    title: 'Oops...',
+    text: 'Something went wrong while confirming the appointment.',
+  });}
       }
     });
   

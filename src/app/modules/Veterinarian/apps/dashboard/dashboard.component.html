@@ -18,59 +18,169 @@
                             <div
                                 class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate"
                             >
-                                {{ t("welcome-back") }}, {{user.name}}!
+                                {{ t("welcome-back") }}, {{ user.name }}!
                             </div>
                         </ng-container>
-                        
                     </div>
                 </div>
                 <!-- Actions -->
                 <div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
-                   <button
-  class="bg-accent text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md hover:bg-accent-dark transition"
-  mat-flat-button
-  [color]="'accent'"
-  id="messagesButton"
-  (click)="openUserList()"
->
-  <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
-  <span>Mail a client</span>
-</button>
-                   <div *ngIf="isUserListOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-lg w-80 max-h-96 overflow-auto p-6">
-    <h3 class="text-xl font-semibold mb-4">Select a user to message</h3>
-    <ul>
-     <li
-  *ngFor="let user of users.data"
-  class="py-2 px-3 rounded cursor-pointer hover:bg-accent hover:text-white transition flex justify-between items-center"
->
-  <span (click)="selectUser(user)">
-    {{ user.name }}
-  </span>
-  <a *ngIf="user.email"
-     [href]="'mailto:' + user.email"
-     target="_blank"
-     rel="noopener noreferrer"
-     class="flex items-center hover:text-white"
-     (click)="$event.stopPropagation()"  
-  >
-    <mat-icon
-      class="icon-size-5 text-hint"
-      [svgIcon]="'heroicons_solid:envelope'"
-    ></mat-icon>
-    <span class="ml-2">Email</span>
-  </a>
-</li>
-    </ul>
-    <button
-      (click)="isUserListOpen = false"
-      class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow"
-    >
-      Close
-    </button>
-  </div>
-</div>
-                    
+                    <button
+                        class="bg-accent text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md hover:bg-accent-dark transition"
+                        mat-flat-button
+                        [color]="'accent'"
+                        id="messagesButton"
+                        (click)="openUserList()"
+                    >
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:envelope'"
+                        ></mat-icon>
+                        <span>Mail a client</span>
+                    </button>
+                    <!-- Business Hours Button -->
+                    <button
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md hover:bg-blue-700 transition"
+                        mat-flat-button
+                        (click)="openBusinessHours()"
+                    >
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:clock'"
+                        ></mat-icon>
+                        <span>Business Hours</span>
+                    </button>
+                    <!-- Business Hours Modal -->
+                    <div
+                        *ngIf="isBusinessHoursOpen"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                    >
+                        <div
+                            class="bg-white rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto p-6"
+                        >
+                            <h3 class="text-xl font-semibold mb-4">
+                                Veterinary Business Hours
+                            </h3>
+
+                            <form (ngSubmit)="saveBusinessHours()">
+                                <div
+                                    *ngFor="
+                                        let day of daysOfWeek;
+                                        trackBy: trackByDay
+                                    "
+                                >
+                                    <label
+                                        class="block font-semibold text-gray-700 mb-1"
+                                    >
+                                        {{ day }}
+                                    </label>
+                                    <div class="flex gap-4">
+                                        <input
+                                            type="time"
+                                            [ngModel]="
+                                                getBusinessHour(day)?.open
+                                            "
+                                            (ngModelChange)="
+                                                updateBusinessHour(
+                                                    day,
+                                                    'open',
+                                                    $event
+                                                )
+                                            "
+                                            name="{{ day }}_open"
+                                            class="flex-1 border p-2 rounded"
+                                            step="1800"
+                                            [class.border-red-500]="
+                                                isTimeInvalid(day)
+                                            "
+                                            [class.border]="true"
+                                        />
+
+                                        <input
+                                            type="time"
+                                            [ngModel]="
+                                                getBusinessHour(day)?.close
+                                            "
+                                            (ngModelChange)="
+                                                updateBusinessHour(
+                                                    day,
+                                                    'close',
+                                                    $event
+                                                )
+                                            "
+                                            name="{{ day }}_close"
+                                            class="flex-1 border p-2 rounded"
+                                            step="1800"
+                                            [class.border-red-500]="
+                                                isTimeInvalid(day)
+                                            "
+                                            [class.border]="true"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between mt-6">
+                                    <button
+                                        type="submit"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        type="button"
+                                        (click)="resetBusinessHours()"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="isUserListOpen"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                    >
+                        <div
+                            class="bg-white rounded-lg shadow-lg w-80 max-h-96 overflow-auto p-6"
+                        >
+                            <h3 class="text-xl font-semibold mb-4">
+                                Select a user to message
+                            </h3>
+                            <ul>
+                                <li
+                                    *ngFor="let user of users.data"
+                                    class="py-2 px-3 rounded cursor-pointer hover:bg-accent hover:text-white transition flex justify-between items-center"
+                                >
+                                    <span (click)="selectUser(user)">
+                                        {{ user.name }}
+                                    </span>
+                                    <a
+                                        *ngIf="user.email"
+                                        [href]="'mailto:' + user.email"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="flex items-center hover:text-white"
+                                        (click)="$event.stopPropagation()"
+                                    >
+                                        <mat-icon
+                                            class="icon-size-5 text-hint"
+                                            [svgIcon]="
+                                                'heroicons_solid:envelope'
+                                            "
+                                        ></mat-icon>
+                                        <span class="ml-2">Email</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <button
+                                (click)="isUserListOpen = false"
+                                class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,7 +212,6 @@
                                     >
                                         Clients
                                     </div>
-                                    
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
@@ -117,9 +226,7 @@
                                     </div>
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    >
-                                        
-                                    </div>
+                                    ></div>
                                 </div>
                             </div>
                             <!-- pets -->
@@ -132,7 +239,6 @@
                                     >
                                         Pets
                                     </div>
-                                    
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
@@ -147,9 +253,7 @@
                                     </div>
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    >
-                                        
-                                    </div>
+                                    ></div>
                                 </div>
                             </div>
                             <!-- Products -->
@@ -162,7 +266,6 @@
                                     >
                                         Products
                                     </div>
-                                    
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
@@ -177,9 +280,7 @@
                                     </div>
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    >
-                                        
-                                    </div>
+                                    ></div>
                                 </div>
                             </div>
                             <!-- Appointments -->
@@ -192,7 +293,6 @@
                                     >
                                         Appointments
                                     </div>
-                                    
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
@@ -209,9 +309,7 @@
                                     </div>
                                     <div
                                         class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    >
-                                        
-                                    </div>
+                                    ></div>
                                 </div>
                             </div>
                             <!-- Appointment per day chart -->
@@ -227,24 +325,53 @@
                                         Appointments per Day
                                     </div>
                                     <!-- Month Selector -->
-                                    <div class="mt-3 sm:mt-0 sm:ml-2 flex items-center gap-4">
-    <label class="text-sm font-medium text-gray-600">Select Month:</label>
+                                    <div
+                                        class="mt-3 sm:mt-0 sm:ml-2 flex items-center gap-4"
+                                    >
+                                        <label
+                                            class="text-sm font-medium text-gray-600"
+                                            >Select Month:</label
+                                        >
 
-    <mat-form-field appearance="outline" class="w-56">
-        <mat-select [(ngModel)]="selectedMonth" (selectionChange)="onMonthChange($event.value)">
-            <mat-option value="all">All Time</mat-option>
-            <mat-option *ngFor="let month of availableMonths" [value]="month">
-                {{ month | date : 'MMMM yyyy' }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-
+                                        <mat-form-field
+                                            appearance="outline"
+                                            class="w-56"
+                                        >
+                                            <mat-select
+                                                [(ngModel)]="selectedMonth"
+                                               
+                                            >
+                                                <mat-option     (click)="
+                                                onMonthChange('all')
+                                            " value="all"
+                                                    >All Time</mat-option
+                                                >
+                                                <mat-option
+                                                    *ngFor="
+                                                        let month of availableMonths
+                                                    "
+                                                    [value]="month"
+                                                    (click)="
+                                                    onMonthChange(month)
+                                                "
+                                                >
+                                                    {{
+                                                        month
+                                                            | date : "MMMM yyyy"
+                                                    }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
                                 </div>
                                 <div
                                     class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4"
                                 >
+                                <button #hidden class="hidden">
+
+                                </button>
                                     <!-- Chart Display -->
+                                     @if(!disabledChart()){
                                     <apx-chart
                                         
                                         class="flex-auto w-full h-80"
@@ -279,7 +406,12 @@
                                         "
                                         [xaxis]="chartAppointmentsPerDay.xaxis"
                                         [yaxis]="chartAppointmentsPerDay.yaxis"
-                                    ></apx-chart>
+                                    ></apx-chart>}
+                                    @else {
+                                        <div class="w-full">
+                                            loading data ....
+                                        </div>
+                                    }
                                     <!-- Overview -->
                                     <div class="flex flex-col">
                                         <div class="font-medium text-secondary">
@@ -418,24 +550,31 @@
                                 </div>
                                 <div class="flex flex-col flex-auto mt-6">
                                     <apx-chart
-  *ngIf="chartTaskDistribution"
-  class="flex-auto w-full h-80"
-  [chart]="chartTaskDistribution.chart"
-  [labels]="chartTaskDistribution.labels"
-  [legend]="chartTaskDistribution.legend"
-  [plotOptions]="chartTaskDistribution.plotOptions"
-  [series]="chartTaskDistribution.series"
-  [states]="chartTaskDistribution.states"
-  [stroke]="chartTaskDistribution.stroke"
-  [theme]="chartTaskDistribution.theme"
-  [tooltip]="chartTaskDistribution.tooltip"
-  [yaxis]="chartTaskDistribution.yaxis"
-></apx-chart>
-
+                                        *ngIf="chartTaskDistribution"
+                                        class="flex-auto w-full h-80"
+                                        [chart]="chartTaskDistribution.chart"
+                                        [labels]="chartTaskDistribution.labels"
+                                        [legend]="chartTaskDistribution.legend"
+                                        [plotOptions]="
+                                            chartTaskDistribution.plotOptions
+                                        "
+                                        [series]="chartTaskDistribution.series"
+                                        [states]="chartTaskDistribution.states"
+                                        [stroke]="chartTaskDistribution.stroke"
+                                        [theme]="chartTaskDistribution.theme"
+                                        [tooltip]="
+                                            chartTaskDistribution.tooltip
+                                        "
+                                        [yaxis]="chartTaskDistribution.yaxis"
+                                    ></apx-chart>
                                 </div>
                                 <ng-template #loading>
-                                    <div class="text-center text-sm text-gray-400">Chart data not available</div>
-                                  </ng-template>
+                                    <div
+                                        class="text-center text-sm text-gray-400"
+                                    >
+                                        Chart data not available
+                                    </div>
+                                </ng-template>
                             </div>
                             <!-- Schedule -->
                             <div
@@ -537,9 +676,7 @@
                 <!-- Budget -->
                 <mat-tab label="Budget">
                     <ng-template matTabContent>
-                        <div
-                            class="grid grid-cols-1  gap-y-5 w-full min-w-0"
-                        >
+                        <div class="grid grid-cols-1 gap-y-5 w-full min-w-0">
                             <!-- Most Sold Categories -->
                             <div
                                 class="sm:col-span-3 lg:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
@@ -551,7 +688,7 @@
                                 </div>
                                 <div class="flex flex-col flex-auto">
                                     <apx-chart
-                                    *ngIf="chartMostSoldCategories"
+                                        *ngIf="chartMostSoldCategories"
                                         class="flex-auto w-full h-100"
                                         [chart]="chartMostSoldCategories.chart"
                                         [colors]="
@@ -582,7 +719,6 @@
                                 </div>
                             </div>
 
-                            
                             <!-- shopping carts lists -->
                             <div
                                 class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
@@ -710,17 +846,16 @@
                             <span class="">Team</span>
                             <span
                                 class="px-2 py-1 text-sm rounded-full bg-primary-100 text-on-primary-100"
-                                > {{teamMembers.length}} </span
                             >
+                                {{ teamMembers.length }}
+                            </span>
                         </span>
                     </ng-template>
                     <ng-template matTabContent>
                         <div
                             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full min-w-0"
                         >
-                            <ng-container
-                                *ngFor="let member of teamMembers"
-                            >
+                            <ng-container *ngFor="let member of teamMembers">
                                 <div
                                     class="flex flex-col flex-auto items-center bg-card shadow rounded-2xl overflow-hidden"
                                 >
@@ -740,19 +875,27 @@
                                             {{ member.name }}
                                         </div>
                                         <div class="text-secondary">
-                                            Email : {{ member.email }}<br>
+                                            Email : {{ member.email }}<br />
                                             Phone : {{ member.phone }}
                                         </div>
                                     </div>
                                     <!-- Email & Phone -->
-                                    <div class="flex items-center w-full border-t divide-x">
+                                    <div
+                                        class="flex items-center w-full border-t divide-x"
+                                    >
                                         <!-- Email Link -->
-                                        <a *ngIf="member.email" class="flex flex-auto items-center justify-center py-4 hover:bg-hover"
-                                            [href]="'mailto:' + member.email"  target="_blank"
-                                            rel="noopener noreferrer">
+                                        <a
+                                            *ngIf="member.email"
+                                            class="flex flex-auto items-center justify-center py-4 hover:bg-hover"
+                                            [href]="'mailto:' + member.email"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <mat-icon
                                                 class="icon-size-5 text-hint"
-                                                [svgIcon]="'heroicons_solid:envelope'"
+                                                [svgIcon]="
+                                                    'heroicons_solid:envelope'
+                                                "
                                             ></mat-icon>
                                             <span class="ml-2">Email</span>
                                         </a>
@@ -765,12 +908,13 @@
                                         >
                                             <mat-icon
                                                 class="icon-size-5 text-hint"
-                                                [svgIcon]="'heroicons_solid:phone'"
+                                                [svgIcon]="
+                                                    'heroicons_solid:phone'
+                                                "
                                             ></mat-icon>
                                             <span class="ml-2">Call</span>
                                         </a>
                                     </div>
-
                                 </div>
                             </ng-container>
                         </div>

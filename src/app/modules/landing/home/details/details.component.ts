@@ -188,22 +188,27 @@ petSpecies: any[] = [];
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
+                
                 this._userService
                     .switchCompany(this.connectedUserId, this.company._id)
                     .subscribe({
                         next: () => {
                         // Optionally show a success notification
                         this._fuseConfirmationService.open({
+                            icon: { name: "success", color: "primary" },
                             title: 'Switched Successfully',
                             message: 'You have successfully switched company. You now have to wait for your account to be accepted.',
                             actions: {
                                 confirm: {
                                     label: 'OK',
                                     color: 'primary',
+                                },
+                                cancel:{
+                                    show:false
                                 }
                             }
                         }).afterClosed().subscribe(() => {
-                            this._authService.signOut();
+                            
                              this._router.navigate(['/sign-in']);
 
                         });
@@ -212,6 +217,7 @@ petSpecies: any[] = [];
                             console.error('Error switching company:', err);
                         },
                     });
+                    this._authService.signOut();
             }
         });
     }

@@ -1,1 +1,15 @@
-<router-outlet></router-outlet>
+<div class="w-full relative">
+    <router-outlet></router-outlet>
+@if(loading){
+    <div class="fuse-splash-screen h-full absolute w-full flex z-99999 justify-center items-center  inset-0 bg-slate-100/50 ">
+        <img
+        src="assets/images/logo/logo.svg"
+        alt="Fuse logo" >
+    <div class="spinner2">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+    </div>
+}
+</div>
