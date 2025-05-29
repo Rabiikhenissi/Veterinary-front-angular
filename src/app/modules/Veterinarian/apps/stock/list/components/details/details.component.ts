@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'app/shared/models/product';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-details',
@@ -29,6 +30,10 @@ _productService = inject(ProductService);
   ];
   getSpeciesImage(name: string): string | undefined {
     return this.species.find(s => s.name === name)?.image;
+  }
+  getProductImageUrl(imagePath: string): string {
+    const url = getImageUrl(imagePath);
+    return url;
   }
   ngOnInit(): void {
     this._loadingService.show();

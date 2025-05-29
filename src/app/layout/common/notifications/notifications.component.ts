@@ -49,24 +49,54 @@ export class NotificationsComponent implements OnInit, OnDestroy
      */
 ngOnInit(): void {
     let previousUnreadCount = 0;
+    let previousNotificationCount = 0;
 
-this._notificationsService.notifications$
-    .pipe(takeUntil(this._unsubscribeAll))
-    .subscribe((notifications: Notification[]) => {
-        this.notifications = notifications;
-        
-        const currentUnreadCount = notifications.filter(n => !n.read).length;
+    this._notificationsService.notifications$
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((notifications: Notification[]) => {
+            console.log('[Notification Stream] Raw notifications received:', notifications);
 
-        // Play sound only if there's an increase in unread notifications
-        if (currentUnreadCount > previousUnreadCount) {
-            this.playNotificationSound();
-        }
+            const connectedUserId = localStorage.getItem('connectedUserId');
+            console.log('[Notification Stream] Connected userId:', connectedUserId);
 
-        previousUnreadCount = currentUnreadCount;
+            // Step 1: Filter out malformed notifications
+            const validNotifications = notifications.filter((n, index) => {
+                const isValid = n?.userId && typeof n.read === 'boolean' && n._id;
+                if (!isValid) {
+                    console.warn(`[Notification ${index}] INVALID - Skipping:`, n);
+                }
+                return isValid;
+            });
 
-        this._calculateUnreadCount();
-        this._changeDetectorRef.markForCheck();
-    });
+            // Step 2: Log valid ones
+            validNotifications.forEach((n, index) => {
+                console.log(`[Valid Notification ${index}] userId: ${n.userId}, read: ${n.read}, id: ${n._id}, title: ${n.title}`);
+            });
+
+            // Step 3: Filter for current user
+            const filtered = validNotifications.filter(n => n.userId === connectedUserId);
+            console.log('[Notification Stream] Filtered for connected user:', filtered);
+
+            this.notifications = filtered;
+
+            const currentUnreadCount = this.notifications.filter(n => !n.read).length;
+            console.log('[Notification Stream] Current unread count:', currentUnreadCount, 'Previous unread count:', previousUnreadCount);
+
+            if (currentUnreadCount > previousUnreadCount) {
+                console.log('[Notification Stream] New unread notification detected, playing sound...');
+                this.playNotificationSound();
+            }
+
+            if (this.notifications.length > previousNotificationCount) {
+                console.log('[Notification Stream] Notification count increased. Updating UI...');
+                this._changeDetectorRef.markForCheck();
+            }
+
+            previousUnreadCount = currentUnreadCount;
+            previousNotificationCount = this.notifications.length;
+
+            this._calculateUnreadCount();
+        });
 }
     /**
      * On destroy
@@ -95,7 +125,9 @@ this._notificationsService.notifications$
     private playNotificationSound(): void {
     const audio = new Audio('assets/sounds/notification.wav');
     audio.load();
-    audio.play().catch(err => console.warn('Notification sound error:', err));
+    audio.play()
+        .then(() => console.log('[Sound] Notification sound played.'))
+        .catch(err => console.warn('[Sound] Notification sound error:', err));
 }
 openPanel(): void {
   if (!this._notificationsPanel || !this._notificationsOrigin) {

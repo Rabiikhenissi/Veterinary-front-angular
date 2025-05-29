@@ -23,7 +23,8 @@
       <div class="sm:hidden -ml-1 mr-3">
         <button
           mat-icon-button
-          (click)="closePanel()">
+          (click)="closePanel()"
+          aria-label="Close notifications panel">
           <mat-icon
             class="icon-size-5 text-current"
           [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
@@ -33,6 +34,7 @@
       <div class="ml-auto">
         <button
           mat-icon-button
+          aria-label="Mark all notifications as read"
           [matTooltip]="'Mark all as read'"
           [disabled]="unreadCount === 0"
           (click)="markAllAsRead()">
@@ -81,6 +83,7 @@
             <button
               class="w-6 h-6 min-h-6"
               mat-icon-button
+               aria-label="Show notifications"
               (click)="toggleRead(notification)"
               [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
               <span
@@ -90,6 +93,7 @@
             </button>
             <!-- Remove -->
             <button
+             aria-label="Remove notification"
               class="w-6 h-6 min-h-6 sm:opacity-0 sm:group-hover:opacity-100"
               mat-icon-button
               (click)="archive(notification)"
