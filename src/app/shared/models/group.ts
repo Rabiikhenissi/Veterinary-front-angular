@@ -5,4 +5,5 @@ export class Group {
   code?: string;
   label?: string;
   type?: string;
+  companyId?:string;
 }

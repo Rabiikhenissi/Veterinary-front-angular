@@ -499,7 +499,7 @@ this.initializeCalendarOptions();
         const connectedUserType = localStorage.getItem('connectedUserType');
         console.log('User Type:', connectedUserType);
         const connectedUserCompany = localStorage.getItem('connectedUserCompany');
-      
+        this._loadingService.show()
         this._appointmentService.getAppointments('100', '1', '', connectedUserCompany).subscribe(
           (response) => {
             console.log('Appointments fetched successfully:', response);
@@ -593,6 +593,7 @@ this.initializeCalendarOptions();
             calendarApi.removeAllEvents();
             calendarApi.addEventSource(events);
             calendarApi.updateSize();
+            this._loadingService.hide()
           },
           (error) => {
             console.error('Error fetching appointments:', error);

@@ -21,6 +21,9 @@ import {MatRadioButton} from "@angular/material/radio";
 import {MatIcon} from "@angular/material/icon";
 import {GroupFeature} from "../../../../../shared/models/group-feature";
 import Swal from 'sweetalert2';
+import { User } from 'app/shared/models/user';
+import { CompanyService } from 'app/shared/services/company.service';
+import { Company } from 'app/shared/models/company';
 
 @Component({
   selector: 'app-details',
@@ -54,26 +57,33 @@ export class AddComponent implements OnInit {
     _fuseConfirmationService= inject(FuseConfirmationService);
     _route= inject(ActivatedRoute);
     _loadingService = inject(LoadingService)
+    _companyService = inject(CompanyService)
     //********* DECLARE CLASSES/ENUMS ***********//
+    companyId;
     group = new Group();
     listFeature: Feature[]=[];
     featureId: Feature[] = [];
     filteredList = [];
+    listCompanies=[];
     type: boolean[] = [true, true, true, true, true, true];
     groupFeature: GroupFeature[] = [new GroupFeature()];
     ngOnInit(): void {
     this._loadingService.show();
-    forkJoin([
-        this._featureService.getAllFeature()
-    ]).subscribe({
-        next:(result: [Feature[]]) => {
-            this.listFeature = result[0];
-            this._loadingService.hide();
-        },
-        error: () => {
-            this._loadingService.hide();
-        }
-    })
+    this.companyId=localStorage.getItem("connectedUserCompany")
+forkJoin([
+    this._featureService.getAllFeature(),
+    this._companyService.getAll(),
+
+]).subscribe({
+    next: (result: [Feature[], { data: Company[]; total: number }]) => {
+        this.listFeature = result[0];
+        this.listCompanies=result[1].data
+        this._loadingService.hide();
+    },
+    error: () => {
+        this._loadingService.hide();
+    }
+})
   }
     createGroup(myForm: NgForm): void {
         if (myForm.valid) {
