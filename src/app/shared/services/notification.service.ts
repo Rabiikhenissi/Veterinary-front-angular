@@ -21,7 +21,7 @@ export class NotificationService implements OnDestroy {
 
   private _connectWebSocket(): void {
     const userId = localStorage.getItem('connectedUserId');
-    this.ws = new WebSocket(`ws://192.168.1.18:8080/?userId=${userId}`);
+    this.ws = new WebSocket(`ws://192.168.215.71:8080/?userId=${userId}`);
 
     this.ws.onopen = () => {
       console.log('WebSocket connected');

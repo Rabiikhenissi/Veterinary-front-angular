@@ -3,8 +3,8 @@
     
         <!-- Product Image -->
         <div class="lg:w-[40%] w-full">
-          <img 
-            [src]="product.image"
+                        <img [src]="getProductImageUrl(product.image) "
+
             alt="{{ product.name }}"
             class="w-full h-[420px] object-cover rounded-xl border border-gray-300 shadow-sm" />
         </div>

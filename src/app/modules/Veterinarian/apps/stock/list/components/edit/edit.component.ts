@@ -6,6 +6,7 @@ import { PetSpecies } from 'app/shared/models/petSpecies';
 import { Product } from 'app/shared/models/product';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -28,6 +29,10 @@ export class EditComponent implements OnInit {
   
   get product() {
   return this.productForm?.value;
+}
+getProductImageUrl(imagePath: string): string {
+  const url = getImageUrl(imagePath);
+  return url;
 }
   getSpeciesImage(name: string): string | undefined {
     return this.species.find(s => s.name === name)?.icon;
@@ -90,15 +95,22 @@ export class EditComponent implements OnInit {
     }
     this.productForm.get('species')?.setValue([...current]);
   }
-  onFileSelected(event: Event) {
-    const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.productForm.get('image')?.setValue(reader.result as string);
-      };
-      reader.readAsDataURL(file); 
+   onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this._productService.uploadImage(file).subscribe({
+        next: (res) => {
+          this.product.image = res.imageUrl; // assume backend returns { imageUrl: '...' }
+        },
+        error: (err) => {
+          console.error('Image upload failed', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Image Upload Failed',
+            text: 'Please try uploading the image again.',
+          });
+        }
+      });
     }
   }
 }

@@ -47,5 +47,9 @@ archiveOne(id: string): Observable<Product> {
       updateOne(product: Product): Observable<null> {
         return this.http.patch<null>(`${this.endpoint}/${product._id}`,  product );
       }
-
+uploadImage(file: File): Observable<{ imageUrl: string }> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post<{ imageUrl: string }>(`${this.endpoint}/upload-image`, formData);
+  }
 }
