@@ -67,7 +67,6 @@ export class ShopComponent implements OnInit{
   }
 getProductImageUrl(imagePath: string): string {
   const url = getImageUrl(imagePath);
-  console.log('getProductImageUrl called with:', imagePath, '-> returns:', url);
   return url;
 }
   fetchProducts(): void {
