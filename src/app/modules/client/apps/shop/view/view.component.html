@@ -19,11 +19,11 @@
     <!-- Product Image -->
 
     <div  class="w-full lg:w-1/3">
-      
-      <img [src]="product?.image" 
+       <img [src]="getProductImageUrl(product.image) "
            alt="{{ product?.name }}"
            class="w-full h-96 object-cover rounded-lg border border-green-200 shadow-sm" />
     </div>
+    
 
     <!-- Product Info -->
     <div class="w-full lg:w-1/3 space-y-4">
@@ -78,7 +78,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div *ngFor="let item of recommendedProducts"
            class="bg-white border border-green-100 rounded-lg shadow-sm hover:shadow-md transition p-4">
-        <img [src]="item.image" alt="{{ item.name }}" class="w-full h-40 object-cover rounded mb-4" />
+        <img [src]="getProductImageUrl(item.image) " alt="{{ item.name }}" class="w-full h-40 object-cover rounded mb-4" />
         <h3 class="text-lg font-bold text-green-800">{{ item.name }}</h3>
         <p class="text-sm text-gray-600">{{ item.price | currency:'TND ':'symbol':'1.2-3' }}</p>
         <button (click)="viewProduct(item._id)"
