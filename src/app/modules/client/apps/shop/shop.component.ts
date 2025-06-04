@@ -12,6 +12,7 @@ import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 import Swal from 'sweetalert2';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { PetSpecies } from 'app/shared/models/petSpecies';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-shop',
@@ -64,7 +65,10 @@ export class ShopComponent implements OnInit{
       }
     });
   }
-
+getProductImageUrl(imagePath: string): string {
+  const url = getImageUrl(imagePath);
+  return url;
+}
   fetchProducts(): void {
     
     this._productService

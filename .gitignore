@@ -47,3 +47,6 @@ Thumbs.db
 
 #sign in form
 ./src/app/sign-in-form/sign-in-form.component.ts
+
+
+./src/proxy.conf.json
