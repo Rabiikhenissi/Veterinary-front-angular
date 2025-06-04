@@ -12,4 +12,7 @@ export class FilterOptions {
   sortEmail?: string;
   ProjectId?: string;
   sortLabel?: string;
+  status?: string;
+  groups?: string;
+  archived?: boolean;
 }

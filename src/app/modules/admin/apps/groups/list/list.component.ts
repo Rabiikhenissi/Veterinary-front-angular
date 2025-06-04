@@ -60,6 +60,7 @@ export class ListComponent implements OnInit {
   filterSearch: string;
  featureCodes = FeatureCodes;
   featureActions = FeatureActions;
+  showArchived=false
   ngOnInit(): void {
     this.getList();
   }
@@ -145,4 +146,7 @@ export class ListComponent implements OnInit {
       this.getList();
     }, this.doneTypingInterval);
   }
+  toggleArchived() {
+  this.getList()
+}
 }

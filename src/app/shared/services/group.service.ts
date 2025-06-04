@@ -58,5 +58,13 @@ export class GroupService {
   getFeatureGroup(id: string): Observable<GroupFeature[]> {
         return this.http.get<GroupFeature[]>(`${this.endpoint}/${id}/group-feature`);
   }
-
+  getGroupsByCompany(id: string,type?:string): Observable<Group[]> {
+    let searchParams = new HttpParams();
+    if (type) {
+      searchParams = searchParams.append('type', type);
+    }
+    return this.http.get<Group[]>(`${this.endpoint}/company/${id}`,{
+      params: searchParams,
+    });
+  }
 }

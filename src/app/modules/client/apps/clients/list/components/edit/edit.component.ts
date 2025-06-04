@@ -50,7 +50,7 @@ export class EditComponent {
       this._userService.updateOne(payload).subscribe({
         next: (response) => {
           console.log('Profile updated successfully:', response);
-          this.router.navigate(['..'], { relativeTo: this.route });
+          this.router.navigate(['..','..'], { relativeTo: this.route });
         }
         , error: (error) => {
           console.error('Error updating profile:', error);

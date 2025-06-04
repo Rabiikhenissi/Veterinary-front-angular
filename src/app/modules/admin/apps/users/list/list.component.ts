@@ -10,7 +10,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatInput} from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatPrefix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {LoadingService} from "../../../../../shared/services/loading.service";
 import { UserService } from 'app/shared/services/user.service';
@@ -21,6 +21,9 @@ import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { CommonModule } from '@angular/common';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { GroupService } from 'app/shared/services/group.service';
+import { MatOption, MatSelect } from '@angular/material/select';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -39,7 +42,10 @@ import { CommonModule } from '@angular/common';
         MatPaginator,
         TranslocoPipe,
         FeaturesDirective,
-        CommonModule
+        CommonModule,
+        MatSelect,
+        MatOption,
+        MatLabel
     ],
 })
 export class ListComponent implements OnInit {
@@ -52,24 +58,35 @@ export class ListComponent implements OnInit {
   _loadingService = inject(LoadingService)
   companyNames: Map<string, string> = new Map();
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  filterOptions: FilterOptions = new FilterOptions();
-  currentSize = 10;
-  currentPage = 1;
-  displayedList: Pagination<User>;
-  typingTimer;
-  doneTypingInterval = 500;
-  isScreenSmall: boolean;
-  featureCodes = FeatureCodes;
-  featureActions = FeatureActions;
-  //************* FILTERS *****************//
-  openFilter = false;
-  filterType: string[] = [];
-  filterStatus: string[] = [];
-  filterSearch: string;
+groups: any[] = [];
+filterOptions: FilterOptions = new FilterOptions();
+currentSize = 10;
+currentPage = 1;
+displayedList: Pagination<User>;
+typingTimer;
+doneTypingInterval = 500;
+isScreenSmall: boolean;
+featureCodes = FeatureCodes;
+featureActions = FeatureActions;
+_groupService=inject(GroupService)
+//************* FILTERS *****************//
+openFilter = false;
+filterarchived: string[] = [];
+filtergroups: string[] = [];
+filterstatus:string[]=[];
+filterCompany:string[]=[];
+filterSearch: string;
+showArchived = false;
 
   ngOnInit(): void {
+    this.loadGroups();
     this.getList();
   }
+  loadGroups(): void {
+  this._groupService.getAll().subscribe((groups) => {
+    this.groups = groups;
+  });
+}
   pageChanged(event: PageEvent ): void {
     let { pageIndex } = event;
     const { pageSize } = event;
@@ -95,28 +112,31 @@ export class ListComponent implements OnInit {
     return ''; 
   }
   getList(): void {
-    this._loadingService.show();
-    this._userService
-      .getUsers(
-        this.currentSize.toString(),
-        this.currentPage.toString(),
-        this.filterSearch,
-      )
-      .subscribe({
+    
+  this._loadingService.show();
+  this._userService
+    .getUsers(
+      this.currentSize.toString(),
+      this.currentPage.toString(),
+      this.filterSearch,
+      this.showArchived, 
+      this.filtergroups,    
+      this.filterstatus,
+      this.filterCompany 
+    )
+    .subscribe({
+      next: results => {
         
-          next: results => {
-            
-
-              this.displayedList = results;
-              this.openFilter = false;
-              this._loadingService.hide();
-          },
-          error: () => {
-              this._loadingService.hide();
-              this.openFilter = false;
-          }
-      });
-  }
+        this.displayedList = results;
+        this.openFilter = false;
+        this._loadingService.hide();
+      },
+      error: () => {
+        this._loadingService.hide();
+        this.openFilter = false;
+      }
+    });
+}
   addOne(): void {
     this._router.navigate(['add'], { relativeTo: this._route }).then();
   }
@@ -134,11 +154,11 @@ export class ListComponent implements OnInit {
       this.getList();
     }, this.doneTypingInterval);
   }
-  deleteOne(row: User) {
+  ArchiveOne(row: User) {
     // Open the confirmation dialog
     const confirmation = this._fuseConfirmationService.open({
-      title: 'Delete',
-      message: 'Would you like to confirm the deletion ?',
+      title: 'Archive',
+      message: 'Would you like to confirm  Archiving ?',
       actions: {
         confirm: {
           label: 'yes',
@@ -153,10 +173,65 @@ export class ListComponent implements OnInit {
     confirmation.afterClosed().subscribe((result) => {
       // If the confirm button pressed...
       if (result === 'confirmed') {
+        this._userService.ArchiveOne(row._id).subscribe(() => {
+          this.getList();
+        });
+      }
+    });
+  }
+  deleteOne(row: User) {
+    const confirmation = this._fuseConfirmationService.open({
+      title: 'Delete',
+      message: 'Are you sure you want to delete this user?',
+      actions: {
+        confirm: {
+          label: 'Delete',
+        },
+        cancel: {
+          label: 'Cancel',
+        },
+      },
+    });
+
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
         this._userService.deleteOne(row._id).subscribe(() => {
           this.getList();
         });
       }
     });
   }
+
+  restoreOne(row: User) {
+    const confirmation = this._fuseConfirmationService.open({
+      title: 'Restore',
+      message: 'Do you want to restore this user?',
+      actions: {
+        confirm: {
+          label: 'Restore',
+        },
+        cancel: {
+          label: 'Cancel',
+        },
+      },
+    });
+
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this._userService.restoreOne(row._id).subscribe(() => {
+          this.getList();
+        });
+      }
+    });
+  }
+
+  toggleArchived() {
+  this.getList()
+}
+resetFilters() {
+  this.filtergroups = [];
+  this.filterstatus = [];
+  this.filterCompany=[]
+  this.showArchived = false;
+}
 }

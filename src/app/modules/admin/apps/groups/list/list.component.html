@@ -15,6 +15,13 @@
                   placeholder="{{ 'Search' | transloco }}"
               />
          </mat-form-field>
+         <mat-slide-toggle
+  [(ngModel)]="showArchived"
+  (change)="toggleArchived()"
+  class="ml-4 "
+>
+   {{ showArchived ? ('Including Archived' | transloco) : ('Active Only' | transloco) }}
+</mat-slide-toggle>
          <button *appFeatures="[
          {
            code: featureCodes.groups,
