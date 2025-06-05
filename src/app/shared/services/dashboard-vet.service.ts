@@ -35,9 +35,15 @@ export class dashboardVetService
     );
   }
 
-    getAppointmentStats(companyId: string): Observable<any> {
-  return this._httpClient.get(`${this.endpoint}/appointmentStat?companyId=${companyId}`);
+    getAppointmentStats(companyId: string, period: string): Observable<any> {
+  return this._httpClient.get(`${this.endpoint}/appointmentStat`, {
+    params: {
+      companyId,
+      period, // e.g., '2025-05' or 'all'
+    },
+  });
 }
+
 
 getOverviewStats(): Observable<any> {
   return this._httpClient.get(`${this.endpoint}/overviewStats`);

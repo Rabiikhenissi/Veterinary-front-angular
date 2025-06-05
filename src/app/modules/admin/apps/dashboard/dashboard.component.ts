@@ -1,5 +1,5 @@
 import {NgFor } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRippleModule } from '@angular/material/core';
@@ -16,6 +16,8 @@ import { dashboardAdminService } from 'app/shared/services/dashboard-admin.servi
 import { UserService } from 'app/shared/services/user.service';
 import { ApexChart, ApexNonAxisChartSeries, ApexOptions, ApexResponsive, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { LoadingService } from 'app/shared/services/loading.service';
 
 export type ChartOptions = {
     series: ApexNonAxisChartSeries;
@@ -35,17 +37,18 @@ export class DashboardComponent implements OnInit, OnDestroy
 {
   _userService=inject(UserService);
   _authService=inject(AuthService)
-  veterinarians:User[] = [];
+  _loadingService=inject(LoadingService)
+  veterinarians= [];
 admin: User;
 chartAppointmentStats: ApexOptions = { };
 chartTopCompanies  : ApexOptions = {};
 data: any;
 selectedProject: string = 'ACME Corp. Backend App';
 private _unsubscribeAll: Subject<any> = new Subject<any>();
-companiesCount = { total: 0, inactive: 0 };
-veterinariansCount = { total: 0, inactive: 0 };
-secretariesCount = { total: 0, inactive: 0 };
-featuresCount = { total: 0, inactive: 0 };
+companiesCount :number;
+veterinariansCount :number;
+secretariesCount :number;
+featuresCount :number;
 
 stats = {
     total: 0,
@@ -63,6 +66,7 @@ stats = {
         private _projectService: dashboardAdminService,
         private _router: Router,
         private _appointmentService: AppointmentService,
+        private _cdr: ChangeDetectorRef 
     )
     {
     }
@@ -76,54 +80,87 @@ stats = {
      */
     ngOnInit(): void
     {
-      this._userService.getOne(localStorage.getItem('connectedUserId')).subscribe({
-        next: (user: User) => {
-          this.admin = user;
+      this._loadingService.show();
+
+      const userId = localStorage.getItem('connectedUserId');
+
+      forkJoin({
+        admin: this._userService.getOne(userId),
+        veterinarians: this._userService.getInternalUsers(),
+        appointmentStats: this._appointmentService.getTopCompaniesComparison(),
+        dashboardCounts: this._projectService.getStatsOverview(),
+        allAppointments: this._appointmentService.getAll(),
+        mockData: this._projectService.getData()
+      }).subscribe({
+        next: ({
+          admin,
+          veterinarians,
+          appointmentStats,
+          dashboardCounts,
+          allAppointments,
+          mockData
+        }) => {
+          
+            // Admin user
+          this.admin = admin;
+
+            // Veterinarians
+            const internalUsers = veterinarians;
+            if (Array.isArray(internalUsers)) {
+            this.veterinarians = internalUsers.filter((user) =>
+              user.groupsId && user.groupsId.code.includes('veterinarian') && user.archived === false
+            );
+            }
+            console.log(veterinarians)
+          // Appointment stats for charts
+          this.chartTopCompanies = {
+            series: [
+              {
+                name: 'Completed This Week',
+                data: appointmentStats.map(c => c.completedThisWeek),
+              },
+              {
+                name: 'Confirmed This Week',
+                data: appointmentStats.map(c => c.confirmedThisWeek),
+              },
+              {
+                name: 'Completed Last Week',
+                data: appointmentStats.map(c => c.completedLastWeek),
+              },
+              {
+                name: 'Confirmed Last Week',
+                data: appointmentStats.map(c => c.confirmedLastWeek),
+              },
+            ],
+            xaxis: {
+              categories: appointmentStats.map(c => c.name),
+            }
+          };
+
+          // Dashboard counts
+          this.companiesCount = dashboardCounts.totalCompanies;
+this.veterinariansCount = dashboardCounts.totalVets;
+this.secretariesCount = dashboardCounts.totalSecretaries;
+this.featuresCount = dashboardCounts.totalBasicFeatures;
+
+          // Appointment stats
+          this.stats = allAppointments;
+
+          // Mock data
+          this.data = mockData;
+
+          // Prepare chart data
+          this._prepareChartData();
+
+          this._loadingService.hide();
+          this._cdr.markForCheck(); 
         },
-        error: (err) => console.error('Error fetching admin user:', err),
+        error: (err) => {
+          console.error('Error loading dashboard data:', err);
+          this._loadingService.hide();
+          this._cdr.markForCheck();
+        }
       });
-      console.log('Connected User:', localStorage.getItem('connectedUserId'));
-      this.fetchVeterinarians();
-        this.fetchAppointmentStats();
-this.loadDashboardCounts();
-        this.fetchAllAppointments();
-
-          this._appointmentService.getTopCompaniesComparison().subscribe({
-            next: (data) => {
-              // Prepare the chart data for series
-              this.chartTopCompanies.series = [
-                {
-                  name: 'Completed This Week',
-                  data: data.map(c => c.completedThisWeek),
-                },
-                {
-                  name: 'Confirmed This Week',
-                  data: data.map(c => c.confirmedThisWeek),
-                },
-                {
-                  name: 'Completed Last Week',
-                  data: data.map(c => c.completedLastWeek),
-                },
-                {
-                  name: 'Confirmed Last Week',
-                  data: data.map(c => c.confirmedLastWeek),
-                },
-              ];
-          
-              // Set x-axis labels as the company names
-              this.chartTopCompanies.xaxis = {
-                categories: data.map(c => c.name),
-              };
-            },
-            error: (err) => console.error('Error fetching top companies comparison:', err),
-          });
-          
-
-        // get mock api data
-        this._projectService.getData().subscribe((data) => {
-            this.data = data;
-            this._prepareChartData();
-        });
     }
     
 
@@ -167,7 +204,7 @@ this.loadDashboardCounts();
 fetchVeterinarians(): void {
   this._userService.getInternalUsers().subscribe({
     next: (internalUsersResponse: any) => {
-      const internalUsers = internalUsersResponse?.data;
+      const internalUsers = internalUsersResponse;
       if (Array.isArray(internalUsers)) {
         this.veterinarians = internalUsers.filter((user) => 
           user.groupsId && user.groupsId.code.includes('veterinarian') 
@@ -183,16 +220,11 @@ fetchVeterinarians(): void {
 
 
 loadDashboardCounts(): void {
-    this._projectService.getStats().subscribe((data) => {
-      this.companiesCount.total = data.companies.total;
-        this.companiesCount.inactive = data.companies.inactive;
-        
-      this.veterinariansCount.total = data.veterinarians.total;
-        this.veterinariansCount.inactive = data.veterinarians.inactive;
-      this.secretariesCount.total = data.secretaries.total;
-        this.secretariesCount.inactive = data.secretaries.inactive;
-      this.featuresCount.total = data.features.total;
-        this.featuresCount.inactive = data.features.inactive;
+    this._projectService.getStatsOverview().subscribe((data) => {
+      this.companiesCount = data.totalCompanies
+      this.veterinariansCount = data.totalVets
+      this.secretariesCount = data.totalSecretaries
+      this.featuresCount = data.totalBasicFeatures
     });
   }
   fetchAppointmentStats() {
@@ -234,6 +266,7 @@ loadDashboardCounts(): void {
      */
     private _prepareChartData(): void
     {
+    this._cdr.markForCheck();
         // appointment issues
         this._appointmentService.getTopCompaniesComparison().subscribe((data) => {
   const categories = data.map(d => d.companyName);
@@ -326,9 +359,9 @@ const roundedMax = Math.ceil(maxValue / 5) * 5; // Round to nearest 5
 };
 
 
+this._cdr.markForCheck();
 });
         
-
         
     }
 }

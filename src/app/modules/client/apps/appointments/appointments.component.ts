@@ -316,7 +316,7 @@ windowResizeDelay: 150,
                                 
                                 this._userService.getInternalUsers().subscribe({
                                     next: (internalUsersResponse: any) => {
-                                      const internalUsers = internalUsersResponse?.data;
+                                      const internalUsers = internalUsersResponse;
                                       if (Array.isArray(internalUsers)) {
                                         internalUsers.forEach(user => {
                                           this._notificationService.createNotification({

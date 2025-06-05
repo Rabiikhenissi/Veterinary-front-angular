@@ -17,12 +17,13 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CartService } from 'app/shared/services/cart.service';
 import { dashboardVetService } from 'app/shared/services/dashboard-vet.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 import { User } from 'app/shared/models/user';
 import { UserService } from 'app/shared/services/user.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { BusinessHour } from 'app/shared/models/company';
+import { LoadingService } from 'app/shared/services/loading.service';
 @Component({
     selector       : 'dashboard-vet',
     templateUrl    : './dashboard.component.html',
@@ -35,8 +36,9 @@ export class DashboardComponent implements OnInit, OnDestroy
   @ViewChild("hidden") hidden!:ElementRef<HTMLButtonElement>
     @ViewChild(MatPaginator) paginator: MatPaginator;
      isUserListOpen = false;
+     _loadingService=inject(LoadingService)
      user:any;
-  users: User[] = [];
+  users: User[] = []; 
 currentSize = 10;
   currentPage = 1;
 total = 0;
@@ -101,203 +103,151 @@ overviewStats: any = {
     /**
      * On init
      */
-    ngOnInit(): void
-    {
-      
-      this.companyId=localStorage.getItem('connectedUserCompany') || '';
-      const id=localStorage.getItem('connectedUserId');
-      this.user=this._userService.getOne(id).subscribe({
-        next:(user:User)=>{
-          this.user=user;
-          console.log('user',this.user);
-        },
-        error:(err)=>{
-          console.log('error',err);
-        }
-      })
-      this.getExternalUsers();
-      this.getCompanyTeam()
-        this.generateMonthOptions();
-this.getAppointmentsPerDay();
-this.getBusinessHours()
-this.initializeBusinessHours()
-        this._dashboardVetService.getAppointmentStats(this.companyId).subscribe({
-            next: (data) =>
-            {
-                this.appointmentData = data;
-            },
-            error: () =>
-            {
-                // Redirect to the 404 page
-                this._router.navigate(['/pages/errors/404']);
-            }
-        })
+    ngOnInit(): void {
+    this._loadingService.show();
 
-        // Get the overview stats
-        this._dashboardVetService.getOverviewStats().subscribe({
-            next: (data) =>
-            {
-                this.overviewStats = data;
-                this._cdr.detectChanges();
-                console.log('Overview stats:', this.overviewStats);
-            },
-            error: (err) =>
-            {
-                // see error
-                console.log('Error fetching overview stats:', err);
-            },
-        })
+    this.companyId = localStorage.getItem('connectedUserCompany') || '';
+    const id = localStorage.getItem('connectedUserId');
+    this.selectedMonth = this.getCurrentMonth();
+    this.generateMonthOptions();
 
-        // Get the cart list
-this.getCartList();
+    forkJoin({
+        user: this._userService.getOne(id),
+        externalUsers: this._userService.getExternalUsers(this.companyId),
+        team: this._dashboardVetService.getCompanyTeam(),
+        overviewStats: this._dashboardVetService.getOverviewStats(),
+        appointmentStats: this._dashboardVetService.getAppointmentStats(this.companyId,this.selectedMonth),
+        appointmentsPerDay: this._dashboardVetService.getAppointmentsPerDay(this.selectedMonth),
+        petCountBySpecies: this._dashboardVetService.getPetCountBySpecies(),
+        mostSoldCategories: this._dashboardVetService.getMostSoldCategories(this.companyId),
+        cartList: this._cartService.getList(this.currentPage, this.currentSize, this.companyId),
+        allAppointments: this._appointmentService.getAllByCompany(this.companyId),
+        company: this._companyService.getOne(this.companyId),
+    }).subscribe({
+        next: (result) => {
+          console.log(this.selectedMonth)
+            this.user = result.user;
+            this.users = result.externalUsers;
+            this.teamMembers = result.team;
+            this.overviewStats = result.overviewStats;
+            this.appointmentData = result.appointmentStats;
+            this.appointmentPerDayData = result.appointmentsPerDay;
+            this.appointments = result.allAppointments;
+            this.businessHours = result.company.businessHours || [];
+            this.originalBusinessHours = JSON.parse(JSON.stringify(this.businessHours));
+            this.cartList = result.cartList.data;
+            this.total = result.cartList.total;
 
-        
-
-
-        this._appointmentService.getAllByCompany(this.companyId).subscribe({
-            next: (data) =>
-            {
-                this.appointments = data;
-            },
-            error: () =>
-            {
-                // Redirect to the 404 page
-                this._router.navigate(['/pages/errors/404']);
-            },
-        })
-
-        this._dashboardVetService
-    .getMostSoldCategories(this.companyId)
-    .pipe(takeUntil(this._unsubscribeAll))
-    .subscribe((result) => {
-      // result is sorted desc by totalQuantity already
-      const allCategories = ['Food', 'Hygiene', 'Accessories'];
-const quantitiesMap = new Map(result.map(r => [r._id, r.totalQuantity]));
-
-const categories = allCategories;
-const quantities = allCategories.map(cat => quantitiesMap.get(cat) || 0);
-
-      const maxQuantity = Math.max(...quantities);
-      // Build radar chart config
-      this.chartMostSoldCategories = {
-        chart: {
-          fontFamily: 'inherit',
-          foreColor: 'inherit',
-          height: '100%',
-          type: 'radar',
-          sparkline: { enabled: true },
-        },
-        colors: ['#34D399'],
-        dataLabels: {
-          enabled: true,
-          formatter: (val: number) => `${val}`,
-          textAnchor: 'start',
-          style: { fontSize: '13px', fontWeight: 500 },
-          background: { borderWidth: 0, padding: 4 },
-          offsetY: -15,
-        },
-        markers: { strokeColors: '#34D399', strokeWidth: 4 },
-        plotOptions: {
-          radar: {
-            polygons: {
-              strokeColors: 'var(--fuse-border)',
-              connectorColors: 'var(--fuse-border)',
-            },
-          },
-        },
-        series: [
-          { name: 'Sold Quantity', data: quantities }
-        ],
-        stroke: { width: 2 },
-        tooltip: {
-          theme: 'dark',
-          y: { formatter: (val: number) => `${val} sold` },
-        },
-        xaxis: {
-          categories,
-          labels: { show: true, style: { fontSize: '12px', fontWeight: '500' } },
-        },
-        yaxis: {
-          max: Math.ceil(maxQuantity + 1),
-          tickAmount: 5,
-        },
-      };
-      
-    })
-
-
-
-        this._dashboardVetService.getPetCountBySpecies().subscribe({
-          next: (result) => {
-            const labels = result.map((item: any) => item._id);
-            const series = result.map((item: any) => item.count);
-            
-            this.chartTaskDistribution = {
-              chart: {
-                fontFamily: 'inherit',
-                foreColor: 'inherit',
-                height: '100%',
-                type: 'polarArea',
-                toolbar: { show: false },
-                zoom: { enabled: false },
-              },
-              labels: labels,
-              legend: { position: 'bottom' },
-              plotOptions: {
-                polarArea: {
-                  spokes: { connectorColors: 'var(--fuse-border)' },
-                  rings: { strokeColor: 'var(--fuse-border)' },
+            // Chart: Appointments per day
+            this.chartAppointmentsPerDay = {
+                chart: { fontFamily: 'inherit', foreColor: 'inherit', height: '100%', type: 'bar', toolbar: { show: false }, zoom: { enabled: false } },
+                colors: ['#22c55e'],
+                dataLabels: { enabled: true, enabledOnSeries: [0], background: { borderWidth: 0 } },
+                grid: { borderColor: 'var(--fuse-border)' },
+                labels: result.appointmentsPerDay.labels,
+                legend: { show: false },
+                plotOptions: { bar: { columnWidth: '50%' } },
+                series: [{ name: 'Appointments', data: result.appointmentsPerDay.series }],
+                states: { hover: { filter: { type: 'darken', value: 0.75 } } },
+                stroke: { width: [3, 0] },
+                tooltip: { followCursor: true, theme: 'dark' },
+                xaxis: {
+                    categories: result.appointmentsPerDay.labels,
+                    axisBorder: { show: false },
+                    axisTicks: { color: 'var(--fuse-border)' },
+                    labels: { style: { colors: 'var(--fuse-text-secondary)' } },
+                    tooltip: { enabled: false },
                 },
-              },
-              series: series,
-              states: {
-                hover: {
-                  filter: {
-                    type: 'darken',
-                    value: 0.75,
-                  },
-                },
-              },
-              stroke: { width: 2 },
-              theme: {
-                monochrome: {
-                  enabled: true,
-                  color: '#34D399',
-                  shadeIntensity: 0.75,
-                  shadeTo: 'dark',
-                },
-              },
-              tooltip: {
-                followCursor: true,
-                theme: 'dark',
-              },
-              yaxis: {
-                min: 0,
-                max: Math.max(...series, 1), // use fallback to avoid NaN
-                tickAmount: Math.max(...series, 1),
-                labels: {
-                  style: {
-                    colors: 'var(--fuse-text-secondary)',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                  },
-                },
-              },
+                yaxis: {
+                    min: 0,
+                    forceNiceScale: true,
+                    decimalsInFloat: 0,
+                    labels: {
+                        offsetX: -16,
+                        style: { colors: 'var(--fuse-text-secondary)' },
+                        formatter: (val) => Math.floor(val).toString(),
+                    }
+                }
             };
-        
-            // ✅ This must be inside the 'next' block
-            if (result.length > 0) {
-              const top = result[0];
-              console.log(`Top category: ${top._id} (${top.count} pets)`);
-            }
-          },
-          error: (err) => {
-            console.error('Failed to fetch pet count by species:', err);
-          },
-        });
-        
-  
-  }      
+
+            // Chart: Most Sold Categories
+            const allCategories = ['Food', 'Hygiene', 'Accessories'];
+            const quantitiesMap = new Map(result.mostSoldCategories.map(r => [r._id, r.totalQuantity]));
+            const categories = allCategories;
+            const quantities = allCategories.map(cat => quantitiesMap.get(cat) || 0);
+            const maxQuantity = Math.max(...quantities);
+            this.chartMostSoldCategories = {
+                chart: { fontFamily: 'inherit', foreColor: 'inherit', height: '100%', type: 'radar', sparkline: { enabled: true } },
+                colors: ['#34D399'],
+                dataLabels: {
+                    enabled: true,
+                    formatter: (val: number) => `${val}`,
+                    textAnchor: 'start',
+                    style: { fontSize: '13px', fontWeight: 500 },
+                    background: { borderWidth: 0, padding: 4 },
+                    offsetY: -15,
+                },
+                markers: { strokeColors: '#34D399', strokeWidth: 4 },
+                plotOptions: {
+                    radar: {
+                        polygons: {
+                            strokeColors: 'var(--fuse-border)',
+                            connectorColors: 'var(--fuse-border)',
+                        },
+                    },
+                },
+                series: [{ name: 'Sold Quantity', data: quantities }],
+                stroke: { width: 2 },
+                tooltip: { theme: 'dark', y: { formatter: (val: number) => `${val} sold` } },
+                xaxis: { categories, labels: { show: true, style: { fontSize: '12px', fontWeight: '500' } } },
+                yaxis: { max: Math.ceil(maxQuantity + 1), tickAmount: 5 },
+            };
+
+            // Chart: Task Distribution (Pet count by species)
+            const labels = result.petCountBySpecies.map((item: any) => item._id);
+            const series = result.petCountBySpecies.map((item: any) => item.count);
+            this.chartTaskDistribution = {
+                chart: { fontFamily: 'inherit', foreColor: 'inherit', height: '100%', type: 'polarArea', toolbar: { show: false }, zoom: { enabled: false } },
+                labels: labels,
+                legend: { position: 'bottom' },
+                plotOptions: {
+                    polarArea: {
+                        spokes: { connectorColors: 'var(--fuse-border)' },
+                        rings: { strokeColor: 'var(--fuse-border)' },
+                    },
+                },
+                series: series,
+                states: { hover: { filter: { type: 'darken', value: 0.75 } } },
+                stroke: { width: 2 },
+                theme: {
+                    monochrome: {
+                        enabled: true,
+                        color: '#34D399',
+                        shadeIntensity: 0.75,
+                        shadeTo: 'dark',
+                    },
+                },
+                tooltip: { followCursor: true, theme: 'dark' },
+                yaxis: {
+                    min: 0,
+                    max: Math.max(...series, 1),
+                    tickAmount: Math.max(...series, 1),
+                    labels: {
+                        style: { colors: 'var(--fuse-text-secondary)', fontSize: '14px', fontWeight: 600 },
+                    },
+                },
+            };
+
+            this._loadingService.hide();
+            this._cdr.markForCheck();
+        },
+        error: (err) => {
+            this._loadingService.hide();
+            this._cdr.markForCheck();
+            // Optionally handle error
+        }
+    });
+}  
 
     
 
@@ -511,10 +461,25 @@ getCompanyTeam(): void {
 onMonthChange(selectedMonth: string): void {
     this.selectedMonth = selectedMonth;
     console.log('Selected month:', this.selectedMonth);
+    this._loadingService.show()
     this.getAppointmentsPerDay(); // Re-fetch the data for the selected month
+    this.getAppointmentStats();   // Fetch appointment stats for the selected month
     
   }
+  getAppointmentStats(): void {
+    this._dashboardVetService.getAppointmentStats(this.companyId, this.selectedMonth).subscribe({
+      next: (stats) => {
+        this.appointmentData = stats;
+        this._cdr.markForCheck();
+        this._loadingService.hide()
+      },
+      error: (err) => {
+        console.error('Failed to fetch appointment stats:', err);
+      }
+    });
+  }
 
+  
         
 
     /**

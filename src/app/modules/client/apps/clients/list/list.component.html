@@ -79,6 +79,7 @@
                     </button>
                     <mat-menu #budgetMenu="matMenu">
   <!-- Always show Show & Edit -->
+  
   <button *appFeatures="[
         { code: featureCodes.users, actions: [featureActions.read] }
       ]" mat-menu-item class="flex justify-between" (click)="openShow(row)">
@@ -91,7 +92,12 @@
     <span class="ml-2 mr-1 block">{{ "Edit" | transloco }}</span>
     <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
   </button>
-
+<button *appFeatures="[
+        { code: featureCodes.users, actions: [featureActions.update] }
+      ]" mat-menu-item class="flex justify-between" (click)="openEditDetails(row)">
+    <span class="ml-2 mr-1 block">{{ "Edit Details" | transloco }}</span>
+    <mat-icon [svgIcon]="'heroicons_outline:document-text'"></mat-icon>
+  </button>
   <!-- If NOT archived, show Archive -->
   <ng-container *ngIf="!row.archived">
     <button *appFeatures="[
