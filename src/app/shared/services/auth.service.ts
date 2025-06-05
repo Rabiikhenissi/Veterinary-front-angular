@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import {AuthUtils} from "../../core/auth/auth.utils";
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth';
+import { NotificationService } from './notification.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -107,7 +108,6 @@ export class AuthService {
         // Remove the access token from the local storage
         localStorage.removeItem('accessToken');
         localStorage.removeItem('connectedSite');
-
         localStorage.clear();
         // Set the authenticated flag to false
         this._authenticated = false;

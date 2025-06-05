@@ -1,6 +1,6 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Notification } from '../models/notifications';
 
@@ -21,7 +21,7 @@ export class NotificationService implements OnDestroy {
 
   private _connectWebSocket(): void {
     const userId = localStorage.getItem('connectedUserId');
-    this.ws = new WebSocket(`ws://192.168.215.71:8080/?userId=${userId}`);
+this.ws = new WebSocket(`${environment.websocketUrl}?userId=${userId}`);
 
     this.ws.onopen = () => {
       console.log('WebSocket connected');
@@ -45,7 +45,7 @@ export class NotificationService implements OnDestroy {
     };
   }
 
-  private _loadInitialNotifications(): void {
+  public _loadInitialNotifications(): void {
     const userId = localStorage.getItem('connectedUserId') || '';
     console.log('User ID:', userId);
     
@@ -77,8 +77,8 @@ export class NotificationService implements OnDestroy {
       params = params.set('type', type);
     }
  if (includeArchived) {
-    params = params.set('includeArchived', 'true');
-  }
+  params = params.set('includeArchived', 'true');
+}
     return this.http.get<any>(`${this.endpoint}`, { params });
   }
 
@@ -128,13 +128,23 @@ export class NotificationService implements OnDestroy {
 
   // Archive a notification
   archiveNotification(id: string): Observable<any> {
-    return this.http.patch(`${this.endpoint}/${id}/archive`, {});
-  }
-
+  return this.http.patch(`${this.endpoint}/${id}/archive`, {}).pipe(
+    tap(() => {
+      // Remove archived notification from cache immediately
+      const currentNotifications = this._notifications.getValue();
+      const updatedNotifications = currentNotifications.filter(n => n._id !== id);
+      this._notifications.next(updatedNotifications);
+    })
+  );
+}
   // Cleanup WebSocket on destroy
   ngOnDestroy(): void {
     if (this.ws) {
       this.ws.close();
     }
   }
+  clearNotificationsCache(): void {
+  this._notifications.next([]);
+}
+
 }
