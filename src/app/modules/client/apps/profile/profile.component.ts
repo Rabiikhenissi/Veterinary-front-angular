@@ -17,10 +17,7 @@ export class ProfileComponent {
   userPets: Pet[] = [];
   selectedAvatar = '';
   connectedUser: any;
-  avatars = [
-    'assets/images/avatars/male.png',
-    'assets/images/avatars/female.png',
-  ];
+
   _authService= inject(AuthService);
   _userService= inject(UserService);
   router= inject(Router);
@@ -45,7 +42,7 @@ export class ProfileComponent {
         this.user.id = results._id;
         this.user.type = results.type;
         console.log('User:', this.user);
-        this.selectedAvatar = results.avatar || this.avatars[0];
+        this.selectedAvatar = results.avatar ;
         
     this.getList()
       },

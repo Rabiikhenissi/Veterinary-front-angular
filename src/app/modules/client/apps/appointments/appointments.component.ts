@@ -150,6 +150,7 @@ this.initializeCalendarOptions();
 
         handleWindowResize: true,
 windowResizeDelay: 150,
+       
         
 
         businessHours: formattedBusinessHours,
