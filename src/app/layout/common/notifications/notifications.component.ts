@@ -159,8 +159,15 @@ openPanel(): void {
     /**
      * Mark all notifications as read
      */
-   markAllAsRead(): void
+markAllAsRead(): void
 {
+    // Get the IDs of unread notifications
+    const unreadNotifications = this.notifications.filter(notification => !notification.read);
+
+    if (unreadNotifications.length === 0) {
+        return;
+    }
+
     // Optimistically update local state
     this.notifications = this.notifications.map(notification => ({
         ...notification,
@@ -173,26 +180,25 @@ openPanel(): void {
     // Trigger change detection to update UI
     this._changeDetectorRef.markForCheck();
 
-    // Send the update to the backend
-    this._notificationsService.markAllAsRead().subscribe();
+    // Send update requests for each unread notification
+    unreadNotifications.forEach(notification => {
+        this._notificationsService.update(notification._id, { ...notification, read: true }).subscribe();
+    });
 }
 
-    /**
-     * Toggle read status of the given notification
-     */
+/**
+ * Toggle read status of the given notification
+ */
+toggleRead(notification: Notification): void
+{
+    // Toggle the read status
+    notification.read = !notification.read;
 
-    toggleRead(notification: Notification): void
-    {
-        // Toggle the read status
-        notification.read = !notification.read;
-
-        // Update the notification
-        this._notificationsService.update(notification._id, notification).subscribe();
-        this._calculateUnreadCount();
-            this._changeDetectorRef.markForCheck();
-
-
-    }
+    // Update the notification
+    this._notificationsService.update(notification._id, notification).subscribe();
+    this._calculateUnreadCount();
+    this._changeDetectorRef.markForCheck();
+}
 
     /**
      * Archive the given notification
