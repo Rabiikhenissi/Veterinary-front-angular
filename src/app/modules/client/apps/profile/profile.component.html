@@ -2,7 +2,16 @@
     <div class="max-w-4xl w-full mx-auto p-0 relative rounded-xl shadow-xl border border-green-200 bg-white overflow-hidden">
         <!-- Banner / Cover Image -->
         <div class="h-64 bg-gradient-to-r from-green-400 to-green-200 flex items-center justify-center relative">
-    <img src="assets/images/logo/banner.png" alt="Banner" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" />
+    <img 
+        src="assets/images/logo/banner.png" 
+        alt="Banner" 
+        class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none hidden md:block" 
+    />
+    <img 
+        src="assets/images/logo/bannermd.png" 
+        alt="Banner Medium" 
+        class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none block md:hidden" 
+    />
     <button
         (click)="editProfile()"
         class="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm shadow transition-colors duration-500"
