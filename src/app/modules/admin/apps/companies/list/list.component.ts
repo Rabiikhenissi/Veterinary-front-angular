@@ -16,6 +16,7 @@ import {LoadingService} from "../../../../../shared/services/loading.service";
 import { CompanyService } from 'app/shared/services/company.service';
 import {Company} from "../../../../../shared/models/company";
 import mapboxgl from 'mapbox-gl'
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -33,6 +34,7 @@ import mapboxgl from 'mapbox-gl'
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
+        CommonModule
     ],
 })
 export class ListComponent implements OnInit {
@@ -59,10 +61,24 @@ export class ListComponent implements OnInit {
   longitude = -74.5;  
   latitude = 40;      
   zoom = 10;
+  showMap = false;
+
   ngOnInit(): void {
     this.getList();
   }
- 
+ toggleMap(): void {
+  if (this.showMap) {
+    this.map?.remove(); // Clean up map before hiding
+  }
+
+  this.showMap = !this.showMap;
+
+  if (this.showMap) {
+    setTimeout(() => {
+      this.initMap();
+    }, 0);
+  }
+}
   initMap(): void {        
     (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
 
