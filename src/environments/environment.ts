@@ -3,6 +3,7 @@ export const environment = {
 
   api: 'http://192.168.243.71:8080/api',
   uploads: 'http://192.168.243.71:8080',
+  websocketUrl: 'ws://192.168.243.71:8080/',
 
   firebaseConfig: {
     apiKey: 'AIzaSyDQEnprjRwG3u6KkwQy4OraWfErXgXyxpA',

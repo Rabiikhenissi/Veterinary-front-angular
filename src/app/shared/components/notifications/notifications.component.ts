@@ -41,7 +41,7 @@ allTypes: string[] = [];
   this.currentSize.toString(),
   this.currentPage.toString(),
   this.filteredType,
-  true,
+  false,
   this.userId
 ).subscribe({
   next: (response) => {
