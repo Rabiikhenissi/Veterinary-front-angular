@@ -48,20 +48,23 @@
     <!-- Main -->
     <div class="flex flex-auto overflow-hidden">
         <div class="flex flex-col flex-auto sm:mb-18">
-          <div
-  class="grid grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
->
-  <div class="w-full">{{ "N°" }}</div>
-  <div class="w-full">{{ "code" | transloco }}</div>
-  <div class="w-full">{{ "label" | transloco }}</div>
-  <div class="w-full">{{ "Company" | transloco }}</div>
-  <div class="w-full"></div>
-  <div class="w-full flex justify-end">
-    <button mat-icon-button (click)="openFilter = true">
-      <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
-    </button>
-  </div>
-</div>
+            <div
+                class="grid grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+            >
+                <div class="w-full">{{ "N°" }}</div>
+                <div class="w-full">{{ "code" | transloco }}</div>
+                <div class="w-full">{{ "label" | transloco }}</div>
+                <div class="w-full">{{ "Company" | transloco }}</div>
+                <div class="w-full"></div>
+                <div class="w-full flex justify-end">
+                    <button mat-icon-button (click)="openFilter = true">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'feather:filter'"
+                        ></mat-icon>
+                    </button>
+                </div>
+            </div>
             @if (displayedList?.data?.length > 0) {
             <div class="flex-1 overflow-hidden sm:overflow-y-auto">
                 <div class="flex-1 sm:grid sm:flex-0">
@@ -69,31 +72,36 @@
                     <ng-container>
                         @for (row of displayedList?.data; track row) {
                         <div
-  class="grid grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b"
-  [ngClass]="{
-      'bg-red-100 hover:bg-red-200': row.archived,
-      'hover:bg-gray-100': !row.archived
-  }"
-  (click)="isScreenSmall ? openShow(row) : null"
->
-  <div class="w-full">{{ $index + 1 }}</div>
-  <div class="w-full truncate">{{ row.code }}</div>
-  <div class="w-full truncate">{{ row.label }}</div>
-  <div class="w-full truncate">{{ row.companyName }}</div>
-  <div class="w-full"></div>
-  <div class="w-full flex justify-end">
-    <button
-      class="mr-4"
-      mat-icon-button
-      [matMenuTriggerFor]="budgetMenu"
-      (click)="$event.stopPropagation()"
-    >
-      <mat-icon
-        class="icon-size-5"
-        [svgIcon]="'heroicons_solid:ellipsis-vertical'"
-      ></mat-icon>
-    </button>
-    <mat-menu #budgetMenu="matMenu">
+                            class="grid grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b"
+                            [ngClass]="{
+                                'bg-red-100 hover:bg-red-200': row.archived,
+                                'hover:bg-gray-100': !row.archived
+                            }"
+                            (click)="isScreenSmall ? openShow(row) : null"
+                        >
+                            <div class="w-full">{{ $index + 1 }}</div>
+                            <div class="w-full truncate">{{ row.code }}</div>
+                            <div class="w-full truncate">{{ row.label }}</div>
+                            <div class="w-full truncate">
+                                {{ row.companyName }}
+                            </div>
+                            <div class="w-full"></div>
+                            <div class="w-full flex justify-end">
+                                <button
+                                    class="mr-4"
+                                    mat-icon-button
+                                    [matMenuTriggerFor]="budgetMenu"
+                                    (click)="$event.stopPropagation()"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="
+                                            'heroicons_solid:ellipsis-vertical'
+                                        "
+                                    ></mat-icon>
+                                </button>
+                                <mat-menu #budgetMenu="matMenu">
+                                    <!-- Show -->
                                     <button
                                         mat-menu-item
                                         class="flex justify-between"
@@ -106,6 +114,7 @@
                                             [svgIcon]="'heroicons_outline:eye'"
                                         ></mat-icon>
                                     </button>
+                                    <!-- Edit -->
                                     <button
                                         *appFeatures="[
                                             {
@@ -126,26 +135,78 @@
                                             "
                                         ></mat-icon>
                                     </button>
-                                    <button
-                                        *appFeatures="[
-                                            {
-                                                code: featureCodes.groups,
-                                                actions: [featureActions.delete]
-                                            }
-                                        ]"
-                                        mat-menu-item
-                                        class="flex justify-between"
-                                        (click)="deleteGroup(row)"
-                                    >
-                                        <span class="ml-2 mr-1 block">{{
-                                            "Delete" | transloco
-                                        }}</span>
-                                        <mat-icon
-                                            [svgIcon]="
-                                                'heroicons_outline:trash'
-                                            "
-                                        ></mat-icon>
-                                    </button>
+                                    <!-- Archive (if not archived) -->
+                                    <ng-container *ngIf="!row.archived">
+                                        <button
+                                            *appFeatures="[
+                                                {
+                                                    code: featureCodes.groups,
+                                                    actions: [
+                                                        featureActions.delete
+                                                    ]
+                                                }
+                                            ]"
+                                            mat-menu-item
+                                            class="flex justify-between"
+                                            (click)="archiveOne(row)"
+                                        >
+                                            <span class="ml-2 mr-1 block">{{
+                                                "Archive" | transloco
+                                            }}</span>
+                                            <mat-icon
+                                                [svgIcon]="
+                                                    'heroicons_outline:folder'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                    </ng-container>
+                                    <!-- Restore & Delete (if archived) -->
+                                    <ng-container *ngIf="row.archived">
+                                        <button
+                                            *appFeatures="[
+                                                {
+                                                    code: featureCodes.groups,
+                                                    actions: [
+                                                        featureActions.update
+                                                    ]
+                                                }
+                                            ]"
+                                            mat-menu-item
+                                            class="flex justify-between"
+                                            (click)="restoreOne(row)"
+                                        >
+                                            <span class="ml-2 mr-1 block">{{
+                                                "Restore" | transloco
+                                            }}</span>
+                                            <mat-icon
+                                                [svgIcon]="
+                                                    'heroicons_outline:arrow-path'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                        <button
+                                            *appFeatures="[
+                                                {
+                                                    code: featureCodes.groups,
+                                                    actions: [
+                                                        featureActions.delete
+                                                    ]
+                                                }
+                                            ]"
+                                            mat-menu-item
+                                            class="flex justify-between"
+                                            (click)="deleteGroup(row)"
+                                        >
+                                            <span class="ml-2 mr-1 block">{{
+                                                "Delete" | transloco
+                                            }}</span>
+                                            <mat-icon
+                                                [svgIcon]="
+                                                    'heroicons_outline:trash'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                    </ng-container>
                                 </mat-menu>
                             </div>
                         </div>

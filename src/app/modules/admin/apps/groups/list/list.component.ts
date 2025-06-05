@@ -21,6 +21,7 @@ import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CompanyService } from 'app/shared/services/company.service';
 import { Company } from 'app/shared/models/company';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -41,6 +42,7 @@ import { Company } from 'app/shared/models/company';
         FeaturesDirective,
         MatSelect,
         MatOption,
+        CommonModule
     ],
 })
 export class ListComponent implements OnInit {
@@ -117,6 +119,45 @@ export class ListComponent implements OnInit {
   addGroup(): void {
     this._router.navigate(['add'], { relativeTo: this._route }).then();
   }
+
+archiveOne(row: Group) {
+  const confirmation = this._fuseConfirmationService.open({
+    title: 'Archive',
+    message: 'Would you like to confirm archiving this group?',
+    actions: {
+      confirm: { label: 'Yes' },
+      cancel: { label: 'No' },
+    },
+  });
+
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+      this._groupService.archiveOne(row._id).subscribe(() => {
+        this.getList();
+      });
+    }
+  });
+}
+
+restoreOne(row: Group) {
+  const confirmation = this._fuseConfirmationService.open({
+    title: 'Restore',
+    message: 'Do you want to restore this group?',
+    actions: {
+      confirm: { label: 'Restore' },
+      cancel: { label: 'Cancel' },
+    },
+  });
+
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+      this._groupService.restoreOne(row._id).subscribe(() => {
+        this.getList();
+      });
+    }
+  });
+}
+
   openShow(row: Group) {
     this._router.navigate([`${row._id}`], { relativeTo: this._route }).then();
   }

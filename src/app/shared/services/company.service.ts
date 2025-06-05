@@ -14,8 +14,7 @@ export class CompanyService {
       limit: string,
       page: string,
       search: string,
-      filterType:string,
-      filterStatus:string,
+      archived?:boolean,
   ): Observable<Pagination<Company>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
@@ -23,11 +22,8 @@ export class CompanyService {
     if (search) {
       searchParams = searchParams.append('search', search);
     }
-    if (filterType) {
-      searchParams = searchParams.append('filterType', filterType);
-    }
-    if (filterStatus) {
-      searchParams = searchParams.append('filterStatus', filterStatus);
+    if (archived !== null ) {
+        searchParams = searchParams.set('archived', archived.toString());
     }
     return this.http.get<Pagination<Company>>(`${this.endpoint}`, {
       params: searchParams,
@@ -50,5 +46,12 @@ export class CompanyService {
   }
   updateBusinessHours(companyId: string, businessHours: any): Observable<any> {
   return this.http.patch(`${this.endpoint}/${companyId}/business-hours`, { businessHours });
+}
+archiveOne(id: string): Observable<null> {
+  return this.http.patch<null>(`${this.endpoint}/${id}/archive`, {});
+}
+
+restoreOne(id: string): Observable<null> {
+  return this.http.patch<null>(`${this.endpoint}/${id}/restore`, {});
 }
 }

@@ -24,6 +24,7 @@ import { CommonModule } from '@angular/common';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { GroupService } from 'app/shared/services/group.service';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -77,9 +78,36 @@ filterCompany:string[]=[];
 filterSearch: string;
 
   ngOnInit(): void {
-    this.loadGroups();
-    this.getList();
-  }
+  this._loadingService.show();
+  forkJoin([
+    this._groupService.getAll(),
+    this._companyService.getAll(), // Fetch all companies here
+    this._userService.getUsers(
+      this.currentSize.toString(),
+      this.currentPage.toString(),
+      this.filterSearch,
+      this.filterarchived,
+      this.filtergroups,
+      this.filterstatus,
+      this.filterCompany
+    )
+  ]).subscribe({
+    next: ([groups, companies, users]) => {
+      this.groups = groups;
+      // Build the company name map
+      (companies.data || []).forEach((company: Company) => {
+        this.companyNames.set(company._id, company.name);
+      });
+      this.displayedList = users;
+      this.openFilter = false;
+      this._loadingService.hide();
+    },
+    error: () => {
+      this._loadingService.hide();
+      this.openFilter = false;
+    }
+  });
+}
   loadGroups(): void {
   this._groupService.getAll().subscribe((groups) => {
     this.groups = groups;
@@ -97,18 +125,10 @@ filterSearch: string;
     this.currentPage = pageIndex;
     this.getList();
   }
-  getCompany(companyId: string) {
-    if (!companyId) return ''; 
-
-    if (this.companyNames.has(companyId)) {
-      return this.companyNames.get(companyId);
-    }
-      this._companyService.getOne(companyId).subscribe((company: Company) => {
-      this.companyNames.set(companyId, company.name);
-    });
-  
-    return ''; 
-  }
+  getCompany(companyId: string): string {
+  if (!companyId) return '';
+  return this.companyNames.get(companyId) || '';
+}
   getList(): void {
     
   this._loadingService.show();

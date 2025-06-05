@@ -193,6 +193,43 @@ export class ListComponent implements OnInit {
       }
     });
   }
+  archiveOne(row: User) {
+  const confirmation = this._fuseConfirmationService.open({
+    title: 'Archive',
+    message: 'Would you like to confirm archiving this user?',
+    actions: {
+      confirm: { label: 'Yes' },
+      cancel: { label: 'No' },
+    },
+  });
+
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+      this._userService.ArchiveOne(row._id).subscribe(() => {
+        this.getList();
+      });
+    }
+  });
+}
+
+restoreOne(row: User) {
+  const confirmation = this._fuseConfirmationService.open({
+    title: 'Restore',
+    message: 'Would you like to restore this user?',
+    actions: {
+      confirm: { label: 'Restore' },
+      cancel: { label: 'Cancel' },
+    },
+  });
+
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+      this._userService.restoreOne(row._id).subscribe(() => {
+        this.getList();
+      });
+    }
+  });
+}
   resetFilters() {
   this.filterGroup = [];
   this.filterStatus = [];

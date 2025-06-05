@@ -80,4 +80,12 @@ export class GroupService {
       params: searchParams,
     });
   }
+
+  archiveOne(id: string): Observable<null> {
+    return this.http.patch<null>(`${this.endpoint}/${id}/archive`, {});
+  }
+
+  restoreOne(id: string): Observable<null> {
+    return this.http.patch<null>(`${this.endpoint}/${id}/restore`, {});
+  }
 }

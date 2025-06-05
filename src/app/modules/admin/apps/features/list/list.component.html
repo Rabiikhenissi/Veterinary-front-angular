@@ -46,7 +46,7 @@
           <!-- Rows -->
           <ng-container>
             @for (feature of displayedList?.data; track feature) {
-            <div class="feature-grid grid items-center gap-4 py-1  px-4 md:px-6 border-b"
+            <div class="feature-grid grid items-center gap-4 py-1 hover:bg-gray-100  px-4 md:px-6 border-b"
               (click)="isScreenSmall ? openShow(feature) : null">
               <div class="hidden sm:flex">{{ $index + 1 }}</div>
               <div class="hidden sm:flex truncate">{{ feature.code }}</div>
