@@ -69,8 +69,8 @@ export class AddComponent implements OnInit{
     ngOnInit(): void {
         this._loadingService.show();
        forkJoin([
-        this._groupService.getList('1000', '1', '', '', '', 'internal'),
-        this._groupService.getList('1000', '1', '', '', '', 'super')
+        this._groupService.getList({types:'internal'}),
+        this._groupService.getList({types:'super'})
     ]).subscribe({
         next: ([internalGroups, externalGroups]) => {
             this.listGroups = [...internalGroups.data, ...externalGroups.data];

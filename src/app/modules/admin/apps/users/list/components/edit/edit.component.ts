@@ -51,7 +51,7 @@ export class EditComponent implements OnInit {
     this._userService.getOne(this.id).subscribe({
       next: (user: User) => {
         this.user = user;
-        this._groupService.getList('1000', '1', '', '', '', this.user.type).subscribe({
+        this._groupService.getList({types:this.user.type}).subscribe({
           next: (pagination: Pagination<Group>) => {
             this.listGroups = pagination.data;
             this.user.groupsId = this.listGroups.find(el => el._id === this.user.groupsId._id);

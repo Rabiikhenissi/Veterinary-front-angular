@@ -13,28 +13,41 @@ export class GroupService {
 
   http = inject(HttpClient)
   // get groups
-  getList(
-      limit: string,
-      page: string,
-      search: string,
-      filterType:string,
-      filterStatus:string,
-      type?:string
-  ): Observable<Pagination<Group>> {
+  getList({
+  limit,
+  page,
+  search,
+  types,
+  companies,
+  archived,
+}:{
+      limit?: string,
+      page?: string,
+      search?: string,
+      types?:string[] | string,
+      companies?:string[] | string,
+      archived?:boolean,
+  }): Observable<Pagination<Group>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
     searchParams = searchParams.append('page', page);
     if (search) {
       searchParams = searchParams.append('search', search);
     }
-    if (filterType) {
-      searchParams = searchParams.append('filterType', filterType);
+    if (archived !== null ) {
+        searchParams = searchParams.set('archived', archived.toString());
     }
-    if (filterStatus) {
-      searchParams = searchParams.append('filterStatus', filterStatus);
+    if (types && types.length > 0) {
+        const typesArray: string[] = Array.isArray(types) ? types : [types];
+        typesArray.forEach((type: string) => {
+            searchParams = searchParams.append('type', type);
+        });
     }
-    if (type) {
-      searchParams = searchParams.append('type', type);
+    if (companies && companies.length > 0) {
+        const companiesArray: string[] = Array.isArray(companies) ? companies : [companies];
+        companiesArray.forEach((company: string) => {
+            searchParams = searchParams.append('company', company);
+        });
     }
     return this.http.get<Pagination<Group>>(`${this.endpoint}`, {
       params: searchParams,

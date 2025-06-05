@@ -32,11 +32,11 @@
     <div class="flex flex-col flex-auto sm:mb-18">
       <!-- Table Header -->
       <div
-        class="row-grid grid z-10 top-0 shadow items-center gap-1 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-green-100 dark:bg-black dark:bg-opacity-5"
+        class="grid grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-green-100 dark:bg-black dark:bg-opacity-5"
         style="grid-template-columns: 40px 1fr 2fr 1.5fr 1fr auto;"
       >
-        <div class="hidden sm:flex">N°</div>
-        <div class="flex">{{ 'name' | transloco }}</div>
+        <div class="hidden md:block ">N°</div>
+        <div class="truncate">{{ 'name' | transloco }}</div>
         <div class="flex">{{ 'email' | transloco }}</div>
         <div class="hidden sm:flex">{{ 'phone' | transloco }}</div>
         <div class="hidden sm:flex">{{ 'Status' | transloco }}</div>
@@ -58,12 +58,12 @@
                                 'hover:bg-gray-100': !row.archived
                             }" (click)="isScreenSmall ? openShow(row) : null">
                   <div class="hidden sm:flex">{{ $index + 1 }}</div>
-                  <div class="truncate">{{ row.name }}</div>
-                  <div class="truncate">{{ row.email }}</div>
-                  <div class="hidden sm:flex truncate">{{ row.phone }}</div>
+                  <div class="truncate text-xl">{{ row.name }}</div>
+                  <div class="truncate text-xl">{{ row.email }}</div>
+                  <div class="hidden sm:flex truncate text-xl">{{ row.phone }}</div>
                   <div class="hidden sm:flex">
                     <span
-                      class="px-2 py-1 rounded-full text-xs font-semibold"
+                      class="px-2 py-1 rounded-full text-md font-semibold"
                       [ngClass]="{
                         'bg-green-100 text-green-800': row.status === 'verified',
                         'bg-yellow-100 text-yellow-800': row.status === 'pending',

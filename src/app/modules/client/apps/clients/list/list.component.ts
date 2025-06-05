@@ -42,7 +42,6 @@ import { UserService } from 'app/shared/services/user.service';
           TranslocoPipe,
           FeaturesDirective,
         CommonModule,
-      MatLabel,
     MatOption,
   MatSelect],
   templateUrl: './list.component.html',
@@ -76,7 +75,7 @@ export class ListComponent implements OnInit {
   openFilter = false;
   filterGroup: string[] = [];
   filterStatus: string[] = [];
-  filterArchived: boolean;
+  filterArchived: boolean=false;
   filterSearch: string;
   connectedUser: any;
   authService= inject(AuthService);
@@ -197,6 +196,6 @@ export class ListComponent implements OnInit {
   resetFilters() {
   this.filterGroup = [];
   this.filterStatus = [];
-  this.showArchived = false;
+  this.filterArchived = false;
 }
 }

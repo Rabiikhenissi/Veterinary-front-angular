@@ -32,8 +32,8 @@
         <div class=" md:block">N°</div>
         <div class="truncate">{{ "name" | transloco }}</div>
         <div class="hidden truncate">{{ "email" | transloco }}</div>
-        <div class="  truncate">{{ "group" | transloco }}</div>
-        <div class="  truncate">{{ "company" | transloco }}</div>
+        <div class="truncate">{{ "group" | transloco }}</div>
+        <div class="truncate">{{ "company" | transloco }}</div>
         <div class=" md:block">{{ "status" | transloco }}</div>
         <div class="flex justify-end">
           <button mat-icon-button (click)="openFilter = true">
@@ -229,8 +229,7 @@
           {{ 'Filter by Archive Status' | transloco }}
         </div>
         <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
-          
-          <mat-select [(ngModel)]="showArchived" name="archived" placeholder="Select archived or active">
+          <mat-select [(ngModel)]="filterarchived" name="archived" placeholder="Select archived or active">
             <mat-option value="">{{ 'All' | transloco }}</mat-option>
             <mat-option [value]="false">{{ 'Active' | transloco }}</mat-option>
             <mat-option [value]="true">{{ 'Archived' | transloco }}</mat-option>

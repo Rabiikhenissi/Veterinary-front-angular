@@ -45,7 +45,6 @@ import { MatOption, MatSelect } from '@angular/material/select';
         CommonModule,
         MatSelect,
         MatOption,
-        MatLabel
     ],
 })
 export class ListComponent implements OnInit {
@@ -71,12 +70,11 @@ featureActions = FeatureActions;
 _groupService=inject(GroupService)
 //************* FILTERS *****************//
 openFilter = false;
-filterarchived: string[] = [];
+filterarchived:boolean=false;
 filtergroups: string[] = [];
 filterstatus:string[]=[];
 filterCompany:string[]=[];
 filterSearch: string;
-showArchived = false;
 
   ngOnInit(): void {
     this.loadGroups();
@@ -119,7 +117,7 @@ showArchived = false;
       this.currentSize.toString(),
       this.currentPage.toString(),
       this.filterSearch,
-      this.showArchived, 
+      this.filterarchived, 
       this.filtergroups,    
       this.filterstatus,
       this.filterCompany 
@@ -225,13 +223,11 @@ showArchived = false;
     });
   }
 
-  toggleArchived() {
-  this.getList()
-}
+ 
 resetFilters() {
   this.filtergroups = [];
   this.filterstatus = [];
   this.filterCompany=[]
-  this.showArchived = false;
+  this.filterarchived = false;
 }
 }
