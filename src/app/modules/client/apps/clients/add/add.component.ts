@@ -73,7 +73,7 @@ export class AddComponent implements OnInit {
     ngOnInit(): void {
         this._loadingService.show();
 
-        forkJoin([  this._groupService.getList({types:'external'}) ,]).subscribe({
+        forkJoin([  this._groupService.getList({types:'external', archived:false}) ,]).subscribe({
             next: (result: [Pagination<Group>]) => {
                 this.listGroups = result[0].data;
                 console.log(this.listGroups);
@@ -92,8 +92,6 @@ export class AddComponent implements OnInit {
                 this.currentSize.toString(),
                 this.currentPage.toString(),
                 this.filterSearch,
-                this.filterType.toString(),
-                this.filterStatus.toString()
             )
             .subscribe({
                 next: (results) => {

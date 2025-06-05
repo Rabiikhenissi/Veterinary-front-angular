@@ -150,17 +150,7 @@ this.initializeCalendarOptions();
 
         handleWindowResize: true,
 windowResizeDelay: 150,
-        businessHours: [
-            {
-                daysOfWeek: [ 1, 2, 3, 4,5],
-                startTime: '08:00', // 8am
-                endTime:'18:00'
-            },
-            {
-                daysOfWeek: [ 6], 
-                startTime: '10:00', // 10am
-                endTime: '16:00' // 4pm
-              }],
+        
 
         businessHours: formattedBusinessHours,
 
@@ -326,7 +316,7 @@ windowResizeDelay: 150,
                                 
                                 this._userService.getInternalUsers().subscribe({
                                     next: (internalUsersResponse: any) => {
-                                      const internalUsers = internalUsersResponse?.data;
+                                      const internalUsers = internalUsersResponse;
                                       if (Array.isArray(internalUsers)) {
                                         internalUsers.forEach(user => {
                                           this._notificationService.createNotification({

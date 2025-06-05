@@ -17,6 +17,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import {Company} from "../../../../../shared/models/company";
 import mapboxgl from 'mapbox-gl'
 import { CommonModule } from '@angular/common';
+import { MatOption, MatSelect } from '@angular/material/select';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -34,7 +35,9 @@ import { CommonModule } from '@angular/common';
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
-        CommonModule
+        CommonModule,
+        MatSelect,
+        MatOption
     ],
 })
 export class ListComponent implements OnInit {
@@ -54,8 +57,8 @@ export class ListComponent implements OnInit {
   isScreenSmall: boolean;
   //************* FILTERS *****************//
   openFilter = false;
-  filterType: string[] = [];
-  filterStatus: string[] = [];
+  filterArchived:  boolean = false; 
+  
   filterSearch: string;
   map: mapboxgl.Map;
   longitude = -74.5;  
@@ -124,20 +127,19 @@ export class ListComponent implements OnInit {
         this.currentSize.toString(),
         this.currentPage.toString(),
         this.filterSearch,
-        this.filterType.toString(),
-        this.filterStatus.toString(),
+        this.filterArchived,
       )
       .subscribe({
           next: results => {
               this.displayedList = results;
               this.openFilter = false;
-              this._loadingService.hide();
               const comp = this.displayedList.data[0];
               this.latitude = comp.latitude;
               this.longitude = comp.longitude;
-               setTimeout(() => {
+              setTimeout(() => {
                 this.initMap(); 
               }, 10); 
+              this._loadingService.hide();
           },
           error: () => {
               this._loadingService.hide();
@@ -162,6 +164,54 @@ export class ListComponent implements OnInit {
       this.getList();
     }, this.doneTypingInterval);
   }
+  archiveOne(row: Company) {
+  // Open the confirmation dialog
+  const confirmation = this._fuseConfirmationService.open({
+    title: 'Archive',
+    message: 'Would you like to confirm archiving this company?',
+    actions: {
+    confirm: {
+      label: 'yes',
+    },
+    cancel: {
+      label: 'no',
+    },
+    },
+  });
+
+  // Subscribe to the confirmation dialog closed action
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+    this._companyService.archiveOne(row._id).subscribe(() => {
+      this.getList();
+    });
+    }
+  });
+}
+restoreOne(row: Company) {
+  // Open the confirmation dialog
+  const confirmation = this._fuseConfirmationService.open({
+    title: 'Restore',
+    message: 'Would you like to confirm restoring this company?',
+    actions: {
+      confirm: {
+        label: 'yes',
+      },
+      cancel: {
+        label: 'no',
+      },
+    },
+  });
+
+  // Subscribe to the confirmation dialog closed action
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+      this._companyService.restoreOne(row._id).subscribe(() => {
+        this.getList();
+      });
+    }
+  });
+}
   deleteOne(row: Company) {
     // Open the confirmation dialog
     const confirmation = this._fuseConfirmationService.open({
@@ -193,4 +243,7 @@ export class ListComponent implements OnInit {
       this.getList();
     }, this.doneTypingInterval);
   }
+  resetFilters() {
+  this.filterArchived = false;
+}
 }
