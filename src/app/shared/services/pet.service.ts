@@ -17,14 +17,18 @@ export class PetService {
     limit: string,
     page: string,
     search: string,
-
-    userId?: string
+    userId?: string,
+    archived?:boolean
 
   ): Observable<Pagination<Pet>> {
-    let searchParams = new HttpParams();
-    searchParams = searchParams.append('limit', limit);
-    searchParams = searchParams.append('page', page);
-    searchParams = searchParams.append('userId', userId);
+    let searchParams = new HttpParams()
+      .set('limit', limit)
+      .set('page', page);
+
+    if (userId) searchParams = searchParams.set('userId', userId);
+    if (search) searchParams = searchParams.set('search', search);
+    if (archived !== undefined) searchParams = searchParams.set('archived', archived.toString());
+
     if (search) {
       searchParams = searchParams.append('search', search);
     }
@@ -76,5 +80,14 @@ cancelArchiveRequest(petId: string): Observable<any> {
   rejectArchive(petId: string): Observable<any> {
     return this.http.patch(`${this.endpoint}/${petId}/reject-archive`, {});
   }
+  requestRestore(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/request-restore`, {});
+  }
+
+  // Cancel restore request
+  cancelRestoreRequest(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/cancel-restore-request`, {});
+  }
+  
 
 }
