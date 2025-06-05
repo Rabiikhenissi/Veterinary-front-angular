@@ -1,60 +1,64 @@
 <div
-  class="max-w-7xl w-full mx-auto p-6 relative bg-green-50 rounded-xl shadow-lg border border-green-100"
+  class="max-w-7xl w-full mx-auto p-8 relative bg-gradient-to-br from-green-50 via-white to-green-100 rounded-2xl shadow-2xl border border-green-200 overflow-hidden"
 >
-  <h2 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-    <span>🔔</span> Notifications
+  <!-- Animated Glow -->
+  <div class="absolute -top-10 -left-10 w-60 h-60 bg-green-200 opacity-30 rounded-full blur-3xl animate-pulse z-0"></div>
+  <div class="absolute -bottom-10 -right-10 w-60 h-60 bg-green-300 opacity-20 rounded-full blur-3xl animate-pulse z-0"></div>
+
+  <h2 class="relative z-10 text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3 tracking-tight">
+    <span class="animate-bounce">🔔</span>
+    <span class="bg-gradient-to-r from-green-600 via-green-400 to-green-600 bg-clip-text text-transparent">Notifications</span>
   </h2>
 
   <!-- Filter by Type Buttons -->
-  <div class="flex flex-wrap gap-3 mb-6">
-  <button 
-    *ngFor="let type of allTypes"
-    (click)="filterByType(type)"
-    [ngClass]="{
-      'bg-green-700 text-white': filteredType === type,
-      'bg-white text-green-700 border border-green-300': filteredType !== type
-    }"
-    class="px-4 py-2 rounded-full text-md font-medium transition-shadow hover:shadow-lg focus:outline-none"
-  >
-    {{ type }}
-  </button>
-
-  <button
-    (click)="filterByType('')" 
-    [ngClass]="{
-      'bg-green-700 text-white': filteredType === '',
-      'bg-white text-green-700 border border-green-300': filteredType !== ''
-    }"
-    class="px-4 py-2 rounded-full text-md font-medium transition-shadow hover:shadow-lg focus:outline-none"
-  >
-    All
-  </button>
-</div>
+  <div class="relative z-10 flex flex-wrap gap-4 mb-8">
+    <button 
+      *ngFor="let type of allTypes"
+      (click)="filterByType(type)"
+      [ngClass]="{
+        'bg-gradient-to-r from-green-600 to-green-400 text-white shadow-lg scale-105': filteredType === type,
+        'bg-white text-green-700 border border-green-300 hover:bg-green-50': filteredType !== type
+      }"
+      class="px-5 py-2 rounded-full text-md font-semibold transition-all duration-300 focus:outline-none ring-2 ring-transparent hover:ring-green-300"
+    >
+      {{ type }}
+    </button>
+    <button
+      (click)="filterByType('')" 
+      [ngClass]="{
+        'bg-gradient-to-r from-green-600 to-green-400 text-white shadow-lg scale-105': filteredType === '',
+        'bg-white text-green-700 border border-green-300 hover:bg-green-50': filteredType !== ''
+      }"
+      class="px-5 py-2 rounded-full text-md font-semibold transition-all duration-300 focus:outline-none ring-2 ring-transparent hover:ring-green-300"
+    >
+      All
+    </button>
+  </div>
 
   <!-- No notifications message -->
-  <div *ngIf="filteredNotifications.length === 0" class="text-center text-gray-500 italic py-10">
+  <div *ngIf="filteredNotifications.length === 0" class="relative z-10 text-center text-gray-500 italic py-16 text-lg animate-fade-in">
     No notifications to show. ✨
   </div>
 
   <!-- Notification list -->
-  <ul class="space-y-5" *ngIf="filteredNotifications.length > 0">
+  <ul class="relative z-10 space-y-7" *ngIf="filteredNotifications.length > 0">
     <li
       *ngFor="let notif of filteredNotifications; trackBy: trackById"
-      class="p-5 bg-green-100 border border-green-300 rounded-lg shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
+      class="group p-6 bg-white/80 border border-green-200 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-5 backdrop-blur-md hover:scale-[1.02]"
     >
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-5">
         <div class="flex-shrink-0">
           <span 
-            class="inline-block w-10 h-10 rounded-full bg-green-300 text-green-900 flex items-center justify-center text-xl font-bold"
+            class="inline-block w-12 h-12 rounded-full bg-gradient-to-br from-green-300 to-green-500 text-green-900 flex items-center justify-center text-2xl font-bold shadow-lg"
             >🔔</span
           >
         </div>
         <div>
-          <p class="text-black font-semibold text-lg capitalize mb-1">
+          <p class="text-black font-bold text-lg capitalize mb-1 tracking-wide">
             {{ notif.type }}
           </p>
-          <p class="text-black">{{ notif.message }}</p>
-          <p class="text-sm text-gray-600 italic mt-1">
+          <p class="text-gray-800">{{ notif.message }}</p>
+          <p class="text-xs text-gray-500 italic mt-2 flex items-center gap-1">
             {{ notif.createdAt | date: 'short' }}
           </p>
         </div>
@@ -62,24 +66,43 @@
 
       <div *ngIf="notif.relatedItemId" class="text-right mt-3 sm:mt-0">
         <button
-          class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md text-sm font-semibold shadow transition"
+          class="bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg transition-all duration-300 animate-fade-in"
           (click)="viewRelated(notif.relatedItemId)"
         >
-          View Related
+          <span class="mr-1 animate-pulse">🔗</span> View Related
         </button>
       </div>
     </li>
   </ul>
 
   <!-- Pagination -->
-  <div class="mt-8 flex justify-center">
+  <div class="relative z-10 mt-10 flex justify-center">
     <mat-paginator
       [length]="total"
       [pageSize]="currentSize"
       [pageIndex]="currentPage - 1"
       [pageSizeOptions]="[5, 10, 20]"
       (page)="pageChanged($event)"
+      class="bg-white/80 rounded-lg shadow-md px-4 py-2"
     >
     </mat-paginator>
   </div>
 </div>
+
+<!-- Animations (add to your global styles or component styles) -->
+<style>
+@keyframes spin-slow {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.animate-fade-in {
+  animation: fade-in 0.8s cubic-bezier(.4,0,.2,1) both;
+}
+</style>
