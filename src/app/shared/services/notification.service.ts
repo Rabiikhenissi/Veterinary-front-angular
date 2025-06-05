@@ -23,6 +23,7 @@ export class NotificationService implements OnDestroy {
     const userId = localStorage.getItem('connectedUserId');
 this.ws = new WebSocket(`${environment.websocketUrl}?userId=${userId}`);
 
+
     this.ws.onopen = () => {
       console.log('WebSocket connected');
     };

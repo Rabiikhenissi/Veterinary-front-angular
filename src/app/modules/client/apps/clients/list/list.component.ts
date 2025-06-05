@@ -1,12 +1,15 @@
+import { group } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField, MatPrefix } from '@angular/material/form-field';
+import { MatOption } from '@angular/material/core';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoPipe } from '@ngneat/transloco';
@@ -19,6 +22,7 @@ import { Pagination } from 'app/shared/models/pagination';
 import { User } from 'app/shared/models/user';
 import { AuthService } from 'app/shared/services/auth.service';
 import { CompanyService } from 'app/shared/services/company.service';
+import { GroupService } from 'app/shared/services/group.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { UserService } from 'app/shared/services/user.service';
 
@@ -37,7 +41,9 @@ import { UserService } from 'app/shared/services/user.service';
           MatPaginator,
           TranslocoPipe,
           FeaturesDirective,
-        CommonModule],
+        CommonModule,
+    MatOption,
+  MatSelect],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -46,6 +52,7 @@ export class ListComponent implements OnInit {
   //********* INJECT SERVICES ***********//
   _userService= inject(UserService);
   _companyService= inject(CompanyService);
+  _groupService=inject(GroupService)
   _router= inject(Router);
   _fuseConfirmationService= inject(FuseConfirmationService);
   _route= inject(ActivatedRoute);
@@ -61,23 +68,24 @@ export class ListComponent implements OnInit {
   isScreenSmall: boolean;
   featureCodes = FeatureCodes;
   featureActions = FeatureActions;
+  showArchived=false;
+  groups:any[]=[];
+  companyId:string;
   //************* FILTERS *****************//
   openFilter = false;
-  filterType: string[] = [];
+  filterGroup: string[] = [];
   filterStatus: string[] = [];
+  filterArchived: boolean=false;
   filterSearch: string;
-connectedUser: any;
-authService= inject(AuthService);
-
+  connectedUser: any;
+  authService= inject(AuthService);
+  
   ngOnInit(): void {
+    this.connectedUser= localStorage.getItem("connectedUserId")
+    this.companyId=localStorage.getItem("connectedUserCompany")
+    this.loadGroups()
     this.getList();
-    this.connectedUser= this.authService._userService.decodeToken(this.authService.accessToken);
-    this._userService.getOne(this.connectedUser.id).subscribe({
-      next: (results) => {
-        this.connectedUser = results;
-      },
-      error: (err) => console.error(err),
-    });
+    
   }
   pageChanged(event: PageEvent ): void {
     let { pageIndex } = event;
@@ -91,29 +99,31 @@ authService= inject(AuthService);
     this.currentPage = pageIndex;
     this.getList();
   }
-  getCompany(companyId: string) {
-    if (!companyId) return ''; 
-
-    if (this.companyNames.has(companyId)) {
-      return this.companyNames.get(companyId);
-    }
-      this._companyService.getOne(companyId).subscribe((company: Company) => {
-      this.companyNames.set(companyId, company.name);
+  loadGroups(): void {
+    
+    this._groupService.getGroupsByCompany(
+      this.companyId,
+      "external"
+    ).subscribe((groups) => {
+      
+      this.groups = groups;
+      
     });
+}
   
-    return ''; 
-  }
   getList(): void {
-    this.connectedUser=this.authService._userService.decodeToken(this.authService.accessToken);
-    const companyId = this.connectedUser.companyId;
-    console.log('companyId', companyId);
+  
+    
     this._loadingService.show();
     this._userService
       .getClients(
         this.currentSize.toString(),
         this.currentPage.toString(),
         this.filterSearch,
-        companyId
+        this.companyId,
+        this.filterArchived,
+        this.filterGroup,
+        this.filterStatus
       )
       .subscribe({ 
         
@@ -122,7 +132,7 @@ authService= inject(AuthService);
 
             const filteredUsers = results.data.filter(user => 
               user.type === 'external' &&
-              user.companyId==this.connectedUser.companyId
+              user.companyId==this.companyId
             );
             
             this.displayedList = {
@@ -183,4 +193,9 @@ authService= inject(AuthService);
       }
     });
   }
+  resetFilters() {
+  this.filterGroup = [];
+  this.filterStatus = [];
+  this.filterArchived = false;
+}
 }

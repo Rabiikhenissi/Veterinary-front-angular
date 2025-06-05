@@ -40,7 +40,6 @@ import { FeaturesDirective } from 'app/shared/directives/features.directive';
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
-        MatLabel,
         MatOption,
         MatSelect,
         FeaturesDirective,
@@ -156,6 +155,10 @@ export class ListComponent implements OnInit {
       this.getList();
     }, this.doneTypingInterval);
   }
-
+resetFilters() {
+  this.filterType = [];
+  this.filterStatus = [];
+  this.getList();
+}
     protected readonly listFeatureStatus = listFeatureStatus;
 }

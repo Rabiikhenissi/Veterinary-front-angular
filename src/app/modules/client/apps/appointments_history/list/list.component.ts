@@ -6,6 +6,7 @@ import { Appointment } from 'app/shared/models/appointment';
 import { Pagination } from 'app/shared/models/pagination';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { AuthService } from 'app/shared/services/auth.service';
+import { LoadingService } from 'app/shared/services/loading.service';
 
 @Component({
   selector: 'app-list',
@@ -14,6 +15,7 @@ import { AuthService } from 'app/shared/services/auth.service';
   styleUrl: './list.component.scss'
 })
 export class ListComponent implements OnInit {
+  _loadingService=inject(LoadingService)
   route=inject(ActivatedRoute);
   router=inject(Router);
   userId: string;
@@ -51,13 +53,16 @@ export class ListComponent implements OnInit {
   }
 
   fetchAppointments(userId): void {
+    this._loadingService.show()
     this.appointmentService.getAppointmentsByUser(this.currentSize.toString(),this.currentPage.toString(),this.filterSearch,userId).subscribe({
       next: (response) => {
         this.appointments=response.data;
         this.total= response.total;
+        this._loadingService.hide()
       },
       error: (error) => {
         console.error('Error fetching appointments:', error);
+        this._loadingService.hide()
     }
     });
   }
