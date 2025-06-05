@@ -141,23 +141,50 @@ export class UserService {
     limit: string,
     page: string,
     search: string,
-  ): Observable<Pagination<User>> {
-    let searchParams = new HttpParams();
-    searchParams = searchParams.append('limit', limit);
+    archived: boolean| null = null,
+    groups: string[] = [],
+    statuses: string[] = [],
+    companies:string[] = [],
+): Observable<Pagination<User>> {
+    let searchParams = new HttpParams()
+        .set('limit', limit)
+        .set('page', page);
 
-    searchParams = searchParams.append('page', page);
     if (search) {
-      searchParams = searchParams.append('search', search);
+        searchParams = searchParams.set('search', search);
     }
+    if (archived !== null ) {
+        searchParams = searchParams.set('archived', archived.toString());
+    }
+    if (groups && groups.length > 0) {
+        groups.forEach(group => {
+            searchParams = searchParams.append('group', group);
+        });
+    }
+
+    if (statuses && statuses.length > 0) {
+        statuses.forEach(status => {
+            searchParams = searchParams.append('status', status);
+        });
+    }
+    if (companies && companies.length > 0) {
+        companies.forEach(company => {
+            searchParams = searchParams.append('company', company);
+        });
+    }
+
     return this.http.get<Pagination<User>>(`${this.endpointAuth}`, {
-      params: searchParams,
+        params: searchParams,
     });
-  }
+}
   getClients(
     limit: string,
     page: string,
     search: string,
     companyId: string,
+    archived: boolean  | null = null,
+    groups: string[] = [],
+    statuses: string[] = [],
   ): Observable<Pagination<User>> {
     let searchParams = new HttpParams();
     searchParams = searchParams.append('limit', limit);
@@ -167,6 +194,21 @@ export class UserService {
     if (search) {
       searchParams = searchParams.append('search', search);
     }
+    if (archived !== null ) {
+        searchParams = searchParams.set('archived', archived.toString());
+    }
+    if (groups && groups.length > 0) {
+        groups.forEach(group => {
+            searchParams = searchParams.append('group', group);
+        });
+    }
+
+    if (statuses && statuses.length > 0) {
+        statuses.forEach(status => {
+            searchParams = searchParams.append('status', status);
+        });
+    }
+
     return this.http.get<Pagination<User>>(`${this.endpointAuth}/clients/${companyId}`, {
       params: searchParams,
     });
@@ -183,10 +225,17 @@ export class UserService {
   enableAccount(id: string): Observable<User> {
     return this.http.get<User>(`${this.endpointAuth}/${id}/enable-disable`);
   }
-   deleteOne(id: string): Observable<any> {
+   ArchiveOne(id: string): Observable<any> {
     return this.http.patch(`${this.endpointAuth}/archive/${id}`,{});
   }
-  
+  restoreOne(id: string): Observable<User> {
+    return this.http.patch<User>(`${this.endpointAuth}/restore/${id}`, {});
+  }
+
+  deleteOne(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.endpointAuth}/${id}`);
+  }
+
   updateAvatar(data: FormData, id: string): Observable<User> {
     return this.http.post<User>(`${this.endpointAuth}/${id}/avatar`, data).pipe(
       tap((user) => {

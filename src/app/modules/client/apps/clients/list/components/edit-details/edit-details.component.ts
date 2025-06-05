@@ -43,13 +43,15 @@ export class EditDetailsComponent implements OnInit {
     //********* DECLARE CLASSES/ENUMS ***********//
     id = this._route.snapshot.paramMap.get('id') || undefined;
     user: User;
+    companyId:string;
     listGroups: Group[];
     ngOnInit(): void {
         if (this.id) {
             this._loadingService.show()
+            this.companyId=localStorage.getItem("connectedUserCompany")
             forkJoin([
                 this._userService.getOne(this.id),
-                  this._groupService.getList('1000', '1','','','','external') ,
+                  this._groupService.getList({types:'external',companies:this.companyId}),
             ]).subscribe({
                 next: (result: [User, Pagination<Group>]) => {
                     this.user = result[0];

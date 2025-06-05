@@ -15,12 +15,13 @@ export class ListComponent implements OnInit {
   _router = inject(Router);
   _route = inject(ActivatedRoute);
   services: any[] = [];
-
+  companyName:string;
 
   ngOnInit() {
     this._companyService.getOne(localStorage.getItem('connectedUserCompany')).subscribe({
       next: (company) => {
         this.services = company.services;
+        this.companyName=company.name
       },
       error: (error) => {
         console.error('Error fetching company data:', error);

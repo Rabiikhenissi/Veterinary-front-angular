@@ -18,6 +18,9 @@ import {LoadingService} from "../../../../../shared/services/loading.service";
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { CompanyService } from 'app/shared/services/company.service';
+import { Company } from 'app/shared/models/company';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -35,7 +38,9 @@ import { FeatureActions } from 'app/shared/enums/feature-actions';
         MatMenuItem,
         MatPaginator,
         TranslocoPipe,
-        FeaturesDirective
+        FeaturesDirective,
+        MatSelect,
+        MatOption,
     ],
 })
 export class ListComponent implements OnInit {
@@ -43,6 +48,7 @@ export class ListComponent implements OnInit {
   _groupService= inject(GroupService);
   _router= inject(Router);
   _fuseConfirmationService= inject(FuseConfirmationService);
+  _companyService=inject(CompanyService)
   _route= inject(ActivatedRoute);
   _loadingService = inject(LoadingService)
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -56,12 +62,22 @@ export class ListComponent implements OnInit {
   //************* FILTERS *****************//
   openFilter = false;
   filterType: string[] = [];
-  filterStatus: string[] = [];
-  filterSearch: string;
+  filterCompany: string[] = [];
+  filterArchived: boolean=false;
+  filterSearch:string;
  featureCodes = FeatureCodes;
   featureActions = FeatureActions;
+  companies:Company[]=[]
   ngOnInit(): void {
+    this.getCompanies();
     this.getList();
+  }
+  getCompanies(): void {
+    this._companyService.getAll().subscribe({
+      next: (res) => {
+        this.companies = res.data;
+      }
+    });
   }
   pageChanged(event: PageEvent ): void {
     let { pageIndex } = event;
@@ -78,12 +94,13 @@ export class ListComponent implements OnInit {
   getList(): void {
     this._loadingService.show();
     this._groupService
-      .getList(
-        this.currentSize.toString(),
-        this.currentPage.toString(),
-        this.filterSearch,
-        this.filterType.toString(),
-        this.filterStatus.toString(),
+      .getList({
+        limit:this.currentSize.toString(),
+  page:this.currentPage.toString(),
+  search:this.filterSearch,
+  types:this.filterType,
+  companies:this.filterCompany,
+  archived:this.filterArchived,}
       )
       .subscribe({
           next: results => {
@@ -145,4 +162,10 @@ export class ListComponent implements OnInit {
       this.getList();
     }, this.doneTypingInterval);
   }
+
+  resetFilters() {
+  this.filterType = [];
+  this.filterCompany=[]
+  this.filterArchived = false;
+}
 }

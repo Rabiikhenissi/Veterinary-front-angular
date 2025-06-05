@@ -1,3 +1,4 @@
+
 .row-grid {
   /* default: under '400px' */
   grid-template-columns: 150px auto 30px;
@@ -16,5 +17,15 @@
   /* xs: '1280px' */
   @screen lg {
     grid-template-columns: 20px 150px auto 120px  30px;
+  }
+  
+
+}
+
+.sidebar-filter {
+  transition: transform 0.3s;
+  transform: translateX(100%);
+  &.open {
+    transform: translateX(0);
   }
 }

@@ -1,6 +1,6 @@
 <div class="max-w-7xl w-full mx-auto p-6 relative bg-green-50 rounded-xl shadow-lg border border-green-100">
     <h2 class="text-2xl font-bold text-green-800 mb-6 flex items-center gap-2">📅 My Past Appointments</h2>
-  
+ 
     <ng-container *ngIf="appointments?.length > 0; else noAppointments">
       <ul class="space-y-4">
         <li *ngFor="let appt of appointments" class="p-4 bg-white border border-green-100 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
@@ -14,7 +14,9 @@
                 <p class="text-sm text-green-700">📅 {{ appt.date | date:'dd/MM/yyyy' }} at 🕒 {{ ('1970-01-01T' + appt.time) |  date:'HH:mm'}}</p>
               </div>
             </div>
-  
+  <div class="text-sm text-gray-500 mt-2 sm:mt-0">
+                      Company: {{ appt.companyId?.name || 'N/A' }}
+                    </div>
             
           </div>
         </li>
