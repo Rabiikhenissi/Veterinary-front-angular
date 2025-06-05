@@ -1,33 +1,74 @@
-<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
-    <h1 class="text-2xl font-bold text-green-800 mb-6">📄 My Invoices</h1>
-  
-    @if (invoices.length === 0) {
-      <div class="text-center text-gray-500">
-        <p>No invoices found.</p>
-      </div>
-    }
+<div class="max-w-7xl w-full mx-auto p-8 bg-gradient-to-br from-green-50 via-white to-green-100 rounded-3xl shadow-2xl border border-green-200">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-extrabold text-green-800 tracking-tight flex items-center gap-2">
+      <!-- Modern Invoice Icon -->
+      <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <rect x="4" y="3" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.2" fill="none"/>
+        <path d="M8 7h8M8 11h8M8 15h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      My Invoices
+    </h1>
+    <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full font-medium shadow text-sm">
+      {{ invoices.length }} Invoices
+    </span>
+  </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (invoice of invoices; track invoice.invoiceId;let i = $index) {
-            <div >
-        <div class="bg-white p-4 rounded-lg border border-green-100 shadow-sm hover:shadow-md transition">
-          <div class="mb-3">
-            <h3 class="text-lg font-semibold text-green-700">Invoice #{{ i+1}}</h3>
-            <p class="text-sm text-gray-500">Date: {{ invoice.createdAt | date: 'shortDate' }}</p>
+  @if (invoices.length === 0) {
+    <div class="flex flex-col items-center justify-center py-16 text-gray-400">
+      <!-- Futuristic Empty State Icon -->
+      <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <rect x="4" y="3" width="16" height="18" rx="3" stroke="currentColor" stroke-width="2.2" fill="none"/>
+        <path d="M8 7h8M8 11h8M8 15h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="4" y1="21" x2="20" y2="3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity="0.2"/>
+      </svg>
+      <p class="text-lg">No invoices found.</p>
+    </div>
+  }
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    @for (invoice of invoices; track invoice.invoiceId; let i = $index) {
+      <div class="relative group">
+        <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-green-200 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-green-700 flex items-center gap-2">
+              <!-- Minimal Invoice Icon -->
+              <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2.2" fill="none"/>
+                <path d="M9 8h6M9 12h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              Invoice #{{ i+1 }}
+            </h3>
+            <span class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-semibold shadow">
+              {{ invoice.createdAt | date: 'shortDate' }}
+            </span>
           </div>
-  
-          <div class="text-sm space-y-1 text-gray-700">
-            <p><strong>Total:</strong> {{ invoice.totalPrice }} TND</p>
-            <p><strong>Number of products:</strong> {{ invoice.totalProducts }}</p>
+          <div class="text-base space-y-2 text-gray-700 mb-4">
+            <p>
+              <span class="font-semibold text-green-600">Total:</span>
+              <span class="ml-2 text-lg font-bold">{{ invoice.totalPrice }} <span class="text-green-400">TND</span></span>
+            </p>
+            <p>
+              <span class="font-semibold text-green-600">Products:</span>
+              <span class="ml-2">{{ invoice.totalProducts }}</span>
+            </p>
           </div>
-  
-          <button 
-            class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition"
+          <button
+            class="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white px-5 py-2 rounded-lg text-base font-semibold shadow-md transition-all duration-200 hover:scale-105"
             (click)="openInvoicePDF(invoice.invoiceId)">
-            View PDF
+            <span class="flex items-center justify-center gap-2">
+              <!-- Futuristic PDF Icon -->
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="12" height="16" rx="2" stroke="currentColor" stroke-width="2.2" fill="none"/>
+                <path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              View PDF
+            </span>
           </button>
         </div>
-      
-    </div>}
+       <div class="absolute -top-3 -right-3 bg-green-600 text-white rounded-full px-3 py-1 text-xs font-bold shadow group-hover:scale-110 transition">
+#{{ invoice.invoiceId | slice:-6 }}
+</div>
+      </div>
+    }
   </div>
-  
+</div>

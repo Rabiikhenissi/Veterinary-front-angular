@@ -1,5 +1,5 @@
-<div class="w-full max-w-7xl mx-auto px-10 py-10 bg-green-50 border border-green-100 rounded-3xl shadow-2xl">
-    <div class="flex items-center justify-between mb-10">
+<div class="w-full max-w-7xl mx-auto px-10 py-10 bg-green-50 border border-green-100 rounded-3xl shadow-2xl"> 
+  <div class="flex items-center justify-between mb-10">
     <h2 class="text-4xl font-bold text-blue-800">💼 Veterinary Services</h2>
     <button
       (click)="add()"
@@ -11,20 +11,20 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     <div
-      *ngFor="let service of services"
+      *ngFor="let service of paginatedServices"
       class="border-2 rounded-lg p-6 flex flex-col items-center text-center transition-all duration-200 relative group"
       [ngClass]="{
         'border-blue-500 bg-blue-50 shadow-lg': selectedServiceId === service._id,
         'border-gray-200 hover:border-blue-300': selectedServiceId !== service._id
       }"
     >
-    <div class="w-20 h-28 mb-2 flex flex-col items-center justify-center">
-  <span class="text-sm font-semibold text-blue-700 mb-1">{{companyName}}</span>
-  <img src="assets/images/logo/vet-cross-with-paw.jpeg" class="w-full h-full object-contain" />
-</div>
+      <div class="w-20 h-28 mb-2 flex flex-col items-center justify-center">
+        <span class="text-sm font-semibold text-blue-700 mb-1">{{ companyName }}</span>
+        <img src="assets/images/logo/vet-cross-with-paw.jpeg" class="w-full h-full object-contain" />
+      </div>
 
       <span class="font-medium text-gray-800">{{ service.name }}</span>
-      <span class="text-sm text-gray-500">{{ service.price}} TND</span>
+      <span class="text-sm text-gray-500">{{ service.price }} TND</span>
 
       <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
@@ -43,5 +43,26 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="flex justify-center mt-8 gap-4">
+    <button
+      (click)="prevPage()"
+      [disabled]="currentPage === 1"
+      class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold"
+    >
+      ◀ Previous
+    </button>
+    <span class="text-lg font-semibold text-gray-700">
+      Page {{ currentPage }} of {{ totalPages }}
+    </span>
+    <button
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+      class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold"
+    >
+      Next ▶
+    </button>
   </div>
 </div>
