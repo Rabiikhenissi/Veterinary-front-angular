@@ -7,8 +7,15 @@ export class Company {
   latitude?: number;
   longitude?: number;
   services?: Service[];
+  businessHours?:BusinessHour[];
 archived?: boolean;}
 export interface Service {
   name: string;
   price: number;
+}
+export interface BusinessHour {
+  day: string;
+  open: string;
+  close: string;
+  _id?:string
 }
