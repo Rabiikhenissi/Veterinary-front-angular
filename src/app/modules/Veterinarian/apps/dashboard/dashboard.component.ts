@@ -24,6 +24,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { BusinessHour } from 'app/shared/models/company';
 import { LoadingService } from 'app/shared/services/loading.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
     selector       : 'dashboard-vet',
     templateUrl    : './dashboard.component.html',
@@ -63,7 +64,7 @@ data:any = {}
   
 displayedColumns: string[] = ['num', 'clientName', 'totalProd', 'totalMoney', 'date'];
 cartList:any;
-
+snackbar=inject(MatSnackBar)
 selectedUser: any = null;
 disabledChart=signal(false)
 overviewStats: any = {
@@ -81,6 +82,11 @@ overviewStats: any = {
     completed: 0,
     recentAppointments: [],
   };
+  timeOptions = Array.from({length: 24 * 2}, (_, i) => {
+  const h = Math.floor(i / 2).toString().padStart(2, '0');
+  const m = i % 2 === 0 ? '00' : '30';
+  return `${h}:${m}`;
+});
     /**
      * Constructor
      */
@@ -514,12 +520,24 @@ openBusinessHours() {
 }
 
 saveBusinessHours() {
-  const invalidDays = this.businessHours.filter(bh => bh.open && bh.close && bh.close <= bh.open);
+  // Check for invalid time ranges
+  const invalidDays = this.businessHours.filter(
+    bh => bh.open && bh.close && bh.close <= bh.open
+  );
 
-  if (invalidDays.length > 0) {
-    
+  // Check for cases where only one of open/close is filled
+  const incompleteDays = this.businessHours.filter(
+    bh =>
+      (bh.open && !bh.close) ||
+      (!bh.open && bh.close)
+  );
+
+  if (invalidDays.length > 0 || incompleteDays.length > 0) {
+    // Show a snackbar message for invalid input
+    this.snackbar.open?.('Please correct invalid or incomplete business hours.', 'Close', { duration: 3000,verticalPosition: 'top' });
     return;
   }
+
   this.isBusinessHoursOpen = false;
   this._companyService.updateBusinessHours(this.companyId, this.businessHours).subscribe({
     next: () => console.log('Business hours updated!'),
@@ -547,6 +565,14 @@ getBusinessHours() {
   return this.businessHours.find(bh => bh.day === day);
 }
 updateBusinessHour(day: string, field: 'open' | 'close', value: string): void {
+  // Only allow times on 30-minute boundaries
+  if (value) {
+    const [h, m] = value.split(':').map(Number);
+    if (m !== 0 && m !== 30) {
+      // Optionally show a warning or auto-correct
+      return;
+    }
+  }
   const bh = this.getBusinessHour(day);
   if (bh) {
     bh[field] = value;

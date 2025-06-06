@@ -13,7 +13,7 @@
     </span>
   </div>
 
-  @if (invoices.length === 0) {
+  @if (displayedList.length === 0) {
     <div class="flex flex-col items-center justify-center py-16 text-gray-400">
       <!-- Futuristic Empty State Icon -->
       <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -26,7 +26,7 @@
   }
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-    @for (invoice of invoices; track invoice.invoiceId; let i = $index) {
+    @for (invoice of displayedList; track invoice.invoiceId; let i = $index) {
       <div class="relative group">
         <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-green-200 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl">
           <div class="flex items-center justify-between mb-4">
@@ -68,7 +68,18 @@
        <div class="absolute -top-3 -right-3 bg-green-600 text-white rounded-full px-3 py-1 text-xs font-bold shadow group-hover:scale-110 transition">
 #{{ invoice.invoiceId | slice:-6 }}
 </div>
+
       </div>
     }
   </div>
+  <!-- Pagination Controls -->
+<div class="mt-10 flex justify-center">
+<mat-paginator
+[length]="total"
+[pageSize]="currentSize"
+[pageIndex]="currentPage - 1"
+[pageSizeOptions]="[3,5, 10, 20, 50]"
+(page)="pageChanged($event)">
+</mat-paginator>
+</div>
 </div>

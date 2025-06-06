@@ -54,6 +54,15 @@
       </div>
     </div>
   </div>
+  <div class="mt-10 flex justify-center">
+    <mat-paginator
+      [length]="total"
+      [pageSize]="currentSize"
+      [pageIndex]="currentPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 10]"
+      (page)="pageChanged($event)">
+    </mat-paginator>
+  </div>
 </div>
 
 <!-- Add this to your global styles or component styles for custom animations -->
