@@ -7,6 +7,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CompanyService } from 'app/shared/services/company.service';
+import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { ProductService } from 'app/shared/services/product.service';
 import Swal from 'sweetalert2';
@@ -25,6 +26,7 @@ export class AddInfoComponent implements OnInit {
   _appointmentService=inject(AppointmentService);
   _companyService=inject(CompanyService);
   _petService=inject(PetService);
+  _medicalServicesService=inject(MedicalServicesService);
   id = this._route.snapshot.paramMap.get('id')!;
  services: any[] = [];
   info = {
@@ -58,13 +60,13 @@ performedProcedures: [] as { name: string, price: number }[],
         console.error('Error fetching appointment data:', error);
       }
     });
- this._companyService.getOne(localStorage.getItem('connectedUserCompany')).subscribe({
-      next: (company) => {
-        this.services = company.services;
+ this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany')).subscribe({
+      next: (response) => {
+        this.services = response.data; 
       },
-      error: (err) => console.error('Failed to load services:', err)
+      error: (err) => console.error('Failed to load services:', err),
     });
-  } 
+  }
   
   handleSymptomsInput(symptomInput: string) {
     const symptomsArray = symptomInput.split(',').map(symptom => symptom.trim());

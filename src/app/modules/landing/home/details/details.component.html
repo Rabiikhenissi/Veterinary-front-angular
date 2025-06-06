@@ -48,6 +48,7 @@
                     {{ company.name }}
                 </h2>
 
+      
                 <!-- Address -->
                 <div class="flex items-start text-lg text-gray-700 gap-2">
                     <span class="font-semibold w-32">📍 Address:</span>
@@ -94,7 +95,7 @@
                     </h3>
                     <ul class="space-y-2 pl-5">
                         <li
-                            *ngFor="let service of company.services"
+                            *ngFor="let service of services"
                             class="text-gray-700 bg-gray-100 px-4 py-2 rounded-xl shadow-sm"
                         >
                             <span class="font-medium text-blue-700">{{
