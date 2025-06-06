@@ -3,7 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Vet_SERVICES } from 'app/shared/enums/services';
-import { CompanyService } from 'app/shared/services/company.service';
+import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,43 +13,45 @@ import Swal from 'sweetalert2';
   styleUrl: './add.component.scss'
 })
 export class AddComponent implements OnInit {
-  _companyService = inject(CompanyService);
+  _medicalServicesService = inject(MedicalServicesService); 
   _router = inject(Router);
   _route = inject(ActivatedRoute);
   predefinedServices = Vet_SERVICES;
   selectedService = '';
   price: number | null = null;
-  company: any;
   ngOnInit() {
-    this._companyService.getOne(localStorage.getItem('connectedUserCompany')).subscribe({
-      next: (companyData) => {
-        this.company = companyData;
+    
+  }
+submit() {
+    if (!this.selectedService || this.price == null) return;
+console.log('Selected Service:', this.selectedService);
+    console.log('Price:', this.price);
+    console.log('Company ID:', localStorage.getItem('connectedUserCompany'));
+    
+
+    const newService = {
+      name: this.selectedService,
+      price: this.price,
+      companyId: localStorage.getItem('connectedUserCompany') 
+      
+    };
+
+    this._medicalServicesService.createOne(newService).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'New Medical Service added successfully.',
+          timer: 1000,
+          showConfirmButton: false,
+        }).then(() => {
+          this._router.navigate([`../`], { relativeTo: this._route }).then();
+        });
       },
       error: (err) => {
-        console.error('Failed to fetch company', err);
+        console.error('Failed to add medical service', err);
       },
     });
   }
 
-  submit() {
-    if (!this.selectedService || this.price == null) return;
-    const newService = {
-      name: this.selectedService,
-      price: this.price,
-    };
-    this.company.services.push(newService);
-    this._companyService.updateOne(this.company).subscribe({
-      next: () => {
-Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'New Medical Service added successfully.',
-                      timer: 1000,
-                      showConfirmButton: false,
-                  }).then(() => {
-                    this._router.navigate([`../`], { relativeTo: this._route }).then();        });      },      error: (err) => {
-        console.error('Failed to add service', err);
-      },
-    });
-  }
 }

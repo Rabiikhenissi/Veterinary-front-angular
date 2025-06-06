@@ -6,10 +6,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { Company } from 'app/shared/models/company';
+import { MedicalServices } from 'app/shared/models/medicalServices';
 
 import { AuthService } from 'app/shared/services/auth.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { LoadingService } from 'app/shared/services/loading.service';
+import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { UserService } from 'app/shared/services/user.service';
 import mapboxgl from 'mapbox-gl';
@@ -27,6 +29,7 @@ import mapboxgl from 'mapbox-gl';
 })
 export class DetailsComponent implements OnInit {
     _companyService = inject(CompanyService);
+    _medicalServicesService = inject(MedicalServicesService);
     _authService = inject(AuthService);
     _userService = inject(UserService);
     _fuseConfirmationService = inject(FuseConfirmationService);
@@ -41,7 +44,7 @@ petSpecies: any[] = [];
     address: string | undefined;
     connectedUserId: string | null = null;
     connectedCompanyId: string | null = null;
-
+    services: MedicalServices[] = [];
     ngOnInit(): void {
         this.connectedUserId = localStorage.getItem('connectedUserId');
         this.connectedCompanyId = localStorage.getItem('connectedUserCompany');
@@ -55,7 +58,7 @@ petSpecies: any[] = [];
                     this.company = result;
                     console.log(this.company);
             this.fetchPetSpecies();
-
+            this.fetchMedicalServices();
                     if (this.company.firstCalendarDay) {
                         this.company.firstCalendarDay = this.formatDateForInput(
                             this.company.firstCalendarDay
@@ -74,6 +77,18 @@ petSpecies: any[] = [];
 
         }
     }
+    fetchMedicalServices() {
+  this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany') || '').subscribe({
+    next: (res) => {
+      this.services = res.data;
+      console.log('Medical Services:', this.services);
+    },
+    error: (err) => {
+      console.error('Failed to fetch medical services', err);
+    }
+  });
+}
+
 
     initMapbox(): void {
         if (!this.company?.latitude || !this.company?.longitude) return;

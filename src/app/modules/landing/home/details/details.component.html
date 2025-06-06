@@ -64,7 +64,7 @@
       <div>
         <h3 class="text-2xl font-semibold text-blue-800 mb-2">🛠️ Services</h3>
         <ul class="space-y-2 pl-5">
-          <li *ngFor="let service of company.services" class="text-gray-700 bg-gray-100 px-4 py-2 rounded-xl shadow-sm">
+          <li *ngFor="let service of services" class="text-gray-700 bg-gray-100 px-4 py-2 rounded-xl shadow-sm">
             <span class="font-medium text-blue-700">{{ service.name }}</span> — {{ service.price | number:'1.2-2' }} TND
           </li>
         </ul>
