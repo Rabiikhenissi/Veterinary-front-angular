@@ -1,15 +1,23 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Pet } from 'app/shared/models/pet';
-import {DatePipe } from '@angular/common';
+import {CommonModule, DatePipe } from '@angular/common';
 import { AuthService } from 'app/shared/services/auth.service';
 import { UserService } from 'app/shared/services/user.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatFormField, MatLabel, MatOption, MatSelect } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { PetSpecies } from 'app/shared/models/petSpecies';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { forkJoin } from 'rxjs';
+import { LoadingService } from 'app/shared/services/loading.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [DatePipe,MatPaginator],
+  imports: [MatSelect,MatOption,MatIconButton,MatIcon,FormsModule,DatePipe,MatFormField,MatPaginator,CommonModule,MatButtonModule],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
@@ -20,7 +28,9 @@ export class ProfileComponent {
 
   _authService= inject(AuthService);
   _userService= inject(UserService);
+  _petSpecies=inject(PetSpeciesService)
   router= inject(Router);
+  _loadingService=inject(LoadingService)
   route= inject(ActivatedRoute);
   _petService= inject(PetService);
   currentSize = 10;
@@ -29,28 +39,43 @@ export class ProfileComponent {
   filterType: string[] = [];
   filterStatus: string[] = [];
   filterSearch: string;
+  filterSpecies: PetSpecies[] = [];
+filterArchived:  boolean 
+availableSpecies: PetSpecies[] = [];
+companyId:string
   total = 0;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
-    this.connectedUser= this._authService._userService.decodeToken(this._authService.accessToken);
-    this._userService.getOne(this.connectedUser.id).subscribe({
-      next: (results) => {
-        this.user.name = results.name;
-        this.user.email = results.email;
-        this.user.phone = results.phone;
-        this.user.id = results._id;
-        this.user.type = results.type;
-        console.log('User:', this.user);
-        this.selectedAvatar = results.avatar ;
-        
-    this.getList()
-      },
-      error: (err) => console.error(err),
-    });
+  this.connectedUser = localStorage.getItem("connectedUserId");
+  this.companyId = localStorage.getItem("connectedUserCompany");
 
-    
-  }
+  this._loadingService.show(); // Start loading
+
+  forkJoin({
+    user: this._userService.getOne(this.connectedUser),
+    species: this._petSpecies.getList(this.companyId)
+  }).subscribe({
+    next: ({ user, species }) => {
+      this.user.name = user.name;
+      this.user.email = user.email;
+      this.user.phone = user.phone;
+      this.user.id = user._id;
+      this.user.type = user.type;
+      this.selectedAvatar = user.avatar;
+      this.availableSpecies = species.data;
+      this.getList();
+    },
+    error: (err) => {
+      console.error(err);
+      this._loadingService.hide(); // Stop loading on error
+    },
+    complete: () => {
+      this._loadingService.hide(); // Stop loading when done
+    }
+  });
+  
+}
 
   // saveProfile(): void {
     
@@ -102,11 +127,16 @@ export class ProfileComponent {
 
 
     getList(): void {
+      const speciesNames = this.filterSpecies.map(s =>
+    typeof s === 'string' ? s : s.name
+  );
       this._petService.getList(
         this.currentSize.toString(),
         this.currentPage.toString(),
         this.filterSearch || '',
-        this.user.id
+        this.user.id,
+        speciesNames,
+        this.filterArchived,
       ).subscribe({
         next: results => {
           this.userPets = results.data;
@@ -140,4 +170,47 @@ cancelArchiveRequest(petId: string): void {
   });
 }
     
+onFilterChange(): void {
+    this.currentPage = 1;
+    this.getList();
+}
+resetFilters() {
+  this.filterSpecies = [];
+  this.filterArchived = false;
+}
+getAvailableSpecies(): void {
+
+  this._petSpecies.getList(this.companyId).subscribe({
+    next: (result) => {
+      this.availableSpecies = result.data;
+      console.log(result)
+    },
+    error: err => console.error('Failed to load species', err)
+  });
+}
+requestRestore(petId: string): void {
+  this._petService.requestRestore(petId).subscribe({
+    next: () => {
+      this.userPets = this.userPets.map(p =>
+        p._id === petId ? { ...p, isRestoreRequested: true } : p
+      );
+    },
+    error: err => console.error('Request restore failed', err)
+  });
+}
+
+cancelRestoreRequest(petId: string): void {
+  this._petService.cancelRestoreRequest(petId).subscribe({
+    next: () => {
+      this.userPets = this.userPets.map(p =>
+        p._id === petId ? { ...p, isRestoreRequested: false } : p
+      );
+    },
+    error: err => console.error('Cancel restore request failed', err)
+  });
+}
+get isFiltering(): boolean {
+  return (this.filterSpecies && this.filterSpecies.length > 0) || this.filterArchived ==null;
+}
+
 }

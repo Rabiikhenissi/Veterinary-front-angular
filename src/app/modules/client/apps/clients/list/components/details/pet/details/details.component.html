@@ -1,84 +1,86 @@
 @if (!loading && pet) {
-<div
-    class="max-w-5xl w-full mx-auto mt-8 mb-16 p-6 bg-green-50 rounded-xl shadow-lg border border-green-100"
->
-    <h2 class="text-3xl font-bold mb-6 text-green-800 text-center">
-        {{ pet.name }}
-    </h2>
-
-    @if (pet.icon) {
-    <div class="flex justify-center mb-6">
+  <div class="max-w-5xl w-full mx-auto mt-10 mb-16 p-6 bg-green-50 rounded-2xl shadow-xl border border-green-100">
+    <!-- Pet Header -->
+    <div class="flex flex-col items-center mb-8">
+      <div class="relative">
         <img
-            [src]="pet.icon"
-            alt="Pet icon"
-            class="w-36 h-36 rounded-full border-4 border-green-300 object-cover shadow"
+          [src]="pet.icon || 'assets/images/pet-placeholder.png'"
+          alt="Pet icon"
+          class="w-40 h-40 rounded-full border-4 border-green-400 object-cover shadow-lg bg-white"
         />
-    </div>
-    }
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-green-700 text-lg">
-        <div>
-            <strong class="block text-green-800 mb-1">Species:</strong>
-            <span>{{ pet.species }}</span>
+        <span *ngIf="pet.archived"
+          class="absolute bottom-2 right-2 bg-red-500 text-white text-xs px-3 py-1 rounded-full shadow font-semibold"
+        >Archived</span>
+      </div>
+      <h2 class="text-4xl font-extrabold mt-6 text-green-800 tracking-tight">{{ pet.name }}</h2>
+      <div class="flex gap-6 mt-3 text-green-700 text-lg">
+        <div class="flex items-center gap-2">
+          <span class="material-icons text-green-400">pets</span>
+          <span class="font-medium">{{ pet.species }}</span>
         </div>
-
-        <div>
-            <strong class="block text-green-800 mb-1">Birth Date:</strong>
-            <span>{{ pet.birthDate | date }}</span>
+        <div class="flex items-center gap-2">
+          <span class="material-icons text-green-400">cake</span>
+          <span class="font-medium">{{ pet.birthDate | date:'longDate' }}</span>
         </div>
+      </div>
     </div>
-    @if (!loadingAppointments) {
-        <div class="max-w-5xl w-full mx-auto mt-4 p-6 bg-white border rounded-xl shadow-md">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-2xl font-semibold text-green-800">📅 Appointments</h3>
-            
-              <a [routerLink]="['/home/appointments']">
-                <button class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
-                  ➕ Add Appointment
-                </button>
-              </a>
-            </div>
-        @if (appointments.length> 0) {
-        <ul class="space-y-4">
+
+    <!-- Appointments Section -->
+    <div class="bg-white border border-green-100 rounded-xl shadow-md p-6">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-2">
+        <h3 class="text-2xl font-bold text-green-800 flex items-center gap-2">
+          <span class="material-icons text-green-400">event</span>
+          Appointments
+        </h3>
+        <a [routerLink]="['/home/appointments']">
+          <button class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow font-semibold transition">
+            ➕ Add Appointment
+          </button>
+        </a>
+      </div>
+      @if (!loadingAppointments) {
+        @if (appointments && appointments.length > 0) {
+          <ul class="space-y-4">
             @for (appt of appointments ; track $index) {
-                <li (click)="viewDetails(appt._id)" class="p-4 bg-green-50 border border-green-100 rounded-lg shadow-sm hover:bg-green-100 transition cursor-pointer">
-                  
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                      <div>
-                        <p class="font-bold text-green-800 text-lg">
-                          Date: {{ appt.date | date:'mediumDate' }} at {{ ('1970-01-01T' + appt.time) | date:'HH:mm' }}
-                        </p>
-                      </div>
-                      <div class="text-sm text-gray-500 mt-2 sm:mt-0">
-                        Company: {{ appt.companyId?.name || 'N/A' }}
-                      </div>
-                    </div>
-                </li>
-              }
-        </ul>
-
+              <li
+                (click)="viewDetails(appt._id)"
+                class="p-4 bg-green-50 border border-green-100 rounded-lg shadow-sm hover:bg-green-100 transition cursor-pointer"
+              >
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                  <div>
+                    <p class="font-bold text-green-800 text-lg">
+                      Date: {{ appt.date | date:'mediumDate' }} at {{ ('1970-01-01T' + appt.time) | date:'HH:mm' }}
+                    </p>
+                  </div>
+                  <div class="text-sm text-gray-500 mt-2 sm:mt-0">
+                    Company: {{ appt.companyId?.name || 'N/A' }}
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="text-center text-gray-500 italic py-8 bg-green-50 rounded-lg shadow-inner">
+            No appointments found for this pet.
+          </div>
+        }
         <!-- Pagination -->
         <div class="mt-6 flex justify-center">
-            <mat-paginator
-                [length]="total"
-                [pageSize]="currentSize"
-                [pageIndex]="currentPage - 1"
-                [pageSizeOptions]="[5, 10, 20, 50, 100]"
-                (page)="pageChanged($event)"
-            >
-            </mat-paginator>
+          <mat-paginator
+            [length]="total"
+            [pageSize]="currentSize"
+            [pageIndex]="currentPage - 1"
+            [pageSizeOptions]="[5, 10, 20, 50, 100]"
+            (page)="pageChanged($event)">
+          </mat-paginator>
         </div>
-
-        } @else {
-        <p class="text-gray-500">No appointments found for this pet.</p>
-        }
+      } @else {
+        <div class="text-center text-gray-400 mt-4">Loading appointments...</div>
+      }
     </div>
-    } @else {
-    <div class="text-center text-gray-400 mt-4">Loading appointments...</div>
-    }
-</div>
+  </div>
 }
 
 <ng-template #loadingTemplate>
-    <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
+  <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
 </ng-template>

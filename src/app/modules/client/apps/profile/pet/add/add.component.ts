@@ -6,8 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PetSpecies } from 'app/shared/models/petSpecies';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -20,7 +22,7 @@ export class AddComponent implements OnInit {
   petForm: FormGroup;
   _petService = inject(PetService);
   _petSpeciesService = inject(PetSpeciesService);
-  
+  _loadingService = inject(LoadingService);
 route= inject(ActivatedRoute);
 today: string = new Date().toISOString().split('T')[0];
 
@@ -39,14 +41,24 @@ today: string = new Date().toISOString().split('T')[0];
    speciesOptions: PetSpecies[] = []; 
   
     ngOnInit() {
-    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
-        next: (res) => {
-          this.speciesOptions = res.data;
+      this._loadingService.show(); // Start loading
+      forkJoin({
+        speciesOptions: this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')),
+      }).subscribe({
+        next: ({ speciesOptions }) => {
+          this.speciesOptions = speciesOptions.data;
+          console.log('Species options loaded:', this.speciesOptions);
+
         },
         error: (err) => {
-          console.error('Failed to fetch species', err);
+          console.error('Failed to fetch species options', err);
+        },
+        complete: () => {
+          this._loadingService.hide(); // Stop loading
         }
       });
+
+
     }
   selectIcon(iconData: { icon: string; name: string }) {
     this.petForm.patchValue({
@@ -78,5 +90,8 @@ today: string = new Date().toISOString().split('T')[0];
         }
     })
   }
+}
+onCancel() {
+  this.router.navigate(['/home/profile']);
 }
 }

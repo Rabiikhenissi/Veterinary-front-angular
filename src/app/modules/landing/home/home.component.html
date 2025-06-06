@@ -1,9 +1,9 @@
 <div class="flex flex-col items-center justify-center w-full h-full">
   <div class="w-full">
-    <div class="min-h-screen bg-gradient-to-br from-purple-100 via-white to-blue-100">
+    <div class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100">
 
       <!-- Hero Banner -->
-      <div class="w-full text-center py-16 bg-white shadow-md mb-10">
+      <div class="w-full text-center py-16 bg-white shadow-md mb-10 rounded-b-3xl">
         <h1 class="text-4xl sm:text-5xl font-bold text-indigo-700 mb-4">
           Welcome to Zoovana!
         </h1>
@@ -22,129 +22,153 @@
           ></mat-icon>
         </a>
       </div>
-<div class="flex justify-center mb-4">
-  <button
-    (click)="showFilters = !showFilters"
-    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition duration-200"
-  >
-    {{ showFilters ? 'Hide Filters 🔽' : 'Show Filters 🔍' }}
-  </button>
-</div>
 
-      <!-- Sticky Filter Bar -->
+     
+
+      <!-- Filter Toggle Button (centered below tabs) -->
+      <div class="flex justify-center my-4">
+        <button
+          class="flex items-center gap-2 px-5 py-2 rounded-lg bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-700 transition"
+          (click)="showFilters = !showFilters"
+          type="button"
+        >
+          <mat-icon>{{ showFilters ? 'filter_alt_off' : 'filter_alt' }}</mat-icon>
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </button>
+      </div>
+
+      <!-- Modern Sticky Filter Bar -->
       <div *ngIf="showFilters"
-      class="sticky top-0 z-30 bg-white px-4 sm:px-6 lg:px-8 py-4 shadow-md">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="Search companies or veterinarians..."
-            [(ngModel)]="searchText"
-            (input)="applyFilters()"
-            class="border p-2 rounded-md w-full"
-          />
-          <input
-            type="number"
-            placeholder="Min Price"
-            [(ngModel)]="minPrice"
-            (input)="applyFilters()"
-            class="border p-2 rounded-md w-full"
-          />
-          <input
-            type="number"
-            placeholder="Max Price"
-            [(ngModel)]="maxPrice"
-            (input)="applyFilters()"
-            class="border p-2 rounded-md w-full"
-          />
-          <input
-            type="text"
-            placeholder="Location"
-            [(ngModel)]="locationText"
-            (input)="applyFilters()"
-            class="border p-2 rounded-md w-full"
-          />
-        </div>
+        class="sticky top-0 z-30 bg-white/80 backdrop-blur px-4 sm:px-6 lg:px-8 py-4 shadow-md rounded-xl mx-auto max-w-5xl mb-8 border border-indigo-100 relative">
+        <form class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+  <div class="relative">
+    <mat-icon class="absolute left-2 top-2 text-indigo-400">search</mat-icon>
+    <input
+      name="searchText"
+      type="text"
+      placeholder="Search companies or veterinarians..."
+      [(ngModel)]="searchText"
+      (input)="applyFilters()"
+      class="pl-9 border border-indigo-200 p-2 rounded-md w-full focus:ring-2 focus:ring-indigo-300"
+    />
+  </div>
+  <div class="relative">
+    <mat-icon class="absolute left-2 top-2 text-indigo-400">attach_money</mat-icon>
+    <input
+      name="minPrice"
+      type="number"
+      placeholder="Min Price"
+      [(ngModel)]="minPrice"
+      (input)="applyFilters()"
+      class="pl-9 border border-indigo-200 p-2 rounded-md w-full focus:ring-2 focus:ring-indigo-300"
+    />
+  </div>
+  <div class="relative">
+    <mat-icon class="absolute left-2 top-2 text-indigo-400">money_off</mat-icon>
+    <input
+      name="maxPrice"
+      type="number"
+      placeholder="Max Price"
+      [(ngModel)]="maxPrice"
+      (input)="applyFilters()"
+      class="pl-9 border border-indigo-200 p-2 rounded-md w-full focus:ring-2 focus:ring-indigo-300"
+    />
+  </div>
+  <div class="relative">
+    <mat-icon class="absolute left-2 top-2 text-indigo-400">location_on</mat-icon>
+    <input
+      name="locationText"
+      type="text"
+      placeholder="Location"
+      [(ngModel)]="locationText"
+      (input)="applyFilters()"
+      class="pl-9 border border-indigo-200 p-2 rounded-md w-full focus:ring-2 focus:ring-indigo-300"
+    />
+  </div>
+</form>
       </div>
 
-      <!-- Company Cards Grid -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-indigo-700 my-10 text-center">
-          Our Veterinaries 🏥
-        </h2>
 
-        <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          <div
-            *ngFor="let company of filteredCompanies"
-            (click)="details(company)"
-            [ngClass]="{
-              'ring-4 ring-indigo-400': isConnectedCompany(company._id),
-              'cursor-pointer': true,
-              'bg-white rounded-2xl shadow-md hover:shadow-indigo-300 transition-all duration-300 border border-gray-200 flex flex-col p-6 space-y-4 relative': true
-            }"
-          >
-            <div *ngIf="isConnectedCompany(company._id)"
-              class="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
-              Assigned
-            </div>
-            <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto shadow-sm">
-              <img [src]="defaultLogo" alt="Company Logo" class="w-12 h-12 object-contain" />
-            </div>
-            <div class="text-center space-y-1">
-              <h2 class="text-indigo-800 text-lg font-semibold">
-                {{ company.name }}
-              </h2>
-              <p class="text-sm text-gray-500">
-                Visit Price: <span class="font-medium">{{ company.visitPrice | currency:'TND':'symbol':'1.2-2' }}</span>
-              </p>
-              <p class="text-sm text-gray-500">
-                Address: {{ addressMap.get(company._id) }}
-              </p>
-            </div>
-            <div *ngIf="company.services?.length > 0" class="mt-2 text-sm text-gray-700">
-              <h3 class="font-semibold text-indigo-600 mb-1 text-center">
-                Services Offered
-              </h3>
-              <ul class="list-disc list-inside space-y-1">
-                <li *ngFor="let service of services">
-                  {{ service.name }} - {{ service.price | currency:'TND':'symbol':'1.2-2' }}
-                </li>
-              </ul>
+      <!-- Tabbed Content -->
+      <mat-tab-group class="bg-transparent mt-0">
+        <mat-tab label="Companies">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-indigo-700 my-10 text-center">
+              Our Veterinaries 🏥
+            </h2>
+            <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <div
+                *ngFor="let company of filteredCompanies"
+                (click)="details(company)"
+                [ngClass]="{
+                  'ring-4 ring-indigo-400': isConnectedCompany(company._id),
+                  'cursor-pointer': true,
+                  'bg-white rounded-2xl shadow-md hover:shadow-indigo-300 transition-all duration-300 border border-gray-200 flex flex-col p-6 space-y-4 relative': true
+                }"
+              >
+                <div *ngIf="isConnectedCompany(company._id)"
+                  class="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+                  Assigned
+                </div>
+                <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                  <img [src]="defaultLogo" alt="Company Logo" class="w-12 h-12 object-contain" />
+                </div>
+                <div class="text-center space-y-1">
+                  <h2 class="text-indigo-800 text-lg font-semibold">
+                    {{ company.name }}
+                  </h2>
+                  <p class="text-sm text-gray-500">
+                    Visit Price: <span class="font-medium">{{ company.visitPrice | currency:'TND':'symbol':'1.2-2' }}</span>
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Address: {{ addressMap.get(company._id) }}
+                  </p>
+                </div>
+                <div *ngIf="company.services?.length > 0" class="mt-2 text-sm text-gray-700">
+                  <h3 class="font-semibold text-indigo-600 mb-1 text-center">
+                    Services Offered
+                  </h3>
+                  <ul class="list-disc list-inside space-y-1">
+                    <li *ngFor="let service of services">
+                      {{ service.name }} - {{ service.price | currency:'TND':'symbol':'1.2-2' }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Veterinarians List -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-        <h2 class="text-3xl font-bold text-indigo-700 mb-6 text-center">
-          Our Veterinarians 🦥
-        </h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div
-            *ngFor="let vet of filteredVeterinarians"
-            class="bg-white rounded-2xl shadow p-6 border border-gray-200 flex flex-col items-center text-center space-y-2"
-          >
-            <h3 class="text-lg font-semibold text-indigo-800">
-              Name: {{ vet.name }}
-            </h3>
-            <p class="text-sm text-gray-600">
-              <strong>Email:</strong> {{ vet.email }}
-            </p>
-            <p class="text-sm text-gray-600">
-              <strong>Company:</strong> {{ this.getCompanyName(vet.companyId) }}
-            </p>
-            <button
-              *ngIf="vet.company"
-              class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-              (click)="details(vet.company)"
-            >
-              See Company
-            </button>
+        </mat-tab>
+        <mat-tab label="Veterinarians">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+            <h2 class="text-3xl font-bold text-indigo-700 mb-6 text-center">
+              Our Veterinarians 🩺
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div
+                *ngFor="let vet of filteredVeterinarians"
+                class="bg-white rounded-2xl shadow p-6 border border-gray-200 flex flex-col items-center text-center space-y-2"
+              >
+                <h3 class="text-lg font-semibold text-indigo-800">
+                  Name: {{ vet.name }}
+                </h3>
+                <p class="text-sm text-gray-600">
+                  <strong>Email:</strong> {{ vet.email }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  <strong>Company:</strong> {{ this.getCompanyName(vet.companyId) }}
+                </p>
+                <button
+                  *ngIf="vet.company"
+                  class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+                  (click)="details(vet.company)"
+                >
+                  See Company
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
+        </mat-tab>
+      </mat-tab-group>
     </div>
   </div>
 </div>

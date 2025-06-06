@@ -2,13 +2,13 @@ import { Component, inject, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Pet } from 'app/shared/models/pet';
 import { PetService } from 'app/shared/services/pet.service';
-import {DatePipe } from '@angular/common';
+import {CommonModule, DatePipe } from '@angular/common';
 import { Appointment } from 'app/shared/models/appointment';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { MatPaginator } from '@angular/material/paginator';
 @Component({
   selector: 'app-details',
-  imports: [DatePipe,MatPaginator],
+  imports: [DatePipe,MatPaginator,CommonModule],
   templateUrl: './details.component.html',
 })
 export class DetailsComponent {

@@ -17,17 +17,23 @@ export class PetService {
     limit: string,
     page: string,
     search: string,
-
-    userId?: string
-
+    userId?: string,
+    species?: string[],
+    archived?: boolean
   ): Observable<Pagination<Pet>> {
-    let searchParams = new HttpParams();
-    searchParams = searchParams.append('limit', limit);
-    searchParams = searchParams.append('page', page);
-    searchParams = searchParams.append('userId', userId);
-    if (search) {
-      searchParams = searchParams.append('search', search);
+    let searchParams = new HttpParams()
+      .set('limit', limit)
+      .set('page', page);
+
+    if (userId) searchParams = searchParams.set('userId', userId);
+    if (search) searchParams = searchParams.set('search', search);
+    if (species && species.length > 0) {
+      species.forEach(s => {
+        searchParams = searchParams.append('species', s);
+      });
     }
+    if (archived !== undefined) searchParams = searchParams.set('archived', archived.toString());
+
     return this.http.get<Pagination<Pet>>(`${this.endpoint}`, { params: searchParams });
   }
 
@@ -63,7 +69,7 @@ export class PetService {
   }
 
   requestArchive(petId: string): Observable<any> {
-  return this.http.patch(`/api/pets/${petId}/request-archive`, {});
+  return this.http.patch(`${this.endpoint}/${petId}/request-archive`, {});
 }
 
 cancelArchiveRequest(petId: string): Observable<any> {
@@ -75,6 +81,17 @@ cancelArchiveRequest(petId: string): Observable<any> {
 
   rejectArchive(petId: string): Observable<any> {
     return this.http.patch(`${this.endpoint}/${petId}/reject-archive`, {});
+  }
+  requestRestore(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/request-restore`, {});
+  }
+
+  // Cancel restore request
+  cancelRestoreRequest(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/cancel-restore-request`, {});
+  }
+  restoreOne(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/restore`, {});
   }
 
 }

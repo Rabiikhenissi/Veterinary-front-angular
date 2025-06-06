@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,10 +11,27 @@ import { UserService } from 'app/shared/services/user.service';
 })
 export class EditComponent {
    userId: string;
-  profileForm: FormGroup;
-  _userService = inject(UserService);
-  router = inject(Router);
-  route=inject(ActivatedRoute);
+   profileForm: FormGroup;
+   _userService = inject(UserService);
+   router = inject(Router);
+   _location= inject(Location);
+   route=inject(ActivatedRoute);
+   avatars = [
+ 
+   { avatar: 'assets/images/avatars/av1.png'  },
+   { avatar: 'assets/images/avatars/av2.png' },
+   { avatar: 'assets/images/avatars/av3.png'  },
+   { avatar: 'assets/images/avatars/av4.png'  },
+   { avatar: 'assets/images/avatars/av5.png'  },
+   { avatar: 'assets/images/avatars/av6.png' },
+   { avatar: 'assets/images/avatars/av7.png' },
+   { avatar: 'assets/images/avatars/av8.png' },
+   { avatar: 'assets/images/avatars/av9.png' },
+   { avatar: 'assets/images/avatars/av10.png'  },
+   { avatar: 'assets/images/avatars/av11.png' },
+   { avatar: 'assets/images/avatars/av12.png'  },
+ 
+ ];
   constructor(private fb: FormBuilder) {
     this.profileForm = this.fb.group({
       _id: [''],
@@ -33,10 +51,6 @@ export class EditComponent {
       error: (err) => console.error(err),
     });
   }
-  avatars = [
-    { avatar: 'assets/images/avatars/male.png', label: 'male' },
-    { avatar: 'assets/images/avatars/female.png', label: 'female' }
-  ];
   
   selectAvatar(avatarData: { avatar: string; label: string }) {
     this.profileForm.patchValue({
@@ -50,12 +64,16 @@ export class EditComponent {
       this._userService.updateOne(payload).subscribe({
         next: (response) => {
           console.log('Profile updated successfully:', response);
-          this.router.navigate(['..','..'], { relativeTo: this.route });
+          this.router.navigate(['..'], { relativeTo: this.route });
         }
         , error: (error) => {
           console.error('Error updating profile:', error);
         }
       });
     }
+  }
+
+  onCancel() {
+    this._location.back();
   }
 }

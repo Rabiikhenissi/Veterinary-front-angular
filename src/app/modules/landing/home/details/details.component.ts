@@ -45,6 +45,7 @@ petSpecies: any[] = [];
     connectedUserId: string | null = null;
     connectedCompanyId: string | null = null;
     services: MedicalServices[] = [];
+daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     ngOnInit(): void {
         this.connectedUserId = localStorage.getItem('connectedUserId');
         this.connectedCompanyId = localStorage.getItem('connectedUserCompany');

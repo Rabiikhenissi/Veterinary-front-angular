@@ -51,6 +51,7 @@ export class EditComponent implements OnInit {
     this._userService.getOne(this.id).subscribe({
       next: (user: User) => {
         this.user = user;
+        console.log("userrrr",user)
         this._groupService.getList({types:this.user.type}).subscribe({
           next: (pagination: Pagination<Group>) => {
             this.listGroups = pagination.data;
