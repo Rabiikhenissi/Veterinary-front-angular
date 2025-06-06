@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,15 +10,35 @@ import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { User } from 'app/shared/models/user';
+import { MatFormField } from '@angular/material/form-field';
+import { MatOption } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { PetSpecies } from 'app/shared/models/petSpecies';
+import { LoadingService } from 'app/shared/services/loading.service';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-details',
-  imports: [DatePipe,MatPaginator,FeaturesDirective],
+  imports: [CommonModule,
+    DatePipe,
+    MatPaginator,
+    MatButtonModule,
+    MatIconModule,
+    FeaturesDirective,
+  MatFormField,
+MatOption,
+MatSelect,
+FormsModule],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
 export class DetailsComponent {
 
-  user = { id:"string",name: '', email: '',avatar:"" , phone:""};
+  user :User= {} as User;
   userPets: Pet[] = [];
   featureCodes = FeatureCodes;
   featureActions = FeatureActions;
@@ -32,6 +52,8 @@ export class DetailsComponent {
     _notificationService= inject(NotificationService);
     router= inject(Router);
     route= inject(ActivatedRoute);
+    _petspeciesService=inject(PetSpeciesService)
+    _loadingService=inject(LoadingService)
     _petService= inject(PetService);
     currentSize = 10;
     currentPage = 1;
@@ -39,25 +61,40 @@ export class DetailsComponent {
     filterType: string[] = [];
     filterStatus: string[] = [];
     filterSearch: string;
+    filterSpecies: PetSpecies[] = [];
+filterArchived:  boolean 
+availableSpecies: PetSpecies[] = [];
+isFiltering: boolean = false;
+companyId:string=''
+
     total = 0;
     connectedUser: any;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
-    this.user.id= this.route.snapshot.paramMap.get('id');
-    this._userService.getOne(this.user.id).subscribe({
-      next: (results) => {
-        this.user.name = results.name;
-        this.user.email = results.email;
-        this.user.phone = results.phone;
-        this.selectedAvatar = results.avatar || this.avatars[0];
-        this.getList()
+    this.user._id = this.route.snapshot.paramMap.get('id');
+    this.companyId = localStorage.getItem("connectedUserCompany");
+
+    this._loadingService.show();
+    forkJoin({
+      user: this._userService.getOne(this.user._id),
+      species: this._petspeciesService.getList(this.companyId)
+    }).subscribe({
+      next: ({ user, species }) => {
+        this.user.name = user.name;
+        this.user.email = user.email;
+        this.user.phone = user.phone;
+        this.selectedAvatar = user.avatar || this.avatars[0];
+        this.availableSpecies = species.data;
+        this.getList();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err);
+      },
+      complete: () => {
+        this._loadingService.hide();
+      }
     });
-
-
-    
   }
 pageChanged(event: PageEvent ): void {
       let { pageIndex } = event;
@@ -81,7 +118,7 @@ pageChanged(event: PageEvent ): void {
   }
 
   editProfile() {
-    this.router.navigate(["..",this.user.id,`edit`], { relativeTo: this.route });
+    this.router.navigate([`edit`], { relativeTo: this.route });
   }
   
   addNewPet() {
@@ -97,23 +134,26 @@ pageChanged(event: PageEvent ): void {
   }
 
   getList(): void {
+    const speciesNames = this.filterSpecies.map(s =>
+    typeof s === 'string' ? s : s.name
+  );
     this._petService.getList(
       this.currentSize.toString(),
       this.currentPage.toString(),
       this.filterSearch || '',
-      this.user.id
+      this.user._id,
+      speciesNames,
+        this.filterArchived,
     ).subscribe({
       next: results => {
         this.userPets = results.data;
-        this.total = results.total; // 👈 à afficher dans le paginator
-        console.log('User pets:', this.userPets);
+        this.total = results.total;
       },
       error: err => console.error(err)
     });
   }
 
   approveArchiveRequest(pet: any, isRequestApproval: boolean) {
-    console.log('Pet to archive:', pet);
   this._petService.Archive(pet._id).subscribe({
     next: () => {
       this.getList();
@@ -145,7 +185,6 @@ pageChanged(event: PageEvent ): void {
 
       this._notificationService.createNotification(notification).subscribe({
         next: () => {
-          console.log('Notification created');
           
           // Then send email
           this._notificationService.sendEmailNotification(
@@ -170,6 +209,49 @@ cancelArchiveRequest(petId: string) {
   this._petService.cancelArchiveRequest(petId).subscribe({
     next: () => this.getList(),
     error: err => console.error(err),
+  });
+}
+onFilterChange(): void {
+    this.currentPage = 1;
+    this.getList();
+    this.openFilter = false;
+}
+resetFilters() {
+  this.filterSpecies = [];
+  this.filterArchived = false;
+}
+
+
+getAvailableSpecies(): void {
+
+  this._petspeciesService.getList(this.companyId).subscribe({
+    next: (result) => {
+      this.availableSpecies = result.data;
+    },
+    error: err => console.error('Failed to load species', err)
+  });
+}
+
+approveRestoreRequest(pet: Pet) {
+  this._petService.restoreOne(pet._id).subscribe({
+    next: () => this.getList(),
+    error: err => console.error('Approve restore failed', err)
+  });
+}
+
+cancelRestoreRequest(petId: string) {
+  this._petService.cancelRestoreRequest(petId).subscribe({
+    next: () => this.getList(),
+    error: err => console.error('Cancel restore failed', err)
+  });
+}
+
+
+
+deletePet(petId: string) {
+  this._petService.deleteOne(petId).subscribe({
+    next: () => this.getList(),
+    error: err => console.error('Delete failed', err)
   });
 }
 

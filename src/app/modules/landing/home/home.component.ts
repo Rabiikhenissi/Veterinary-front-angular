@@ -3,6 +3,7 @@ import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Company } from 'app/shared/models/company';
 import { AuthService } from 'app/shared/services/auth.service';
@@ -15,7 +16,7 @@ import { UserService } from 'app/shared/services/user.service';
     selector: 'landing-home',
     templateUrl: './home.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [MatButtonModule,CommonModule, MatIconModule,RouterLink,FormsModule]
+    imports: [MatButtonModule,CommonModule, MatIconModule,RouterLink,FormsModule,MatTab,MatTabsModule]
 })
 export class LandingHomeComponent implements OnInit {
   _authService = inject(AuthService);

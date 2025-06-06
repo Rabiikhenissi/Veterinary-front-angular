@@ -1,54 +1,90 @@
-<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
-    <div class="max-w-4xl w-full mx-auto p-0 relative rounded-xl shadow-xl border border-green-200 bg-white overflow-hidden">
-        <!-- Banner / Cover Image -->
-        <div class="h-64 bg-gradient-to-r from-green-400 to-green-200 flex items-center justify-center relative">
-    <img 
-        src="assets/images/logo/banner.png" 
-        alt="Banner" 
-        class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none hidden md:block" 
-    />
-    <img 
-        src="assets/images/logo/bannermd.png" 
-        alt="Banner Medium" 
-        class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none block md:hidden" 
-    />
-    <button
-        (click)="editProfile()"
-        class="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm shadow transition-colors duration-500"
+<div
+    class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100"
+>
+    <div
+        class="max-w-4xl w-full mx-auto p-0 relative rounded-xl shadow-xl border border-green-200 bg-white overflow-hidden"
     >
-        ✏️ Edit Profile
-    </button>
-</div>
+        <!-- Banner / Cover Image -->
+        <div
+            class="h-64 bg-gradient-to-r from-green-400 to-green-200 flex items-center justify-center relative"
+        >
+            <img
+                src="assets/images/logo/banner.png"
+                alt="Banner"
+                class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none hidden md:block"
+            />
+            <img
+                src="assets/images/logo/bannermd.png"
+                alt="Banner Medium"
+                class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none block md:hidden"
+            />
+            <button
+                (click)="editProfile()"
+                class="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm shadow transition-colors duration-500"
+            >
+                ✏️ Edit Profile
+            </button>
+        </div>
 
         <!-- Profile Card -->
         <div class="relative -mt-16 flex flex-col items-center px-6 pb-8">
             <!-- Avatar -->
-            <div class="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-green-100 flex items-center justify-center overflow-hidden">
-                 <img
-            [src]="selectedAvatar"
-            alt="User Avatar"
-            class="w-24 h-24 rounded-full shadow-lg border-4 border-green-300 object-cover"
-        />
+            <div
+                class="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-green-100 flex items-center justify-center overflow-hidden"
+            >
+                <img
+                    [src]="selectedAvatar"
+                    alt="User Avatar"
+                    class="w-24 h-24 rounded-full shadow-lg border-4 border-green-300 object-cover"
+                />
                 <ng-template #initials>
-                    <span class="text-4xl font-bold text-green-700">{{ user.name[0] }}</span>
+                    <span class="text-4xl font-bold text-green-700">{{
+                        user.name[0]
+                    }}</span>
                 </ng-template>
             </div>
             <!-- User Info -->
             <div class="text-center mt-4">
-                <h2 class="text-3xl font-bold text-green-800 flex items-center justify-center gap-2">
+                <h2
+                    class="text-3xl font-bold text-green-800 flex items-center justify-center gap-2"
+                >
                     <span class="material-icons text-green-500">person</span>
                     {{ user.name }}
                 </h2>
-                <p class="text-gray-600 flex items-center justify-center gap-2 mt-2">
+                <p
+                    class="text-gray-600 flex items-center justify-center gap-2 mt-2"
+                >
                     <span class="material-icons text-green-400">email</span>
                     {{ user.email }}
                 </p>
-                <p class="text-gray-600 flex items-center justify-center gap-2 mt-1">
+                <p
+                    class="text-gray-600 flex items-center justify-center gap-2 mt-1"
+                >
                     <span class="material-icons text-green-400">phone</span>
                     {{ user.phone }}
                 </p>
                 <!-- Optional Bio -->
-                <p class="mt-4 text-green-700 italic">Welcome to your profile page! Here you can manage your pets and personal info.</p>
+                <p
+                    *ngIf="user.type === 'external'"
+                    class="mt-4 text-green-700 italic"
+                >
+                    Welcome to your profile page! Here you can manage your pets
+                    and personal info.
+                </p>
+                <p
+                    *ngIf="user.type === 'internal'"
+                    class="mt-4 text-green-700 italic"
+                >
+                    Welcome to your profile page, staff member! Here you can
+                    view and manage your profile .
+                </p>
+                <p
+                    *ngIf="user.type === 'super'"
+                    class="mt-4 text-green-700 italic"
+                >
+                    Welcome to your profile page, admin! Here you can view and
+                    manage your profile .
+                </p>
             </div>
         </div>
 
@@ -57,28 +93,49 @@
 
         @if (user.type == 'external') {
         <!-- Pets Section -->
+
         <div class="px-6 pb-8">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-                <h3 class="text-2xl font-bold text-green-700 flex items-center gap-2">
+            <div
+                class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2"
+            >
+                <h3
+                    class="text-2xl font-bold text-green-700 flex items-center gap-2"
+                >
                     🐶 My Pets
                 </h3>
                 <button
+                    mat-icon-button
+                    (click)="openFilter = true"
+                    class="ml-auto"
+                >
+                    <mat-icon [svgIcon]="'feather:filter'"></mat-icon>
+                </button>
+                <button
                     (click)="addNewPet()"
-                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm shadow transition-colors duration-500 w-full sm:w-auto"
+                    class="bg-green-500 hover:bg-green-600 text-black px-4 py-2 rounded-lg text-sm shadow transition-colors duration-500 w-full sm:w-auto"
                 >
                     ➕ Add New
                 </button>
             </div>
 
             @if (userPets.length === 0) {
-            <div class="text-center text-gray-500 italic py-8 bg-green-50 rounded-lg shadow-inner">
-                No pets added yet. Start by adding a new one! 🐾
+            <div
+                class="text-center text-gray-500 italic py-8 bg-green-50 rounded-lg shadow-inner"
+            >
+                @if (isFiltering) { No pets match your filter criteria. Try
+                adjusting your filters! } @else { No pets added yet. Start by
+                adding a new one! 🐾 }
             </div>
             } @else {
             <ul class="space-y-4">
                 @for (pet of userPets; track $index) {
-                <li class="p-4 bg-green-50 border border-green-100 rounded-lg shadow-sm hover:shadow-lg transition">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <li
+                    class="p-4 border border-green-100 rounded-lg shadow-sm hover:shadow-lg transition"
+                    [ngClass]="pet.archived ? 'bg-red-100' : 'bg-green-50'"
+                >
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                    >
                         <!-- Pet Info -->
                         <div class="flex items-center">
                             <img
@@ -87,17 +144,24 @@
                                 class="w-14 h-14 rounded-full mr-4 border-2 border-green-300 bg-white"
                             />
                             <div>
-                                <p class="font-semibold text-lg text-green-800 flex items-center gap-1">
-                                    <span class="material-icons text-green-400">pets</span>
+                                <p
+                                    class="font-semibold text-lg text-green-800 flex items-center gap-1"
+                                >
+                                    <span class="material-icons text-green-400"
+                                        >pets</span
+                                    >
                                     {{ pet.name }}
                                 </p>
                                 <p class="text-sm text-green-700">
-                                    {{ pet.species }} · Born: {{ pet.birthDate | date : "dd/MM/yyyy" }}
+                                    {{ pet.species }} · Born:
+                                    {{ pet.birthDate | date : "dd/MM/yyyy" }}
                                 </p>
                             </div>
                         </div>
                         <!-- Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-2 sm:justify-end w-full sm:w-auto">
+                        <div
+                            class="flex flex-col sm:flex-row gap-2 sm:justify-end w-full sm:w-auto"
+                        >
                             <button
                                 class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-500 w-full sm:w-auto"
                                 (click)="viewPetDetails(pet._id)"
@@ -112,26 +176,41 @@
                             </button>
                             <!-- Archive Request Buttons -->
                             @if(!pet.archived){
-                                <ng-container>
-                                    @if(!pet.isArchiveRequested){
-                                    <button
-                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-300 w-full sm:w-auto"
-                                        (click)="requestArchive(pet._id)"
-                                    >
-                                        Request Archive
-                                    </button>}
-                                    @if (pet.isArchiveRequested) {
-                                    <button
-                                        class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-300 w-full sm:w-auto"
-                                        (click)="cancelArchiveRequest(pet._id)"
-                                    >
-                                        Cancel Request
-                                    </button>}
-                                </ng-container>
-                            }
+                            <ng-container>
+                                @if(!pet.isArchiveRequested){
+                                <button
+                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-300 w-full sm:w-auto"
+                                    (click)="requestArchive(pet._id)"
+                                >
+                                    Request Archive</button
+                                >} @if (pet.isArchiveRequested) {
+                                <button
+                                    class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-300 w-full sm:w-auto"
+                                    (click)="cancelArchiveRequest(pet._id)"
+                                >
+                                    Cancel Request</button
+                                >}
+                            </ng-container>
+                            } @if(pet.archived){
+                            <!-- If pet is archived -->
                             @if(pet.archived){
-                                <span class="text-sm italic text-red-500">Archived</span>
-                            }
+                            <ng-container>
+                                <button
+                                    *ngIf="!pet.isRestoreRequested"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-300 w-full sm:w-auto"
+                                    (click)="requestRestore(pet._id)"
+                                >
+                                    Request Restore
+                                </button>
+                                <button
+                                    *ngIf="pet.isRestoreRequested"
+                                    class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm shadow transition-colors duration-300 w-full sm:w-auto"
+                                    (click)="cancelRestoreRequest(pet._id)"
+                                >
+                                    Cancel Restore
+                                </button>
+                            </ng-container>
+                            } }
                         </div>
                     </div>
                 </li>
@@ -148,6 +227,96 @@
                 ></mat-paginator>
             </div>
             }
+        </div>
+        <!-- Sidebar Filter Panel -->
+        <div
+            class="fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white shadow-2xl transition-transform duration-300"
+            [class.translate-x-0]="openFilter"
+            [class.translate-x-full]="!openFilter"
+            style="transform: translateX(100%)"
+        >
+            <div
+                class="flex items-center justify-between px-6 py-4 border-b bg-green-50"
+            >
+                <span class="text-lg font-bold text-green-700">Filters</span>
+                <button mat-icon-button (click)="openFilter = false">
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:x-circle'"
+                    ></mat-icon>
+                </button>
+            </div>
+            <div
+                class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]"
+            >
+                <!-- Species Filter -->
+                <div>
+                    <div
+                        class="font-semibold text-base mb-2 text-green-700 flex items-center gap-2"
+                    >
+                        <mat-icon [svgIcon]="'feather:activity'"></mat-icon>
+                        Species
+                    </div>
+                    <mat-form-field class="w-full" appearance="fill">
+                        <mat-select
+                            [(ngModel)]="filterSpecies"
+                            multiple
+                            placeholder="Select species"
+                        >
+                            <mat-option
+                                *ngFor="let species of availableSpecies"
+                                [value]="species"
+                                >{{ species.name }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <!-- Archived Filter -->
+                <div>
+                    <div
+                        class="font-semibold text-base mb-2 text-green-700 flex items-center gap-2"
+                    >
+                        <mat-icon [svgIcon]="'feather:archive'"></mat-icon>
+                        Status
+                    </div>
+                    <mat-form-field class="w-full" appearance="fill">
+                        <mat-select
+                            [(ngModel)]="filterArchived"
+                            placeholder="Select status"
+                        >
+                            <mat-option value="">All</mat-option>
+                            <mat-option [value]="false">Active</mat-option>
+                            <mat-option [value]="true">Archived</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <!-- Actions -->
+                <div class="flex gap-2 mt-4">
+                    <button
+                        mat-stroked-button
+                        color="primary"
+                        class="flex-1"
+                        (click)="getList()"
+                    >
+                        <mat-icon
+                            class="mr-1"
+                            [svgIcon]="'feather:filter'"
+                        ></mat-icon>
+                        <span>Apply</span>
+                    </button>
+                    <button
+                        mat-stroked-button
+                        color="warn"
+                        class="flex-1"
+                        (click)="resetFilters()"
+                    >
+                        <mat-icon
+                            class="mr-1"
+                            [svgIcon]="'feather:rotate-ccw'"
+                        ></mat-icon>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
         </div>
         }
     </div>

@@ -18,8 +18,8 @@ export class PetService {
     page: string,
     search: string,
     userId?: string,
-    archived?:boolean
-
+    species?: string[],
+    archived?: boolean
   ): Observable<Pagination<Pet>> {
     let searchParams = new HttpParams()
       .set('limit', limit)
@@ -27,11 +27,13 @@ export class PetService {
 
     if (userId) searchParams = searchParams.set('userId', userId);
     if (search) searchParams = searchParams.set('search', search);
+    if (species && species.length > 0) {
+      species.forEach(s => {
+        searchParams = searchParams.append('species', s);
+      });
+    }
     if (archived !== undefined) searchParams = searchParams.set('archived', archived.toString());
 
-    if (search) {
-      searchParams = searchParams.append('search', search);
-    }
     return this.http.get<Pagination<Pet>>(`${this.endpoint}`, { params: searchParams });
   }
 
@@ -67,7 +69,7 @@ export class PetService {
   }
 
   requestArchive(petId: string): Observable<any> {
-  return this.http.patch(`/api/pets/${petId}/request-archive`, {});
+  return this.http.patch(`${this.endpoint}/${petId}/request-archive`, {});
 }
 
 cancelArchiveRequest(petId: string): Observable<any> {
@@ -88,6 +90,8 @@ cancelArchiveRequest(petId: string): Observable<any> {
   cancelRestoreRequest(petId: string): Observable<any> {
     return this.http.patch(`${this.endpoint}/${petId}/cancel-restore-request`, {});
   }
-  
+  restoreOne(petId: string): Observable<any> {
+    return this.http.patch(`${this.endpoint}/${petId}/restore`, {});
+  }
 
 }
