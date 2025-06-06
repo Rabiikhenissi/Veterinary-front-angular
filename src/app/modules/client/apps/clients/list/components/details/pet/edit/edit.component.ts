@@ -91,4 +91,7 @@ export class EditComponent {
       });
     }
   }
+  onCancel() {
+    this.router.navigate(['../../..'], { relativeTo: this.route });
+  }
 }

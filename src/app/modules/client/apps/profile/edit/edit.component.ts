@@ -1,7 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { UserService } from 'app/shared/services/user.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-edit',
@@ -14,6 +16,7 @@ export class EditComponent {
   _userService = inject(UserService);
   router = inject(Router);
   route=inject(ActivatedRoute);
+  _loadingService=inject(LoadingService)
   constructor(private fb: FormBuilder) {
     this.profileForm = this.fb.group({
       _id: [''],
@@ -26,8 +29,18 @@ export class EditComponent {
   ngOnInit() {
      this.userId=this.route.snapshot.paramMap.get('id') || '';
     console.log(this.userId)
-    this._userService.getUserProfile().subscribe(user => {
-      this.profileForm.patchValue(user);
+    this._loadingService.show(); // Start loading
+    forkJoin({
+      user: this._userService.getOne(this.userId),
+    }).subscribe({
+      next: ({ user }) => {
+        this.profileForm.patchValue(user);
+        this._loadingService.hide(); // Stop loading
+      },
+      error: (err) => {
+        console.error('Error fetching user profile:', err);
+        this._loadingService.hide(); // Stop loading even on error
+      }
     });
   }
   avatars = [
@@ -68,4 +81,7 @@ export class EditComponent {
       });
     }
   }
+  onCancel() {
+  this.router.navigate(['/home/profile']);
+}
 }

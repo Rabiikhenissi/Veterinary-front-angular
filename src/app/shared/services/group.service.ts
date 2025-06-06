@@ -34,7 +34,7 @@ export class GroupService {
     if (search) {
       searchParams = searchParams.append('search', search);
     }
-    if (archived !== null ) {
+    if (archived !== undefined) {
         searchParams = searchParams.set('archived', archived.toString());
     }
     if (types && types.length > 0) {

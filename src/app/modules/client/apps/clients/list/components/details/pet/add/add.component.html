@@ -1,56 +1,88 @@
-<div class="w-full max-w-4xl mx-auto mt-6 p-6 bg-green-50 rounded-2xl shadow-lg border border-green-200 mb-10">
-    <h2 class="text-2xl font-bold mb-6 text-center text-green-700">Add a New Pet</h2>
-  
-    <form [formGroup]="petForm" (ngSubmit)="onSubmit()">
-      <!-- Name -->
-      <div class="mb-4">
-        <label class="block font-semibold text-green-900">Name</label>
-        <input 
-          type="text" 
-          formControlName="name"
-          class="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
-        />
-      </div>
-  
-      <!-- Birth Date Field -->
-    <div class="mb-6">
-      <label class="block font-semibold text-green-900">Birth Date</label>
-      <mat-form-field appearance="outline" class="w-full">
-        <input
-          matInput
-          [matDatepicker]="picker"
-          formControlName="birthDate"
-          [max]="today"
-          
-        />
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
+  <div class="max-w-4xl w-full mx-auto p-0 relative rounded-xl shadow-xl border border-green-200 bg-white overflow-hidden">
+    <!-- Banner / Cover Image -->
+    <div class="h-64 bg-gradient-to-r from-green-400 to-green-200 flex items-center justify-center relative">
+      <img
+        src="assets/images/logo/banner.png"
+        alt="Banner"
+        class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none hidden md:block"
+      />
+      <img
+        src="assets/images/logo/bannermd.png"
+        alt="Banner Medium"
+        class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none block md:hidden"
+      />
     </div>
-      <!-- Select Species -->
-    <div class="mb-6">
-      <label class="block font-semibold text-green-900 mb-3">Select a Species</label>
-      <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
-        @for (item of speciesOptions; track $index) {
-        <div
-          class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
-          [class.border-green-500]="petForm.value.icon === item.icon"
-          (click)="selectIcon(item)"
-        >
-          <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
-          <span class="text-sm font-medium text-green-700">{{ item.name }}</span>
-        </div>}
-      </div>
+
+    <!-- Title -->
+    <div class="w-full flex justify-center mt-[-2.5rem] mb-4">
+      <h2 class="text-3xl font-bold text-green-900 drop-shadow bg-white px-6 py-2 rounded-xl shadow">
+        Add a New Pet
+      </h2>
     </div>
-  
-      <!-- Submit -->
-      <button
-        type="submit"
-        class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-md transition-all duration-500 ease-in-out shadow disabled:opacity-50"
-        [disabled]="petForm.invalid"
-      >
-        ➕ Add Pet
-      </button>
-    </form>
+
+
+    <div class="flex flex-col items-center px-6 pb-8">
+      <form [formGroup]="petForm" (ngSubmit)="onSubmit()" class="w-full max-w-xl mx-auto">
+        <!-- Name -->
+        <div class="mb-4">
+          <label class="block font-semibold text-green-900">Name</label>
+          <input 
+            type="text" 
+            formControlName="name"
+            class="w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
+          />
+        </div>
+    
+        <!-- Birth Date Field -->
+        <div class="mb-6">
+          <label class="block font-semibold text-green-900">Birth Date</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="birthDate"
+              [max]="today"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <!-- Select Species -->
+        <div class="mb-6">
+          <label class="block font-semibold text-green-900 mb-3">Select a Species</label>
+          <div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-4">
+            @for (item of speciesOptions; track $index) {
+              <div
+                class="flex flex-col items-center cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
+                [class.border-green-500]="petForm.value.icon === item.icon"
+                (click)="selectIcon(item)"
+              >
+                <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
+                <span class="text-sm font-medium text-green-700">{{ item.name }}</span>
+              </div>
+            }
+          </div>
+        </div>
+    
+        <!-- Submit & Cancel -->
+        <div class="flex gap-4">
+          <button
+            type="submit"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded-md transition-all duration-500 ease-in-out shadow disabled:opacity-50 font-semibold text-lg"
+            [disabled]="petForm.invalid"
+          >
+            ➕ Add Pet
+          </button>
+          <button
+            type="button"
+            class="flex-1 bg-gray-300 hover:bg-gray-400 text-green-900 py-2 rounded-md transition-all duration-300 shadow font-semibold text-lg"
+            (click)="onCancel()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-  
+</div>
