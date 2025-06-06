@@ -6,9 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Company } from 'app/shared/models/company';
+import { MedicalServices } from 'app/shared/models/medicalServices';
 import { AuthService } from 'app/shared/services/auth.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { GroupService } from 'app/shared/services/group.service';
+import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import { UserService } from 'app/shared/services/user.service';
 
 
@@ -23,6 +25,7 @@ export class LandingHomeComponent implements OnInit {
     _router = inject(Router);
     _route = inject(ActivatedRoute);
   _companyService = inject(CompanyService);
+  _medicalServicesService = inject(MedicalServicesService);
   _userService = inject(UserService);
   _groupService = inject(GroupService);
   companies: Company[] = [];
@@ -39,7 +42,7 @@ minPrice: number | null = null;
 maxPrice: number | null = null;
 locationText: string = '';
 showFilters = false;
-
+services:MedicalServices[] = [];
 
   ngOnInit(): void {
     
@@ -48,7 +51,7 @@ showFilters = false;
     console.log('connectedCompanyId', this.connectedCompanyId);
     console.log('connectedUserId', this.connectedUserId);    
     this.fetchCompanies();
-
+     this.fetchMedicalServices();
     this.fetchVeterinarians();
   }
 
@@ -80,6 +83,17 @@ getAddress(latitude: number, longitude: number): Promise<string> {
 
 getCompanyName(id: string): string {
   return this.companies.find(c => c._id === id)?.name || 'Unknown';
+}
+fetchMedicalServices() {
+  this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany') || '').subscribe({
+    next: (res) => {
+      this.services = res.data;
+      console.log('Medical Services:', this.services);
+    },
+    error: (err) => {
+      console.error('Failed to fetch medical services', err);
+    }
+  });
 }
 
 fetchCompanies() {

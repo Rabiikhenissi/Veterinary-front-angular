@@ -1,57 +1,68 @@
-<div class="w-full max-w-7xl mx-auto px-10 py-10 bg-green-50 border border-green-100 rounded-3xl shadow-2xl"> 
-  <div class="flex items-center justify-between mb-10">
-    <h2 class="text-4xl font-bold text-blue-800">💼 Veterinary Services</h2>
+<div class="w-full max-w-7xl mx-auto px-10 py-14 bg-gradient-to-br from-blue-50 via-white to-blue-100 border border-blue-200 rounded-3xl shadow-2xl backdrop-blur-lg">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-10 gap-6">
+    <h2 class="text-3xl sm:text-4xl font-black text-blue-900 tracking-tight flex items-center gap-2 drop-shadow-lg">
+      <span class="inline-block bg-gradient-to-tr from-blue-400 to-blue-200 text-white rounded-full px-3 py-1.5 text-2xl shadow-lg">💼</span>
+      <span class="bg-gradient-to-r from-blue-700 to-blue-400 bg-clip-text text-transparent">Veterinary Services</span>
+    </h2>
     <button
       (click)="add()"
-      class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl text-lg font-semibold shadow-md transition-all duration-300"
+      class="bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white py-2 px-6 rounded-2xl text-lg font-extrabold shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 flex items-center gap-2"
     >
-      ➕ Add Service
+      <span class="text-xl">＋</span> Add Service
     </button>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
     <div
-      *ngFor="let service of paginatedServices"
-      class="border-2 rounded-lg p-6 flex flex-col items-center text-center transition-all duration-200 relative group"
+      *ngFor="let service of services"
+      class="border-2 rounded-3xl p-8 flex flex-col items-center text-center transition-all duration-300 relative group bg-gradient-to-br from-white via-blue-50 to-blue-100 hover:shadow-2xl hover:scale-[1.04]"
       [ngClass]="{
-        'border-blue-500 bg-blue-50 shadow-lg': selectedServiceId === service._id,
-        'border-gray-200 hover:border-blue-300': selectedServiceId !== service._id
+        'border-blue-600 bg-gradient-to-br from-blue-100 via-blue-50 to-white shadow-2xl scale-105': selectedServiceId === service._id,
+        'border-blue-200 hover:border-blue-500': selectedServiceId !== service._id
       }"
     >
-      <div class="w-20 h-28 mb-2 flex flex-col items-center justify-center">
-        <span class="text-sm font-semibold text-blue-700 mb-1">{{ companyName }}</span>
-        <img src="assets/images/logo/vet-cross-with-paw.jpeg" class="w-full h-full object-contain" />
+      <div class="w-24 h-32 mb-4 flex flex-col items-center justify-center">
+        <span class="text-xs font-extrabold text-blue-700 mb-2 tracking-widest uppercase">{{ companyName }}</span>
+        <img src="assets/images/logo/vet-cross-with-paw.jpeg" class="w-full h-full object-contain rounded-2xl shadow-lg border-2 border-blue-100" alt="Veterinary cross with paw logo" />
       </div>
 
-      <span class="font-medium text-gray-800">{{ service.name }}</span>
-      <span class="text-sm text-gray-500">{{ service.price }} TND</span>
+      <span class="font-bold text-blue-900 text-xl mb-1 tracking-tight">{{ service.name }}</span>
+      <span class="text-lg text-blue-700 font-semibold mb-3 flex items-center gap-1">
+        
+        {{ service.price }} <span class="text-xs text-blue-400 font-medium">TND</span>
+      </span>
 
-      <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           (click)="editService(service)"
-          class="text-blue-600 hover:text-blue-800"
+          class="text-blue-700 hover:text-blue-900 bg-white rounded-full p-2 shadow-lg focus:outline-none border border-blue-100 hover:bg-blue-50 transition"
           title="Edit"
         >
-          ✏️
+          <span class="sr-only">Edit</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 13l6-6M3 21h18"></path></svg>
         </button>
         <button
           (click)="archiveService(service)"
-          class="text-red-600 hover:text-red-800"
+          class="text-red-600 hover:text-red-800 bg-white rounded-full p-2 shadow-lg focus:outline-none border border-red-100 hover:bg-red-50 transition"
           title="Delete"
         >
-          🗑️
+          <span class="sr-only">Delete</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 7V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2"></path></svg>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Pagination Controls -->
-  <div class="mt-10 flex justify-center">
+
+  <!-- Pagination -->
+  <div class="mt-12 w-full rounded-3xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white shadow-xl p-7 flex justify-center">
     <mat-paginator
+      class="w-full"
       [length]="total"
       [pageSize]="currentSize"
       [pageIndex]="currentPage - 1"
-      [pageSizeOptions]="[5, 8, 12, 16, 24]"
+      [pageSizeOptions]="[5, 10, 20]"
+
       (page)="pageChanged($event)">
     </mat-paginator>
   </div>

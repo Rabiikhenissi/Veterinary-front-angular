@@ -88,6 +88,7 @@
 </form>
       </div>
 
+
       <!-- Tabbed Content -->
       <mat-tab-group class="bg-transparent mt-0">
         <mat-tab label="Companies">
@@ -128,7 +129,7 @@
                     Services Offered
                   </h3>
                   <ul class="list-disc list-inside space-y-1">
-                    <li *ngFor="let service of company.services">
+                    <li *ngFor="let service of services">
                       {{ service.name }} - {{ service.price | currency:'TND':'symbol':'1.2-2' }}
                     </li>
                   </ul>
