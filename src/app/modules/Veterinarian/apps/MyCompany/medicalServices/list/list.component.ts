@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CompanyService } from 'app/shared/services/company.service';
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule,MatPaginator],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -21,16 +22,21 @@ export class ListComponent implements OnInit {
   companyName: string;
 
   // Pagination
-  currentPage: number = 1;
-  pageSize: number = 8;
-  totalPages: number = 1;
+total = 0;
+  currentSize = 10; // Default page size
+  currentPage = 1;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
 
   ngOnInit() {
+    this.getServices();
+  }
+getServices() {
     this._companyService.getOne(localStorage.getItem('connectedUserCompany')).subscribe({
       next: (company) => {
         this.services = company.services;
         this.companyName = company.name;
-        this.totalPages = Math.ceil(this.services.length / this.pageSize);
+        this.total = this.services.length;
         this.updatePaginatedServices();
       },
       error: (error) => {
@@ -38,20 +44,25 @@ export class ListComponent implements OnInit {
       }
     });
   }
-
-  updatePaginatedServices() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
+updatePaginatedServices() {
+    const start = (this.currentPage - 1) * this.currentSize;
+    const end = start + this.currentSize;
     this.paginatedServices = this.services.slice(start, end);
   }
 
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.updatePaginatedServices();
+  
+pageChanged(event: any): void {
+    let { pageIndex } = event;
+    const { pageSize } = event;
+    pageIndex++;
+    if (pageSize !== this.currentSize) {
+      pageIndex = 1;
+      this.paginator.firstPage();
     }
+    this.currentSize = pageSize;
+    this.currentPage = pageIndex;
+    this.updatePaginatedServices();
   }
-
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;

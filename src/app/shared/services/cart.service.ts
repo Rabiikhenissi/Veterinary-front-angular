@@ -62,9 +62,15 @@ updateQuantity(productId: string, quantity: number): Observable<Cart> {
   confirmPurchase(): Observable<Blob> {
     return this.http.post<Blob>(`${this.endpoint}/confirm-purchase`, {}, { responseType: 'blob' as 'json' });
   }
-  getInvoices(): Observable<any> {
-    return this.http.get<any>(`${this.endpoint}/invoices`);
+  getInvoices(page?: number, limit?: number): Observable<any> {
+    return this.http.get<any>(`${this.endpoint}/invoices`, {
+      params: {
+        page: page?.toString(),
+        limit: limit?.toString()
+      }
+    });
   }
+   
   getInvoicePdf(invoiceId: string) {
     return this.http.get(`${this.endpoint}/invoice/${invoiceId}`, {
       responseType: 'blob',

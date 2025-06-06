@@ -46,23 +46,13 @@
   </div>
 
   <!-- Pagination Controls -->
-  <div class="flex justify-center mt-8 gap-4">
-    <button
-      (click)="prevPage()"
-      [disabled]="currentPage === 1"
-      class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold"
-    >
-      ◀ Previous
-    </button>
-    <span class="text-lg font-semibold text-gray-700">
-      Page {{ currentPage }} of {{ totalPages }}
-    </span>
-    <button
-      (click)="nextPage()"
-      [disabled]="currentPage === totalPages"
-      class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-semibold"
-    >
-      Next ▶
-    </button>
+  <div class="mt-10 flex justify-center">
+    <mat-paginator
+      [length]="total"
+      [pageSize]="currentSize"
+      [pageIndex]="currentPage - 1"
+      [pageSizeOptions]="[5, 8, 12, 16, 24]"
+      (page)="pageChanged($event)">
+    </mat-paginator>
   </div>
 </div>

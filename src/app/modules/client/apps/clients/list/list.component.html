@@ -102,7 +102,7 @@
   <ng-container *ngIf="!row.archived">
     <button *appFeatures="[
             { code: featureCodes.users, actions: [featureActions.delete] }
-          ]" mat-menu-item class="flex justify-between" (click)="ArchiveOne(row)">
+          ]" mat-menu-item class="flex justify-between" (click)="archiveOne(row)">
       <span class="ml-2 mr-1 block">{{ "Archive" | transloco }}</span>
       <mat-icon [svgIcon]="'heroicons_outline:folder'"></mat-icon>
     </button>
