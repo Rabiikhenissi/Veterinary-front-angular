@@ -70,10 +70,9 @@ export class AddComponent implements OnInit{
         this._loadingService.show();
        forkJoin([
         this._groupService.getList({types:'internal',archived:false}),
-        this._groupService.getList({types:'super', archived:false})
     ]).subscribe({
-        next: ([internalGroups, externalGroups]) => {
-            this.listGroups = [...internalGroups.data, ...externalGroups.data];
+        next: ([internalGroups]) => {
+            this.listGroups = [...internalGroups.data];
             console.log(this.listGroups);
             this._loadingService.hide();
             

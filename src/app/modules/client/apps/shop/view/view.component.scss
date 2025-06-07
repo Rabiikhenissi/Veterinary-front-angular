@@ -1,0 +1,11 @@
+/* Hide scrollbar for the slider */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.grayscale {
+  filter: grayscale(1);
+}

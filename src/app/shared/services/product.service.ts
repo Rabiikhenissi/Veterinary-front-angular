@@ -15,16 +15,20 @@ endpoint = `${environment.api}/products`; // API endpoint for pets
       limit: string,
       page: string,
       search: string,
-      category: string,
-      species: string
+      category?: string,
+      species?: string
   
     ): Observable<Pagination<Product>> {
       let searchParams = new HttpParams();
       searchParams = searchParams.append('limit', limit);
       searchParams = searchParams.append('page', page);
-      
-      searchParams = searchParams.append('category', category);
-      searchParams = searchParams.append('species', species);
+
+      if (category) {
+        searchParams = searchParams.append('category', category);
+      }
+      if (species) {
+        searchParams = searchParams.append('species', species);
+      }
       if (search) {
         searchParams = searchParams.append('search', search);
       }

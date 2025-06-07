@@ -10,12 +10,14 @@ import { MedicalServices } from '../models/medicalServices';
 export class MedicalServicesService {
   endpoint = `${environment.api}/medicalServices`;
   http = inject(HttpClient)
- getList(
+getList(
   limit: string,
   page: string,
   search: string,
   companyId: string, 
-  archived?: boolean
+  archived?: boolean,
+  minprice?: string,
+  maxprice?: string
 ): Observable<Pagination<MedicalServices>> {
   let searchParams = new HttpParams()
     .set('limit', limit)
@@ -31,6 +33,14 @@ export class MedicalServicesService {
 
   if (archived !== null && archived !== undefined) {
     searchParams = searchParams.set('archived', archived.toString());
+  }
+
+  if (minprice) {
+    searchParams = searchParams.set('minprice', minprice);
+  }
+
+  if (maxprice) {
+    searchParams = searchParams.set('maxprice', maxprice);
   }
 
   return this.http.get<Pagination<MedicalServices>>(`${this.endpoint}`, {
