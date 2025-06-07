@@ -16,6 +16,7 @@ export class AuthService {
     private _authenticated = false;
     _httpClient = inject(HttpClient)
     _userService= inject(UserService)
+    _notificationService = inject(NotificationService);
     private app = initializeApp(environment.firebaseConfig); // Initialize Firebase app
     private auth = getAuth(this.app); // Get Firebase auth instance
     connectedUser: any; // Variable to store connected user
@@ -88,6 +89,7 @@ export class AuthService {
                  this.connectedUser = connectedUser;
                  console.log(this.connectedUser);
                  localStorage.setItem('connectedUserId', this.connectedUser.id);
+                 this._notificationService.init(this.connectedUser.id);
                  localStorage.setItem('connectedUserType', this.connectedUser.type);
                  localStorage.setItem('connectedUserCompany', this.connectedUser.companyId);
             
