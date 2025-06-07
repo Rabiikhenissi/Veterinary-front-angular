@@ -53,6 +53,7 @@
     </div>
   </div>
 
+
   <!-- Pagination -->
   <div class="mt-12 w-full rounded-3xl border border-blue-200 bg-gradient-to-r from-blue-50 to-white shadow-xl p-7 flex justify-center">
     <mat-paginator
@@ -61,6 +62,7 @@
       [pageSize]="currentSize"
       [pageIndex]="currentPage - 1"
       [pageSizeOptions]="[5, 10, 20]"
+
       (page)="pageChanged($event)">
     </mat-paginator>
   </div>

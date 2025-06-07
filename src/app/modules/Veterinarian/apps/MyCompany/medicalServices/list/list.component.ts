@@ -32,6 +32,7 @@ currentPage = 1;
   filterSearch: string;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+
 ngOnInit() {
   this.getList();
 }
@@ -54,26 +55,31 @@ getList(): void {
         console.log('Medical Services:', this.services);
          this.total = results.total;
         this._loadingService.hide();
+
       },
       error: () => {
         this._loadingService.hide();
       }
     });
+
 }
+
 
 pageChanged(event: any): void {
     let { pageIndex } = event;
     const { pageSize } = event;
     pageIndex++;
-    
+ 
     if (pageSize !== this.currentSize) {
       pageIndex = 1;
       this.paginator.firstPage();
     }
 
+
     this.currentSize = pageSize;
     this.currentPage = pageIndex;
     this.getList();
+
   }
 
   add() {
