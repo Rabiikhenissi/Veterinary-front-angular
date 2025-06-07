@@ -1,41 +1,31 @@
-<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-2xl shadow-xl border border-green-100">
-  <h2 class="text-2xl font-bold text-green-800 mb-6 flex items-center gap-2">
-    📅 My Past Appointments
+<div class="max-w-7xl w-full mx-auto p-6 relative bg-green-50 rounded-xl shadow-lg border border-green-100">
+  <h2 class="text-3xl font-extrabold text-green-900 mb-8 flex items-center gap-3 tracking-tight">
+    <span class="inline-flex items-center justify-center w-10 h-10 bg-green-100 rounded-full text-2xl">📅</span>
+    My Past Appointments
   </h2>
 
   <ng-container *ngIf="appointments?.length > 0; else noAppointments">
-    <ul class="space-y-4">
-      <li
-        *ngFor="let appt of appointments"
-        class="group p-5 bg-white border border-green-100 rounded-xl shadow-sm hover:shadow-md hover:border-green-300 transition-all cursor-pointer"
-        (click)="navigateToDetails(appt._id)"
-        tabindex="0"
-        role="button"
-        aria-label="View appointment details"
-      >
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <!-- Pet Info -->
-          <div class="flex items-center">
-            <img
-              [src]="appt.petId.icon"
-              alt="{{ appt.petId.name }}"
-              class="w-14 h-14 rounded-full border-2 border-green-300 bg-white mr-4"
-            />
-            <div>
-              <p class="font-semibold text-lg text-green-800">
-                {{ appt.petId.name }} <span class="text-sm text-green-700">({{ appt.petId.species }})</span>
-              </p>
-              <p class="text-sm text-gray-600">
-                📅 {{ appt.date | date:'dd/MM/yyyy' }} &nbsp; 🕒 {{ ('1970-01-01T' + appt.time) |  date:'HH:mm'}}
-              </p>
-            </div>
+    <ul class="space-y-6">
+      <li *ngFor="let appt of appointments"
+          class="p-6 bg-white border border-green-200 rounded-xl shadow hover:shadow-lg transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 group"
+          (click)="navigateToDetails(appt._id)">
+        <!-- Pet Info -->
+        <div class="flex items-center gap-5">
+          <img [src]="appt.petId.icon"
+               alt="{{ appt.petId.name }}"
+               class="w-16 h-16 rounded-full border-4 border-green-200 bg-white shadow-sm group-hover:scale-105 transition-transform">
+          <div>
+            <p class="font-bold text-xl text-green-900">{{ appt.petId.name }} <span class="text-green-600 font-medium">({{ appt.petId.species }})</span></p>
+            <p class="text-sm text-green-700 mt-1 flex items-center gap-2">
+              <span class="inline-block">📅 {{ appt.date | date:'dd/MM/yyyy' }}</span>
+              <span class="inline-block">|</span>
+              <span class="inline-block">🕒 {{ ('1970-01-01T' + appt.time) | date:'HH:mm'}}</span>
+            </p>
           </div>
-
-          <!-- Company Info -->
-          <div class="text-sm text-gray-500 sm:text-right">
-            <span class="font-medium text-green-700">🏢 Company:</span>
-            {{ appt.companyId?.name || 'N/A' }}
-          </div>
+        </div>
+        <div class="text-sm text-gray-600 mt-2 sm:mt-0 flex items-center gap-2">
+          <span class="font-medium text-green-700">Company:</span>
+          <span>{{ appt.companyId?.name || 'N/A' }}</span>
         </div>
       </li>
     </ul>
@@ -47,14 +37,16 @@
         [pageSize]="currentSize"
         [pageIndex]="currentPage - 1"
         [pageSizeOptions]="[5, 10, 20, 50, 100]"
-        (page)="pageChanged($event)"
-      ></mat-paginator>
+        (page)="pageChanged($event)">
+      </mat-paginator>
+
     </div>
   </ng-container>
 
   <ng-template #noAppointments>
-    <div class="bg-white p-6 rounded-xl border border-green-100 shadow text-center">
-      <p class="text-gray-500 text-base">You don't have any past appointments yet.</p>
+    <div class="bg-white p-8 rounded-xl border border-green-200 shadow text-center">
+      <p class="text-gray-400 text-lg">You don't have any past appointments yet.</p>
     </div>
   </ng-template>
 </div>
+
