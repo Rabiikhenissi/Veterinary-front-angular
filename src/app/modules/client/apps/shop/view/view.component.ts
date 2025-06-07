@@ -38,7 +38,6 @@ export class ViewComponent {
 
   getProductImageUrl(imagePath: string): string {
     const url = getImageUrl(imagePath);
-    console.log('getProductImageUrl called with:', imagePath, '-> returns:', url);
     return url;
   }
 @ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;

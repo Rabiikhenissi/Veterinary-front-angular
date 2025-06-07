@@ -159,33 +159,33 @@ openPanel(): void {
     /**
      * Mark all notifications as read
      */
-markAllAsRead(): void
-{
-    // Get the IDs of unread notifications
-    const unreadNotifications = this.notifications.filter(notification => !notification.read);
-
-    if (unreadNotifications.length === 0) {
+markAllAsRead(): void {
+    if (!this.notifications?.some(notification => !notification.read)) {
         return;
     }
 
-    // Optimistically update local state
+    // Optimistically update UI
     this.notifications = this.notifications.map(notification => ({
         ...notification,
         read: true
     }));
 
-    // Recalculate unread count
     this._calculateUnreadCount();
-
-    // Trigger change detection to update UI
     this._changeDetectorRef.markForCheck();
 
-    // Send update requests for each unread notification
-    unreadNotifications.forEach(notification => {
-        this._notificationsService.update(notification._id, { ...notification, read: true }).subscribe();
+    // Call service to mark all as read
+    this._notificationsService.markAllAsRead().subscribe({
+        next: () => {
+            console.log(' marked as read .');
+            this._calculateUnreadCount();
+            this._changeDetectorRef.markForCheck();
+        },
+        error: (err) => {
+            console.error('[Notification] Failed to mark all as read:', err);
+            // Optionally: Revert optimistic update here if needed
+        }
     });
 }
-
 /**
  * Toggle read status of the given notification
  */

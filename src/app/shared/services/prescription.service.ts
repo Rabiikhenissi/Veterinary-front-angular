@@ -55,6 +55,12 @@ export class PrescriptionService {
   generatePrescriptionPDF(id: string): Observable<Blob> {
     return this.http.get<Blob>(`${this.endpoint}/${id}/pdf`, { responseType: 'blob' as 'json' });
   }
-  
+  confirmInvoice(id: string, invoiceType: 'invoice' | 'invoiceNoMeds'): Observable<{ message: string }> {
+  return this.http.post<{ message: string }>(
+    `${this.endpoint}/${id}/confirm-invoice`,
+    { invoiceType }
+  );
+}
+
  
 }

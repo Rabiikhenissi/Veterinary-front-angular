@@ -1,8 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 
@@ -13,28 +14,29 @@ import { PrescriptionService } from 'app/shared/services/prescription.service';
   styleUrl: './details.component.scss'
 })
 export class DetailsComponent implements OnInit {
+  _fuseConfirmationService = inject(FuseConfirmationService);
+  _route = inject(ActivatedRoute);
+  _appointmentService = inject(AppointmentService);
+  _prescriptionService = inject(PrescriptionService); // Inject PrescriptionService
   appointment: any;
   isLoading = true;
   invoice: any | null = null;  // Variable to store invoiceId
   invoices: any = null; 
-  selectedInvoiceType: string = '';
-  constructor(
-    private route: ActivatedRoute,
-    private appointmentService: AppointmentService,
-    private prescriptionService: PrescriptionService,  // Inject PrescriptionService
-  ) {}
+selectedInvoiceType: 'invoice' | 'invoiceNoMeds' = 'invoice';
+   confirmedInvoiceType: string = ''; 
+   isConfirmingInvoice = false;
+
+
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this._route.snapshot.paramMap.get('id');
     if (id) {
-      this.appointmentService.getAppointment(id).subscribe({
+      this._appointmentService.getAppointment(id).subscribe({
         next: (data) => {
           this.appointment = data;
           console.log('Appointment details:', this.appointment);
-          
-          // Fetch the prescription to get the invoiceId
           this.getPrescriptionInvoiceId(this.appointment.prescriptionId);
-          
+
           this.isLoading = false;
         },
         error: () => {
@@ -46,20 +48,30 @@ export class DetailsComponent implements OnInit {
 
   // Function to fetch the prescription and get its invoiceId
   getPrescriptionInvoiceId(prescriptionId: string): void {
-    this.prescriptionService.getPrescription(prescriptionId).subscribe({
-      next: (prescriptionData) => {
-        this.invoices = prescriptionData;
-                console.log('prescriptionData:', prescriptionData);
-      },
-      error: (err) => {
-        console.error('Error fetching prescription data:', err);
+  this._prescriptionService.getPrescription(prescriptionId).subscribe({
+    next: (prescriptionData) => {
+      this.invoices = prescriptionData;
+      console.log('prescriptionData:', prescriptionData);
+
+      // Auto-confirm if only one invoice type exists
+      const hasPremium = !!prescriptionData.invoice;
+      const hasStandard = !!prescriptionData.invoiceNoMeds;
+
+      if (hasPremium && !hasStandard) {
+        this.confirmedInvoiceType = 'invoice';
+      } else if (!hasPremium && hasStandard) {
+        this.confirmedInvoiceType = 'invoiceNoMeds';
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error('Error fetching prescription data:', err);
+    }
+  });
+}
 
   // Open the prescription PDF
   viewPrescriptionPDF(prescriptionId: string): void {
-    this.appointmentService.getPrescriptionPdf(prescriptionId).subscribe(
+    this._appointmentService.getPrescriptionPdf(prescriptionId).subscribe(
       (blob) => {
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank');
@@ -88,5 +100,47 @@ export class DetailsComponent implements OnInit {
       console.error('No invoices found');
     }
   }
+selectInvoice(type: 'invoice' | 'invoiceNoMeds'): void {
+  this.selectedInvoiceType = type;
+}
 
+confirmInvoice(): void {
+  if (!this.selectedInvoiceType) return; 
+
+  const prescriptionId = this.appointment?.prescriptionId;
+  if (!prescriptionId) {
+    console.error('No prescription ID available');
+    return;
+  }
+const confirmation = this._fuseConfirmationService.open({
+    title: 'Archive',
+    message: 'Would you like to confirm this invoice?',
+    actions: {
+    confirm: {
+      label: 'yes',
+    },
+    cancel: {
+      label: 'no',
+    },
+    },
+  });
+
+  confirmation.afterClosed().subscribe((result) => {
+    if (result === 'confirmed') {
+    this._prescriptionService.confirmInvoice(prescriptionId, this.selectedInvoiceType)
+    .subscribe({
+      next: (response) => {
+        // Confirmation succeeded, update the UI
+        this.confirmedInvoiceType = this.selectedInvoiceType;
+        console.log(response.message);
+      },
+      error: (error) => {
+        console.error('Error confirming invoice:', error);
+      }
+    });
+    }
+  });
+
+  
+}
 }
