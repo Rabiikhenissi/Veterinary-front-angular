@@ -1,114 +1,185 @@
-<div class="w-full max-w-[90rem] min-h-[80vh] mx-auto p-10 bg-white shadow-2xl rounded-2xl border border-gray-300 mt-8">
-    <h2 class="text-4xl font-extrabold text-green-800 mb-12 text-center">📋 Appointment Details</h2>
-  
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 text-[1.1rem] text-gray-800">
-      
-      <!-- Left Column -->
-      <div class="space-y-8">
-  
-        <!-- Pet Info -->
-        <div class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">🐾 Pet Info</h3>
-          <p><strong>Name:</strong> {{ appointment?.petId?.name }}</p>
-          <p><strong>Species:</strong> {{ appointment?.petId?.species }}</p>
-          <p><strong>Date:</strong> {{ appointment?.date | date : 'dd/MM/yyyy' }}</p>
-          <p><strong>Time:</strong> {{ '1970-02-01T' + appointment?.time | date : 'HH:mm' }}</p>
-        </div>
-  
-        <!-- Vitals -->
-        <div class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">📊 Vitals</h3>
-          <p><strong>Weight:</strong> {{ appointment?.weight || 'N/A' }}</p>
-          <p><strong>Temperature:</strong> {{ appointment?.temperature || 'N/A' }}</p>
-          <p><strong>Heart Rate:</strong> {{ appointment?.heartRate || 'N/A' }}</p>
-        </div>
-  
-        <!-- Symptoms -->
-        <div class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">💬 Symptoms</h3>
-          <p>{{ appointment?.symptoms?.join(', ') || 'None' }}</p>
+<div
+    class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100"
+>  <h2 class="text-4xl font-black text-green-900 mb-16 text-center tracking-widest uppercase drop-shadow-xl letter-spacing-wider">
+    <span class="inline-block align-middle mr-2">📋</span> Appointment Details
+  </h2>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 text-[1.08rem] text-gray-900">
+    <!-- Left Column -->
+    <div class="space-y-12">
+      <!-- Pet Info -->
+      <div class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+        <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+          <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">🐾</span>
+          Pet Info
+        </h3>
+        <div class="space-y-2 text-lg">
+          <p><span class="font-semibold text-green-800">Name:</span> {{ appointment?.petId?.name }}</p>
+          <p><span class="font-semibold text-green-800">Species:</span> {{ appointment?.petId?.species }}</p>
+          <p><span class="font-semibold text-green-800">Date:</span> {{ appointment?.date | date : 'dd/MM/yyyy' }}</p>
+          <p><span class="font-semibold text-green-800">Time:</span> {{ '1970-02-01T' + appointment?.time | date : 'HH:mm' }}</p>
         </div>
       </div>
-  
-      <!-- Right Column -->
-      <div class="space-y-8">
-  
-        <!-- Procedures -->
-<div class="bg-green-50 p-6 rounded-xl shadow-sm border">
-  <h3 class="text-2xl font-bold text-green-700 mb-4">🛠️ Procedures</h3>
 
-  <ng-container *ngIf="appointment?.performedProcedures?.length > 0; else noProcedures">
-    <ul class="list-disc list-inside space-y-1 text-green-800">
-      <li *ngFor="let procedure of appointment.performedProcedures">
-        {{ procedure.name }} – {{ procedure.price | currency:'TND ':'symbol':'1.0-2' }}
-      </li>
-    </ul>
-  </ng-container>
+      <!-- Vitals -->
+      <div class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+        <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+          <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">📊</span>
+          Vitals
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div>
+            <div class="text-xs text-gray-500">Weight</div>
+            <div class="font-bold text-lg">{{ appointment?.weight || 'N/A' }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500">Temperature</div>
+            <div class="font-bold text-lg">{{ appointment?.temperature || 'N/A' }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500">Heart Rate</div>
+            <div class="font-bold text-lg">{{ appointment?.heartRate || 'N/A' }}</div>
+          </div>
+        </div>
+      </div>
 
-  <ng-template #noProcedures>
-    <p class="text-gray-500">None</p>
-  </ng-template>
-</div>
-  
-        <!-- Prescription -->
-        <div *ngIf="appointment?.prescriptionId" class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">🧾 Prescription</h3>
-          <ul class="list-disc list-inside text-gray-800 space-y-1 text-base">
-            <li *ngFor="let med of appointment.prescriptionId.medications">
-              {{ med.productId?.name || 'Unnamed Medication' }} – {{ med.dosage }}, {{ med.instructions }}
+      <!-- Symptoms -->
+      <div class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+        <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+          <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">💬</span>
+          Symptoms
+        </h3>
+        <p class="italic text-gray-700 text-lg">{{ appointment?.symptoms?.join(', ') || 'None' }}</p>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="space-y-12">
+      <!-- Procedures -->
+      <div class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+        <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+          <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">🛠️</span>
+          Procedures
+        </h3>
+        <ng-container *ngIf="appointment?.performedProcedures?.length > 0; else noProcedures">
+          <ul class="list-disc list-inside space-y-2 text-green-800 text-lg">
+            <li *ngFor="let procedure of appointment.performedProcedures">
+              <span class="font-semibold">{{ procedure.name }}</span>
+              <span class="ml-2 text-gray-600">– {{ procedure.price | currency:'TND ':'symbol':'1.0-2' }}</span>
             </li>
           </ul>
-          <button
-            class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm shadow transition"
-            (click)="viewPrescriptionPDF(appointment.prescriptionId)"
-          >
-            📄 View Prescription PDF
-          </button>
+        </ng-container>
+        <ng-template #noProcedures>
+          <p class="text-gray-400">None</p>
+        </ng-template>
+      </div>
+
+      <!-- Prescription -->
+      <div *ngIf="appointment?.prescriptionId" class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+        <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+          <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">🧾</span>
+          Prescription
+        </h3>
+        <ul class="list-disc list-inside text-gray-800 space-y-2 text-lg">
+          <li *ngFor="let med of appointment.prescriptionId.medications">
+            <span class="font-semibold">{{ med.productId?.name || 'Unnamed Medication' }}</span>
+            <span class="ml-2 text-gray-600">– {{ med.dosage }}, {{ med.instructions }}</span>
+          </li>
+        </ul>
+        <button
+          class="w-full mt-6 bg-green-700 hover:bg-green-900 text-white px-5 py-3 rounded-xl text-lg shadow-lg transition-all duration-200"
+          (click)="viewPrescriptionPDF(appointment.prescriptionId)"
+        >
+          📄 View Prescription PDF
+        </button>
+      </div>
+
+   <div *ngIf="invoices" class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+  <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+    <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">💵</span>
+    Invoice
+  </h3>
+  <p class="mb-6 text-base text-gray-600" *ngIf="!confirmedInvoiceType">Choose an invoice to view or confirm:</p>
+
+  <div class="flex flex-col sm:flex-row gap-6 mb-6">
+    <!-- Premium Invoice -->
+    <ng-container *ngIf="invoices.invoice && (!confirmedInvoiceType || confirmedInvoiceType === 'invoice')">
+      <div
+        class="flex-1 cursor-pointer group border-2 rounded-2xl p-6 flex flex-col items-center transition-all duration-200
+          hover:border-green-700 hover:shadow-xl"
+        [class.border-green-700]="selectedInvoiceType === 'invoice' || confirmedInvoiceType === 'invoice'"
+        [class.opacity-60]="(selectedInvoiceType && selectedInvoiceType !== 'invoice') || (confirmedInvoiceType && confirmedInvoiceType !== 'invoice')"
+        (click)="!confirmedInvoiceType && selectInvoice('invoice')"
+        [class.pointer-events-none]="confirmedInvoiceType && confirmedInvoiceType !== 'invoice'"
+      >
+        <div class="text-4xl mb-2">🧪</div>
+        <div class="font-bold text-lg mb-1">Premium Invoice</div>
+        <button
+          class="mt-2 text-green-700 underline hover:text-green-900 text-sm"
+          (click)="openInvoicePDF('invoice'); $event.stopPropagation();"
+          [disabled]="confirmedInvoiceType && confirmedInvoiceType !== 'invoice'"
+        >
+          View PDF
+        </button>
+        <div *ngIf="(selectedInvoiceType === 'invoice' && !confirmedInvoiceType) || confirmedInvoiceType === 'invoice'" class="mt-3 text-green-700 font-semibold text-sm">
+          Selected
         </div>
-  
-        <!-- Invoice Section -->
-        <div *ngIf="invoices" class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">💵 Invoice</h3>
-          <p class="mb-3 text-base">Select which invoice you'd like to view:</p>
-  
-          <div class="space-y-2">
-            <label class="flex items-center gap-2">
-              <input
-                type="radio"
-                name="invoiceType"
-                [(ngModel)]="selectedInvoiceType"
-                value="invoice"
-                class="accent-green-600"
-              />
-              Invoice with Medications
-            </label>
-            <label class="flex items-center gap-2">
-              <input
-                type="radio"
-                name="invoiceType"
-                [(ngModel)]="selectedInvoiceType"
-                value="invoiceNoMeds"
-                class="accent-green-600"
-              />
-              Standard Invoice
-            </label>
-          </div>
-  
-          <button
-            [disabled]="!selectedInvoiceType"
-            class="w-full mt-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm shadow transition"
-            (click)="openInvoicePDF(selectedInvoiceType)"
-          >
-            📄 View Selected Invoice
-          </button>
+      </div>
+    </ng-container>
+
+    <!-- Standard Invoice -->
+    <ng-container *ngIf="invoices.invoiceNoMeds && (!confirmedInvoiceType || confirmedInvoiceType === 'invoiceNoMeds')">
+      <div
+        class="flex-1 cursor-pointer group border-2 rounded-2xl p-6 flex flex-col items-center transition-all duration-200
+          hover:border-green-700 hover:shadow-xl"
+        [class.border-green-700]="selectedInvoiceType === 'invoiceNoMeds' || confirmedInvoiceType === 'invoiceNoMeds'"
+        [class.opacity-60]="(selectedInvoiceType && selectedInvoiceType !== 'invoiceNoMeds') || (confirmedInvoiceType && confirmedInvoiceType !== 'invoiceNoMeds')"
+        (click)="!confirmedInvoiceType && selectInvoice('invoiceNoMeds')"
+        [class.pointer-events-none]="confirmedInvoiceType && confirmedInvoiceType !== 'invoiceNoMeds'"
+      >
+        <div class="text-4xl mb-2">📄</div>
+        <div class="font-bold text-lg mb-1">Standard Invoice</div>
+        <button
+          class="mt-2 text-green-700 underline hover:text-green-900 text-sm"
+          (click)="openInvoicePDF('invoiceNoMeds'); $event.stopPropagation();"
+          [disabled]="confirmedInvoiceType && confirmedInvoiceType !== 'invoiceNoMeds'"
+        >
+          View PDF
+        </button>
+        <div *ngIf="(selectedInvoiceType === 'invoiceNoMeds' && !confirmedInvoiceType) || confirmedInvoiceType === 'invoiceNoMeds'" class="mt-3 text-green-700 font-semibold text-sm">
+          Selected
         </div>
-  
-        <!-- Next Appointment -->
-        <div *ngIf="appointment?.nextAppointment" class="bg-green-50 p-6 rounded-xl shadow-sm border">
-          <h3 class="text-2xl font-bold text-green-700 mb-4">🔁 Next Appointment</h3>
-          <p>{{ appointment.nextAppointment | date : 'dd/MM/yyyy' }}</p>
-        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Confirm Button (Hidden After Confirmation) -->
+  <button
+    *ngIf="!confirmedInvoiceType"
+    class="w-full mt-2 bg-green-700 hover:bg-green-900 disabled:bg-gray-300 text-white px-5 py-3 rounded-xl text-lg shadow-lg transition-all duration-200"
+    [disabled]="!selectedInvoiceType"
+    (click)="confirmInvoice()"
+  >
+    ✅ Confirm Selection
+  </button>
+
+  <!-- Success Message -->
+  <div *ngIf="confirmedInvoiceType" class="text-green-700 font-medium text-center mt-4">
+    ✔️ You’ve confirmed the 
+    <span class="font-semibold">
+      {{ confirmedInvoiceType === 'invoice' ? 'Premium' : 'Standard' }}
+    </span> Invoice.
+  </div>
+</div>
+
+      <!-- Next Appointment -->
+      <div *ngIf="appointment?.nextAppointment" class="bg-white p-8 rounded-2xl shadow-md border border-green-100 hover:shadow-xl transition-all duration-200">
+        <h3 class="text-2xl font-extrabold text-green-700 mb-6 flex items-center gap-3 tracking-wide">
+          <span class="inline-block w-9 h-9 bg-green-50 rounded-full flex items-center justify-center text-xl border border-green-200">🔁</span>
+          Next Appointment
+        </h3>
+        <p class="font-bold text-green-800 text-lg">{{ appointment.nextAppointment | date : 'dd/MM/yyyy' }}</p>
       </div>
     </div>
   </div>
-  
+</div>

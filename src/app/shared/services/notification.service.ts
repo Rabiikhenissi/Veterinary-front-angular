@@ -13,12 +13,18 @@ export class NotificationService implements OnDestroy {
   private _notifications = new BehaviorSubject<Notification[]>([]);
   notifications$ = this._notifications.asObservable();
   http = inject(HttpClient);
+  private userId: string = '';
 
   constructor() {
+   
+  }
+init(userId: string): void {
+    if (!userId) return;
+
+    this.userId = userId;
     this._connectWebSocket();
     this._loadInitialNotifications();
   }
-
   private _connectWebSocket(): void {
     const userId = localStorage.getItem('connectedUserId');
 this.ws = new WebSocket(`${environment.websocketUrl}?userId=${userId}`);
@@ -118,9 +124,20 @@ this.ws = new WebSocket(`${environment.websocketUrl}?userId=${userId}`);
 
   // Mark all notifications as read
   markAllAsRead(): Observable<any> {
-    const userId = localStorage.getItem('connectedUserId') || '';
-    return this.http.patch(`${this.endpoint}/read-all`, { userId });
-  }
+  const userId = localStorage.getItem('connectedUserId') || '';
+  return this.http.patch(`${this.endpoint}/read-all`, { userId }).pipe(
+    tap(() => {
+      this.getNotifications('5', '0', '', false, userId).subscribe({
+        next: (response) => {
+          this._notifications.next(response.data);
+        },
+        error: (err) => {
+          console.error('[markAllAsRead] Failed to refresh notifications:', err);
+        }
+      });
+    })
+  );
+}
 
   // Update a notification (PATCH)
   update(id: string, notification: Notification): Observable<any> {
