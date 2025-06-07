@@ -3,19 +3,19 @@
 <!-- Floating Cart Button -->
 <button 
   (click)="sidebar.toggleCart()" 
-  class="fixed top-6 right-6 z-50 bg-green-200 hover:bg-green-300 text-slate-800 px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all duration-300 border-2 border-white/30 backdrop-blur-lg"
+  class="fixed top-2 right-6 z-50 bg-green-200 hover:bg-green-300 text-slate-800 px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all duration-300 border-2 border-white/30 backdrop-blur-lg"
 >
   <span class="text-2xl animate-bounce">🛒</span>
   <span 
     *ngIf="cart?.products?.length" 
-    class="absolute -top-2 -right-2 bg-green-300 text-slate-900 text-xs font-bold w-7 h-7 flex items-center justify-center rounded-full border-2 border-white shadow"
+    class="absolute -top-2 -right-2 bg-green-300 text-slate-900 text-md font-bold w-7 h-7 flex items-center justify-center rounded-full border-2 border-white shadow"
   >
     {{ getTotalItems() }}
   </span>
 </button>
 
 <div
-  class="max-w-7xl w-full mx-auto p-6 relative bg-green-50 rounded-xl shadow-lg border border-green-100"
+  class="max-w-6xl w-full mx-auto p-6 relative bg-green-50 rounded-xl shadow-lg border border-green-100"
 >
   <div class="flex flex-col lg:flex-row gap-10">
 

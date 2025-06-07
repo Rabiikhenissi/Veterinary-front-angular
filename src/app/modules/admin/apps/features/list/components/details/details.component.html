@@ -179,27 +179,7 @@
                                 </mat-form-field>
                             </div>
                         }
-                        <!-- Divider -->
-                        <div class="sm:col-span-3">
-                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                                <mat-label class="capitalize">{{ 'Divider' | transloco }}</mat-label>
-                                <mat-select placeholder="select divider" [(ngModel)]="divider" disabled name="divider">
-                                    @if (feature.divider) {
-                                        <mat-option [value]="null">
-                                            <div class="font-medium items-center flex flex-row">
-                                                <span class="block"> {{ '-- None --' | transloco }} </span>
-                                            </div>
-                                        </mat-option>
-                                    }
-                                    <mat-option value="true">
-                                        {{ 'with divider' | transloco }}
-                                    </mat-option>
-                                    <mat-option value="false">
-                                        {{ 'without divider' | transloco }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                        
                         <div class="sm:col-span-3">
                             <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
                                 <mat-label class="capitalize">{{ 'icon' | transloco }}</mat-label>

@@ -1,16 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FilterOptions } from 'app/shared/models/filter-options';
+import { CompanyService } from 'app/shared/services/company.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [FormsModule, CommonModule,MatPaginator],
+  imports: [FormsModule, CommonModule,MatIconButton,MatButton,MatPaginator,MatInputModule,MatSelect,MatOption,MatLabel,MatFormField,MatIcon,MatLabel],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -19,6 +25,7 @@ export class ListComponent implements OnInit {
   private _medicalServicesService = inject(MedicalServicesService);
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
+  private _companyService = inject(CompanyService);
   services: any[] = [];
   companyName: string;
   searchQuery: string = '';
@@ -27,6 +34,10 @@ currentPage = 1;
   total = 0;
   currentSize = 10;
   filterOptions: FilterOptions = new FilterOptions();
+  openFilter = false;
+filterArchived: boolean = false;
+filterPriceMin: number | null = null;
+filterPriceMax: number | null = null;
   typingTimer;
   doneTypingInterval = 500;
   filterSearch: string;
@@ -35,6 +46,17 @@ currentPage = 1;
 
 ngOnInit() {
   this.getList();
+  const companyId = localStorage.getItem('connectedUserCompany');
+  if (companyId) {
+    this._companyService.getOne(companyId).subscribe({
+      next: (company) => {
+        this.companyName = company?.name || '';
+      },
+      error: () => {
+        this.companyName = '';
+      }
+    });
+  }
 }
 getList(): void {
   const companyId = localStorage.getItem('connectedUserCompany');
@@ -45,14 +67,15 @@ getList(): void {
       this.currentSize.toString(),
         this.currentPage.toString(),
         this.searchQuery,
-        
       companyId, 
-      false      
+      this.filterArchived, 
+      this.filterPriceMin != null ? this.filterPriceMin.toString() : undefined,
+    this.filterPriceMax != null ? this.filterPriceMax.toString() : undefined
+   
     )
     .subscribe({
       next: results => {
         this.services = results.data;
-        console.log('Medical Services:', this.services);
          this.total = results.total;
         this._loadingService.hide();
 
@@ -91,7 +114,31 @@ pageChanged(event: any): void {
   }
 
   archiveService(service: any) {
-    // Add your archive logic here
-    console.log('Archiving service:', service);
+  this._loadingService.show();
+    this._medicalServicesService.archiveOne(service._id).subscribe({
+      next: () => {
+        this._loadingService.hide();
+        this.getList();
+      },
+      error: () => {
+        console.error('Failed to archive service');
+        this._loadingService.hide();
+      }
+    });
   }
+
+
+  applyFilters() {
+  this.currentPage = 1;
+  this.paginator?.firstPage();
+  this.getList();
+  this.openFilter = false;
+}
+
+resetFilters() {
+  this.filterArchived = false;
+  this.filterPriceMin = null;
+  this.filterPriceMax = null;
+  this.applyFilters();
+}
 }

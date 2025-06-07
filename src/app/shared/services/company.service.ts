@@ -22,7 +22,7 @@ export class CompanyService {
     if (search) {
       searchParams = searchParams.append('search', search);
     }
-    if (archived !== null ) {
+    if (archived !== undefined) {
         searchParams = searchParams.set('archived', archived.toString());
     }
     return this.http.get<Pagination<Company>>(`${this.endpoint}`, {

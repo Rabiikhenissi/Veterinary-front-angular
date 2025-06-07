@@ -107,29 +107,30 @@
             </div>
 
             <!-- Status -->
-            <div class="sm:col-span-3">
-              <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-                <mat-label class="capitalize">{{ 'status' | transloco }}</mat-label>
-                <mat-select [(ngModel)]="user.status" name="status" required placeholder="{{ 'select status' | transloco }}">
-                  <mat-option value="verified" style="color: #13883e; font-weight: 600;">
-                    {{ 'Verified' | transloco }}
-                  </mat-option>
-                  <mat-option value="pending" style="color: #7b880b; font-weight: 600;">
-                    {{ 'Pending' | transloco }}
-                  </mat-option>
-                  <mat-option value="locked" style="color: #dc2626; font-weight: 600;">
-                    {{ 'Locked' | transloco }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-              @if (
-                myForm.controls['status'] &&
-                (myForm.controls['status'].dirty || myForm.submitted) &&
-                myForm.controls['status'].hasError('required')
-              ) {
-                <mat-error>{{ 'This field is required' | transloco }}</mat-error>
-              }
-            </div>
+<div class="sm:col-span-3">
+  <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+    <mat-label class="capitalize">{{ 'status' | transloco }}</mat-label>
+    <mat-select [(ngModel)]="user.status" name="status" required placeholder="{{ 'select status' | transloco }}">
+      <!-- Show 'Pending' only if user.status is pending -->
+      <mat-option *ngIf="user.status === 'pending'" value="pending" style="color: #7b880b; font-weight: 600;">
+        {{ 'Pending' | transloco }}
+      </mat-option>
+      <mat-option value="verified" style="color: #13883e; font-weight: 600;">
+        {{ 'Verified' | transloco }}
+      </mat-option>
+      <mat-option value="locked" style="color: #dc2626; font-weight: 600;">
+        {{ 'Locked' | transloco }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  @if (
+    myForm.controls['status'] &&
+    (myForm.controls['status'].dirty || myForm.submitted) &&
+    myForm.controls['status'].hasError('required')
+  ) {
+    <mat-error>{{ 'This field is required' | transloco }}</mat-error>
+  }
+</div>
 
           </div>
         </div>

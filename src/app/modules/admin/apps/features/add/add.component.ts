@@ -64,7 +64,6 @@ export class AddComponent implements OnInit {
     filteredListIcons = [];
     filteredListFeature = [];
     listIcons = [];
-    divider: string;
     iconFilterControl: FormControl<any> = new FormControl();
 
     ngOnInit(): void {
@@ -80,11 +79,10 @@ export class AddComponent implements OnInit {
                 this._loadingService.hide();
             },
         });
-        this.feature.divider = true;
+        
     }
     addFeature(myForm: NgForm): void {
         if (myForm.valid) {
-            this.feature.divider = this.divider === 'true';
             if (this.feature.type === FeatureType.group) {
                 this.feature.link = null;
             } else {

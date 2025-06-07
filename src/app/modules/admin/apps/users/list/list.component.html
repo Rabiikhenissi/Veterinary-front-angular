@@ -28,10 +28,10 @@
     <div class="flex flex-col flex-auto md:mb-18">
       <!-- Table Header -->
       <div
-        class="grid grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+        class="grid grid-cols-7 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
         <div class=" md:block">N°</div>
         <div class="truncate">{{ "name" | transloco }}</div>
-        <div class="hidden truncate">{{ "email" | transloco }}</div>
+        <div class=" truncate">{{ "email" | transloco }}</div>
         <div class="truncate">{{ "group" | transloco }}</div>
         <div class="truncate">{{ "company" | transloco }}</div>
         <div class=" md:block">{{ "status" | transloco }}</div>
@@ -48,13 +48,10 @@
         <div class="flex-1 md:grid md:flex-0">
           <ng-container>
             @for (row of displayedList?.data; track row) {
-            <div class="grid grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b " [ngClass]="{
-                                'bg-red-100 hover:bg-red-200': row.archived,
-                                'hover:bg-gray-100': !row.archived
-                            }" (click)="isScreenSmall ? openShow(row) : null">
+            <div class="grid grid-cols-7 items-center gap-4 py-1 px-4 md:px-6 border-b "  (click)="isScreenSmall ? openShow(row) : null">
               <div class=" md:block">{{ $index + 1 }}</div>
               <div class="truncate text-xl">{{ row.name }}</div>
-              <div class="hidden text-xl">{{ row.email }}</div>
+              <div class=" text-xl">{{ row.email }}</div>
               <div class=" md:block truncate text-xl">
                 {{ row.groupsId?.label }}
               </div>

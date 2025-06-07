@@ -4,7 +4,7 @@ export interface FuseNavigationItem {
     id?: string;
     title?: string;
     subtitle?: string;
-    type: 'aside' | 'basic' | 'collapsable' | 'divider' | 'group' | 'spacer';
+    type: 'aside' | 'basic' | 'collapsable' | 'group' | 'spacer';
     hidden?: (item: FuseNavigationItem) => boolean;
     active?: boolean;
     disabled?: boolean;

@@ -51,7 +51,6 @@ export class EditComponent implements OnInit {
     filteredListIcons = [];
     listFeature = [];
     listIcons = [];
-    divider: string;
     feature: Feature;
     ngOnInit(): void {
         if (this.id) {
@@ -69,11 +68,7 @@ export class EditComponent implements OnInit {
                             (l: Feature) => l._id ===  this.feature.featuresIdParent._id,
                         )[0];
                     }
-                    if (this.feature.divider === true) {
-                        this.divider = 'true';
-                    } else {
-                        this.divider = 'false';
-                    }
+                    
                     this.filteredListIcons = material;
                     this.listIcons = material;
                     this._loadingService.hide()
@@ -86,7 +81,6 @@ export class EditComponent implements OnInit {
       }
     updateFeature(myForm: NgForm) {
         if (myForm.valid) {
-          this.feature.divider = this.divider === 'true';
           if (this.feature.type === FeatureType.group) {
             this.feature.link = null;
           } else {

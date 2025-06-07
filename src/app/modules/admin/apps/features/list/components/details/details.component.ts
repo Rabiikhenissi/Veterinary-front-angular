@@ -49,7 +49,6 @@ export class DetailsComponent implements OnInit {
     listFeatureStatus = listFeatureStatus;
     listFeatureType = listFeatureType;
     filteredListIcons = [];
-    divider: string;
 
   ngOnInit(): void {
       if (this.id) {

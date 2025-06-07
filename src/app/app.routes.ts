@@ -14,7 +14,7 @@ import { NotificationsComponent } from './shared/components/notifications/notifi
 export const appRoutes: Route[] = [
 
     // Redirect empty path to '/example'
-    {path: '', pathMatch : 'full', redirectTo: 'home/features'},
+    {path: '', pathMatch : 'full', redirectTo: 'home/profile'},
 
     // Redirect signed-in user to the '/example'
     //
@@ -138,26 +138,8 @@ export const appRoutes: Route[] = [
                         },
                         loadChildren: () => import('app/modules/admin/apps/users/users.routing'),
                     },
-                    {
-                        canActivate: [IsAuthorizedGuard],
-                        canActivateChild: [IsAuthorizedGuard],
-                        path: 'texts',
-                        data: {
-                            breadcrumb: 'Texts',
-                            feature: FeatureCodes.texts,
-                        },
-                        loadChildren: () => import('app/modules/admin/apps/texts/texts.routing'),
-                    },
-                    {
-                        canActivate: [IsAuthorizedGuard],
-                        canActivateChild: [IsAuthorizedGuard],
-                        path: 'pages',
-                        data: {
-                            breadcrumb: 'Pages',
-                            feature: FeatureCodes.pages,
-                        },
-                        loadChildren: () => import('app/modules/admin/apps/pages/pages.routing'),
-                    },
+                    
+                    
                     {
                          canActivate: [IsAuthorizedGuard],
                          canActivateChild: [IsAuthorizedGuard],

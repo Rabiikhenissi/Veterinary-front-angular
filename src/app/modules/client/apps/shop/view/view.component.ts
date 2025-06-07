@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'app/shared/models/product';
@@ -21,7 +21,8 @@ export class ViewComponent {
   searchQuery: string = '';
   currentPage = 1;
   total = 0;
-  currentSize = 10;
+  currentSize = 99999999; // Large enough to fetch all products
+@ViewChild('slider', { static: false }) slider: ElementRef<HTMLDivElement>;
 
   route=inject(ActivatedRoute);
   _productService = inject(ProductService);
@@ -50,6 +51,13 @@ export class ViewComponent {
     });
     
   }
+
+  scrollRecommendations(direction: 'left' | 'right') {
+  const el = this.slider?.nativeElement;
+  if (!el) return;
+  const scrollAmount = 260; // Adjust based on card width + gap
+  el.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+}
 
   increaseQty() {
     this.quantity++;
@@ -103,20 +111,22 @@ export class ViewComponent {
     this._productService.getList(
       this.currentSize.toString(),
       this.currentPage.toString(),
-      this.searchQuery,
-      this.product.category,
-      this.product.species.join(',')).subscribe(response => {
+      this.searchQuery).subscribe(response => {
         const products = response.data;
-    
+
         this.recommendedProducts = products.filter(prod =>
-          prod._id !== this.product._id &&(
-          prod.category === this.product.category ||
-          (Array.isArray(prod.species) &&
-          Array.isArray(this.product.species) &&
-          prod.species.some(s => this.product.species.includes(s)))
-        ));
+          prod._id !== this.product._id &&
+          (
+            prod.category === this.product.category ||
+            (Array.isArray(prod.species) &&
+              Array.isArray(this.product.species) &&
+              prod.species.some(s => this.product.species.includes(s)))
+          )
+        );
+        console.log('Recommended products loaded:', this.recommendedProducts);
+        
       });
-    }
+  }
 
     loadProduct(id: string): void {
       this._productService.getOne(id).subscribe(product => {
