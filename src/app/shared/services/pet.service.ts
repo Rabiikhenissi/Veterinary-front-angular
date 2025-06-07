@@ -79,9 +79,7 @@ cancelArchiveRequest(petId: string): Observable<any> {
     return this.http.patch(`${this.endpoint}/${petId}/archive`, {});
   }
 
-  rejectArchive(petId: string): Observable<any> {
-    return this.http.patch(`${this.endpoint}/${petId}/reject-archive`, {});
-  }
+  
   requestRestore(petId: string): Observable<any> {
     return this.http.patch(`${this.endpoint}/${petId}/request-restore`, {});
   }

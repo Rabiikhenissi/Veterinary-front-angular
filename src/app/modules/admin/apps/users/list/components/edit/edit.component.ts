@@ -15,6 +15,7 @@ import {Group} from "../../../../../../../shared/models/group";
 import {MatOption} from "@angular/material/autocomplete";
 import {MatSelect} from "@angular/material/select";
 import { Pagination } from 'app/shared/models/pagination';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -30,6 +31,7 @@ import { Pagination } from 'app/shared/models/pagination';
         TranslocoModule,
         MatOption,
         MatSelect,
+        CommonModule
     ],
 })
 export class EditComponent implements OnInit {
