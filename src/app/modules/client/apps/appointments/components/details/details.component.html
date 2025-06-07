@@ -98,7 +98,7 @@
       <p class="text-lg text-gray-700">No procedures performed</p>
     </ng-template>
   </div>
-   <!-- Medications Section -->
+ <!-- Medications Section -->
 <div class="bg-white p-4 rounded-xl shadow-md my-6 w-full">
   <h3 class="text-2xl font-semibold text-green-700 mb-4">Medications</h3>
 
@@ -106,10 +106,10 @@
     <p class="text-lg text-gray-700">No medications provided</p>
   </ng-template>
 
-  <div class="mt-4" *ngIf="userRole?.includes('veterinarian')&& addInfo()">
-    <!-- Show Add Button if no prescription -->
+  <div class="mt-4" *ngIf="userRole?.includes('veterinarian') && addInfo() && appointment.weight">
+    <!-- Show Add Button if no prescription and appointment info exists -->
     <button 
-      *ngIf="!appointment.prescriptionId ; else prescriptionExists " 
+      *ngIf="!appointment.prescriptionId; else prescriptionExists" 
       (click)="addPrescription()" 
       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm shadow"
     >
