@@ -72,13 +72,6 @@ ngOnInit(): void {
 }
 
 
-  species: string;
-  medication: any[] = [];
-
-  ngOnInit(): void {
-    this.loadAppointment(this.id);
-  }
-
   loadAppointment(id: string): void {
     this._appointmentService.getAppointment(id).subscribe({
       next: (appointmentData) => {
