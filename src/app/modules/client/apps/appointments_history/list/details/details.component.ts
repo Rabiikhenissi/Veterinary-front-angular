@@ -138,7 +138,7 @@ confirmInvoice(): void {
     return;
   }
 const confirmation = this._fuseConfirmationService.open({
-    title: 'Archive',
+    title: 'Invoice Selection',
     message: 'Would you like to confirm this invoice?',
     actions: {
     confirm: {
