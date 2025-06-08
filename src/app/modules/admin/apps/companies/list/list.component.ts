@@ -37,7 +37,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
         TranslocoPipe,
         CommonModule,
         MatSelect,
-        MatOption
+        MatOption,
     ],
 })
 export class ListComponent implements OnInit {
@@ -84,14 +84,18 @@ export class ListComponent implements OnInit {
 }
   initMap(): void {        
     (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
-
+if(this.showMap) {
+    this._loadingService.show();
+}
       this.map = new mapboxgl.Map({
         container: 'map', // ID of the div container
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [this.longitude, this.latitude], // Initial center coordinates
         zoom: this.zoom, // Initial zoom level
       });
-     
+     this.map.on('load', () => {
+        this._loadingService.hide(); // Hide loading when map is ready
+    });
       // Loop through the company list and add a marker for each location
       this.displayedList?.data?.forEach(company => {
        
@@ -136,10 +140,10 @@ export class ListComponent implements OnInit {
               const comp = this.displayedList.data[0];
               this.latitude = comp.latitude;
               this.longitude = comp.longitude;
+              this._loadingService.hide();
               setTimeout(() => {
                 this.initMap(); 
               }, 10); 
-              this._loadingService.hide();
           },
           error: () => {
               this._loadingService.hide();

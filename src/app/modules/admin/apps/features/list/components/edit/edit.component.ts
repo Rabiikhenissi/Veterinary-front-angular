@@ -86,9 +86,10 @@ export class EditComponent implements OnInit {
           } else {
             this.feature.subtitle = null;
           }
-
+          this._loadingService.show()
                   this._featureService.updateFeature(this.feature).subscribe({
                     next: () => {
+                      this._loadingService.hide();
                       this._router.navigate(['../'], { relativeTo: this._route }).then();
                     },
                     error: (error) => {
@@ -146,10 +147,13 @@ export class EditComponent implements OnInit {
 
         // Subscribe to the confirmation dialog closed action
         confirmation.afterClosed().subscribe((result) => {
-          // If the confirm button pressed...
+          this._loadingService.show()
           if (result === 'confirmed') {
-            this._featureService.deleteFeature(feature._id).subscribe(() => {
-              this._router.navigate(['/home/features']).then();
+            this._featureService.deleteFeature(feature._id).subscribe({
+              next:()=>{
+this._loadingService.hide()
+                this._router.navigate(['/home/features']).then();
+              }
             });
           }
         });

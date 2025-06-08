@@ -25,6 +25,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { GroupService } from 'app/shared/services/group.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { UserService } from 'app/shared/services/user.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-list',
@@ -81,12 +82,41 @@ export class ListComponent implements OnInit {
   authService= inject(AuthService);
   
   ngOnInit(): void {
-    this.connectedUser= localStorage.getItem("connectedUserId")
-    this.companyId=localStorage.getItem("connectedUserCompany")
-    this.loadGroups()
-    this.getList();
-    
-  }
+  this.connectedUser = localStorage.getItem("connectedUserId");
+  this.companyId = localStorage.getItem("connectedUserCompany");
+  this._loadingService.show();
+
+  forkJoin({
+    groups: this._groupService.getGroupsByCompany(this.companyId, "external"),
+    clients: this._userService.getClients(
+      this.currentSize.toString(),
+      this.currentPage.toString(),
+      this.filterSearch,
+      this.companyId,
+      this.filterArchived,
+      this.filterGroup,
+      this.filterStatus
+    )
+  }).subscribe({
+    next: ({ groups, clients }) => {
+      this.groups = groups;
+      const filteredUsers = clients.data.filter(user =>
+        user.type === 'external' &&
+        user.companyId == this.companyId
+      );
+      this.displayedList = {
+        ...clients,
+        data: filteredUsers
+      };
+      this.openFilter = false;
+      this._loadingService.hide();
+    },
+    error: () => {
+      this._loadingService.hide();
+      this.openFilter = false;
+    }
+  });
+}
   pageChanged(event: PageEvent ): void {
     let { pageIndex } = event;
     const { pageSize } = event;

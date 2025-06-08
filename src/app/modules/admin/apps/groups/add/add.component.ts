@@ -96,11 +96,14 @@ forkJoin([
                 if (this.groupFeature.filter((value) => value.defaultFeature).length === 0) {
                     console.log('Default feature is required', 'error');
                 } else {
+                    this._loadingService.show()
                     this._groupService.createOne(this.group, this.groupFeature).subscribe({
                         next:() => {
+                            this._loadingService.hide()
                             this._router.navigate([`../`], { relativeTo: this._route }).then();
                         },
                         error: (error) => {
+                            this._loadingService.hide()
                             console.log('Error while creating group', 'error');
                             if(error.status === 400) {
                             Swal.fire({

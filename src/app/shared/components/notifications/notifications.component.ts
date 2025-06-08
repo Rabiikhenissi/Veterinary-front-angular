@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { Notification } from 'app/shared/models/notifications';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-notifications',
@@ -14,6 +16,7 @@ export class NotificationsComponent implements OnInit {
   _notificationService = inject(NotificationService);
   notifications: Notification[] = [];
   filteredNotifications: Notification[] = [];
+  _loadingService = inject(LoadingService);
   total = 0;
   currentPage = 1;
   currentSize = 5;
@@ -21,9 +24,30 @@ export class NotificationsComponent implements OnInit {
 filteredType: string = '';
 allTypes: string[] = [];
   ngOnInit(): void {
-    this.userId = localStorage.getItem('connectedUserId') ;
-    this.getNotificationTypes(); 
-    this.getNotifications();
+    this.userId = localStorage.getItem('connectedUserId');
+    this._loadingService.show();
+
+    forkJoin({
+      types: this._notificationService.getNotificationTypes(this.userId),
+      notifications: this._notificationService.getNotifications(
+        this.currentSize.toString(),
+        this.currentPage.toString(),
+        this.filteredType,
+        false,
+        this.userId
+      )
+    }).subscribe({
+      next: ({ types, notifications }) => {
+        this.allTypes = types;
+        this.filteredNotifications = notifications.data;
+        this.total = notifications.total;
+        this._loadingService.hide();
+      },
+      error: (err) => {
+        this._loadingService.hide();
+        console.error('Failed to fetch notifications or types:', err);
+      }
+    });
   }
   getNotificationTypes(): void {
   this._notificationService.getNotificationTypes(this.userId).subscribe({
@@ -37,6 +61,7 @@ allTypes: string[] = [];
   });
   }
     getNotifications(): void {
+      this._loadingService.show();
     this._notificationService.getNotifications(
   this.currentSize.toString(),
   this.currentPage.toString(),
@@ -47,8 +72,10 @@ allTypes: string[] = [];
   next: (response) => {
     this.filteredNotifications = response.data;
     this.total = response.total;
+    this._loadingService.hide();
   },
   error: (error) => {
+    this._loadingService.hide();
     console.error('Error fetching notifications:', error);
   }
 });

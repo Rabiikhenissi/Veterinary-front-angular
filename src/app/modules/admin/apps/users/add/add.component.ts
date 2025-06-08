@@ -67,22 +67,25 @@ export class AddComponent implements OnInit{
       filterSearch: string;
 
     ngOnInit(): void {
-        this._loadingService.show();
-       forkJoin([
-        this._groupService.getList({types:'internal',archived:false}),
-    ]).subscribe({
-        next: ([internalGroups]) => {
+    this._loadingService.show();
+    forkJoin({
+        internalGroups: this._groupService.getList({ types: 'internal', archived: false }),
+        companies: this._companyService.getList(
+            this.currentSize.toString(),
+            this.currentPage.toString(),
+            this.filterSearch,
+        )
+    }).subscribe({
+        next: ({ internalGroups, companies }) => {
             this.listGroups = [...internalGroups.data];
-            console.log(this.listGroups);
+            this.listCompany = companies.data;
             this._loadingService.hide();
-            
+            console.log(this.listCompany);
         },
         error: () => {
             this._loadingService.hide();
         }
     });
-
-    this.getList();
 }
     getList(): void {
       this._loadingService.show();
@@ -109,13 +112,16 @@ export class AddComponent implements OnInit{
     if (myForm.valid) {
       console.log(this.user);
       this.user.type="internal"
+      this._loadingService.show();
         this._userService.createInternalUser(this.user).subscribe({
           next: (result) => {
+            this._loadingService.hide();
             this._router.navigate([`../`], { relativeTo: this._route }).then();
           },
           error: () => {
             this._snackBarService.openSnackBar(
               'Error creating user',
+              
             );
             this._loadingService.hide();
           },

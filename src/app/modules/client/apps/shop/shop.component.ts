@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { getImageUrl } from 'app/shared/utils/image-utils';
+import { LoadingService } from 'app/shared/services/loading.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-shop',
@@ -26,8 +28,9 @@ export class ShopComponent implements OnInit{
   _cartService = inject(CartService);
   _productService = inject(ProductService);
   _petSpeciesService = inject(PetSpeciesService);
-  
+  _loadingService = inject(LoadingService);
   router=inject(Router);
+  isAddingToCart: { [productId: string]: boolean } = {};
   products: Product[] = [];
   categories: string[] = [ "Accessories", "Food", "Hygiene"];
   currentPage = 1;
@@ -55,16 +58,32 @@ export class ShopComponent implements OnInit{
   @ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
-    this.fetchProducts();
-    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
-      next: (res) => {
-        this.speciesList = res.data;
-      },
-      error: (err) => {
-        console.error('Failed to fetch species', err);
-      }
-    });
-  }
+  this._loadingService.show();
+
+  forkJoin({
+    products: this._productService.getList(
+      this.currentSize.toString(),
+      this.currentPage.toString(),
+      this.searchQuery,
+      this.selectedCategories.join(','),
+      this.selectedSpecies.join(',')
+    ),
+    species: this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId'))
+  }).subscribe({
+    next: ({ products, species }) => {
+      this.products = products.data.filter(product =>
+        this.categories.includes(product.category)
+      );
+      this.total = this.products.length;
+      this.speciesList = species.data;
+      this._loadingService.hide();
+    },
+    error: (err) => {
+      this._loadingService.hide();
+      console.error('Failed to fetch products or species', err);
+    }
+  });
+}
 getProductImageUrl(imagePath: string): string {
   const url = getImageUrl(imagePath);
   return url;
@@ -147,15 +166,42 @@ getProductImageUrl(imagePath: string): string {
   }
 
   addToCart(product: any) {
+    // Check if product has a limitPerClient and if it's exceeded in the cart
+    const cartItem = this.cart?.products?.find((item: any) => item.productId === product._id);
+    const currentQuantity = cartItem ? cartItem.quantity : 0;
+    const limitPerClient = product.limitPerClient;
+if (this.isAddingToCart[product._id]) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Please wait',
+        text: 'You are clicking too fast. Please wait for the previous action to complete.',
+        confirmButtonColor: '#f87171',
+      });
+      return; // Prevent double click
+    }
+    if (limitPerClient && currentQuantity >= limitPerClient) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Limit Reached',
+        text: 'You cannot purchase more of this product due to the limit per client',
+        confirmButtonColor: '#f87171',
+      });
+      return;
+    }
+    
+this.isAddingToCart[product._id] = true;
+this._loadingService.show();
     this._cartService.addToCart(product._id, 1).subscribe({
       next: (response) => {
-        
         this.sidebar.cartService.fetchCart(); // Refresh the cart after adding product
-        
-      }
-      , error: (error) => {
+        this.isAddingToCart[product._id] = false; // Reset the adding state
+        this._loadingService.hide();
+      },
+      error: (error) => {
+        this._loadingService.hide();
         console.error('Error updating quantity:', error);
-  
+        this.isAddingToCart[product._id] = false; // Reset the adding state
+
         if (error.status === 409) {
           Swal.fire({
             icon: 'warning',
@@ -179,7 +225,6 @@ getProductImageUrl(imagePath: string): string {
           });
         }
       }
-      
     });
   }
 }

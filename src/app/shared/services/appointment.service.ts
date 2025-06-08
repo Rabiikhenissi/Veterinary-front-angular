@@ -105,7 +105,7 @@ export class AppointmentService {
     return this.http.patch<Appointment2>(`${this.endpoint}/${appointment._id}`, {appointment});
   }
   updateAppointmentStatus(appointment:Appointment2):Observable<Appointment2> {
-    return this.http.patch<Appointment2>(`${this.endpoint}/${appointment._id}/status`, appointment);
+    return this.http.patch<Appointment2>(`${this.endpoint}/${appointment._id}/status`, {appointment});
   }
   archiveAppointment(id: string): Observable<Appointment> {
     return this.http.patch<Appointment>(`${this.endpoint}/archive/${id}`, {});

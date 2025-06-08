@@ -6,6 +6,8 @@ import {CommonModule, DatePipe } from '@angular/common';
 import { Appointment } from 'app/shared/models/appointment';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { MatPaginator } from '@angular/material/paginator';
+import { LoadingService } from 'app/shared/services/loading.service';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-details',
   imports: [DatePipe,MatPaginator,CommonModule],
@@ -19,27 +21,35 @@ export class DetailsComponent {
   total=0;
     pet?: Pet;
     appointments: Appointment[] = [];
-    loading = true;
-    loadingAppointments = true;
+    _loadingService = inject(LoadingService);
   petId: string;
     currentSize = 10;
       currentPage = 1;
       filterSearch: string;
       @ViewChild(MatPaginator) paginator: MatPaginator;
     ngOnInit(): void {
-       this.petId = this.route.snapshot.paramMap.get('petId');
+      this.petId = this.route.snapshot.paramMap.get('petId');
       if (this.petId) {
-        this._petService.getOne(this.petId).subscribe({
-          next: (data) => {
-            this.pet = data;
-            this.loading = false;
-  
-            // Fetch appointments for the pet
-            this.fetchAppointments(this.petId);},
-          error: (err) => {
-            console.error('Failed to fetch pet:', err);
-            this.loading = false;
+        this._loadingService.show();
+        forkJoin({
+          pet: this._petService.getOne(this.petId),
+          appointments: this._appointmentService.getAppointmentsByPet(
+            this.currentSize.toString(),
+            this.currentPage.toString(),
+            this.filterSearch,
+            this.petId
+          )
+        }).subscribe({
+          next: ({ pet, appointments }) => {
+            this.pet = pet;
+            this.appointments = appointments.data;
+            this.total = appointments.total;
+            this._loadingService.hide();
           },
+          error: (err) => {
+            console.error('Failed to fetch data:', err);
+            this._loadingService.hide();
+          }
         });
       }
     }
@@ -59,15 +69,16 @@ export class DetailsComponent {
     }
     
     fetchAppointments(petId): void {
+      
       this._appointmentService.getAppointmentsByPet(this.currentSize.toString(),this.currentPage.toString(),this.filterSearch,petId).subscribe({
         next: (appts) => {
           this.appointments = appts.data;
           this.total = appts.total;
-          this.loadingAppointments = false;
+          
         },
         error: (err) => {
           console.error('Failed to fetch appointments:', err);
-          this.loadingAppointments = false;
+          
         },
       });
     }

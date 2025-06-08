@@ -69,10 +69,11 @@ export class EditComponent {
   onSubmit() {
     if (this.profileForm.valid) {
       const payload = { ...this.profileForm.value, _id: this.userId };
-    console.log('Submitting:', payload);
+    this._loadingService.show(); // Start loading
       this._userService.updateOne(payload).subscribe({
         next: (response) => {
-          console.log('Profile updated successfully:', response);
+          this._loadingService.hide(); // Stop loading
+          
           this.router.navigate(['/home/profile']);
         }
         , error: (error) => {

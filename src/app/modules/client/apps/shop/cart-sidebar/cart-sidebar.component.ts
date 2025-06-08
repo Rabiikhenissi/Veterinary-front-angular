@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CartService } from 'app/shared/services/cart.service';
+import { LoadingService } from 'app/shared/services/loading.service';
 import Swal from 'sweetalert2';
 @Component({
   selector: 'app-cart-sidebar',
@@ -9,7 +10,7 @@ import Swal from 'sweetalert2';
   styleUrl: './cart-sidebar.component.scss'
 })
 export class CartSidebarComponent {
-  
+  _loadingService = inject(LoadingService);
   isOpen = false;
   cart: any;
   constructor(public cartService: CartService) {
@@ -40,13 +41,15 @@ export class CartSidebarComponent {
       });
       return; // Prevent further increase if limit is reached
     }
-  
+    this._loadingService.show(); // Show loading indicator
     // Proceed to update the quantity if the limit is not reached
     this.cartService.updateQuantity(item.productId._id, item.quantity + 1).subscribe({
       next: () => {
         this.cartService.fetchCart(); // Refresh the cart after updating quantity
+        this._loadingService.hide(); // Hide loading indicator
       },
       error: (error) => {
+        this._loadingService.hide(); // Hide loading indicator
         console.error('Error updating quantity:', error);
   
         if (error.status == 409) {
@@ -80,12 +83,16 @@ export class CartSidebarComponent {
   
   
   decreaseQuantity(item: any) {
+
+    this._loadingService.show(); // Show loading indicator
     if (item.quantity > 1) {
       this.cartService.updateQuantity(item.productId._id, item.quantity - 1).subscribe({
         next: () => {
           this.cartService.fetchCart(); // Refresh the cart after updating quantity
+          this._loadingService.hide(); // Hide loading indicator
         },
         error: (error) => {
+          this._loadingService.hide(); // Hide loading indicator
           console.error('Error updating quantity:', error);
         }
       })
@@ -93,8 +100,10 @@ export class CartSidebarComponent {
       this.cartService.removeFromCart(item.productId._id).subscribe({
         next: () => {
           this.cartService.fetchCart(); // Refresh the cart after removing item
+          this._loadingService.hide(); // Hide loading indicator
         },
         error: (error) => {
+          this._loadingService.hide(); // Hide loading indicator
           console.error('Error removing item:', error);
         }
       }); // Optional: remove if quantity hits 0
@@ -114,21 +123,36 @@ export class CartSidebarComponent {
 
 
   clearCart() {
+    this._loadingService.show(); // Show loading indicator
     this.cartService.clearCart().subscribe({
-      next: () => this.cartService.fetchCart(),
-      error: (err) => console.error('Error clearing cart:', err)
+      next: () => {this.cartService.fetchCart()
+        this._loadingService.hide(); // Hide loading indicator
+      },
+      error: (err) => {
+        this._loadingService.hide(); // Hide loading indicator
+        console.error('Error clearing cart:', err);
+      }
     });
   }
 
   removeItem(item: any) {
+    this._loadingService.show(); // Show loading indicator
     this.cartService.removeFromCart(item.productId._id).subscribe({
-      next: () => this.cartService.fetchCart(),
-      error: (err) => console.error('Error removing item:', err)
+      next: () => {
+        this.cartService.fetchCart();
+        this._loadingService.hide(); // Hide loading indicator
+      },
+      error: (err) => {
+        this._loadingService.hide(); // Hide loading indicator
+        console.error('Error removing item:', err);
+      }
     });
   }
   confirmPurchase() {
+    this._loadingService.show();
     this.cartService.confirmPurchase().subscribe({
       next: (pdfBlob: Blob) => {
+        this._loadingService.hide();
         Swal.fire({
           icon: 'success',
           title: 'Purchase Confirmed',
@@ -142,6 +166,7 @@ export class CartSidebarComponent {
           this.closeCart();
       },
       error: (error) => {
+        this._loadingService.hide();
         Swal.fire({
           icon: 'error',
           title: 'Purchase Failed',

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PetSpecies } from 'app/shared/models/petSpecies';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import Swal from 'sweetalert2';
 
@@ -14,7 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class AddComponent {
   speciesForm: FormGroup;
-  loading = false;
+  _loadingSerivice = inject(LoadingService);
  _fb =inject(FormBuilder);
   _petSpeciesService = inject(PetSpeciesService); 
   _router = inject(Router); 
@@ -29,7 +30,7 @@ export class AddComponent {
   
   submit() {
     if (this.speciesForm.invalid) return;
-    this.loading = true;
+    this._loadingSerivice.show();
 console.log('Form submitted:', this.speciesForm.value); 
 const species: PetSpecies = {
   name: this.speciesForm.value.name,
@@ -43,7 +44,7 @@ console.log('companyId',localStorage.getItem('connectedUserCompany'))
 
     this._petSpeciesService.createOne(species).subscribe({
       next: () => {
-        this.loading = false;
+        this._loadingSerivice.hide();
 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -54,7 +55,7 @@ Swal.fire({
                     this._router.navigate([`../`], { relativeTo: this._route }).then();        });      },
       error: err => {
         console.error(err);
-        this.loading = false;
+        this._loadingSerivice.hide();
       }
     });
   }

@@ -5,8 +5,10 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import { PetService } from 'app/shared/services/pet.service';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -24,7 +26,7 @@ export class EditInfoComponent implements OnInit {
   _petService = inject(PetService);
   _medicalServicesService = inject(MedicalServicesService);
   id = this._route.snapshot.paramMap.get('id')!;
-
+  _loadingService = inject(LoadingService);
   services: any[] = [];
   selectedProcedures: any[] = [];
 
@@ -40,47 +42,56 @@ export class EditInfoComponent implements OnInit {
   species: string = '';
 
   ngOnInit(): void {
-    this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany') || '').subscribe({
-      next: (response) => {
-        this.services = response.data;
+  this._loadingService.show();
 
-        this._appointmentService.getAppointment(this.id).subscribe({
-          next: (appointmentData) => {
-            const petId = appointmentData.petId;
-            this._petService.getOne(petId._id).subscribe({
-              next: (petData) => {
-                this.species = petData.species;
-              },
-              error: (error) => console.error('Error fetching pet data:', error)
-            });
+  // Load services and appointment in parallel
+  forkJoin({
+    services: this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany') || ''),
+    appointment: this._appointmentService.getAppointment(this.id)
+  }).subscribe({
+    next: ({ services, appointment }) => {
+      this.services = services.data;
 
-            // Convert symptoms array to comma-separated string
-            this.info = {
-              symptoms: Array.isArray(appointmentData.symptoms) ? appointmentData.symptoms.join(', ') : '',
-              performedProcedures: Array.isArray(appointmentData.performedProcedures)
-                ? appointmentData.performedProcedures.map((proc: any) =>
-                    typeof proc === 'string'
-                      ? { name: proc, price: 0 }
-                      : proc
-                  )
-                : [],
-              weight: appointmentData.weight || null,
-              temperature: appointmentData.temperature || null,
-              heartRate: appointmentData.heartRate || null,
-              nextAppointment: appointmentData.nextAppointment || '',
-            };
+      // Convert symptoms array to comma-separated string
+      this.info = {
+        symptoms: Array.isArray(appointment.symptoms) ? appointment.symptoms.join(', ') : '',
+        performedProcedures: Array.isArray(appointment.performedProcedures)
+          ? appointment.performedProcedures.map((proc: any) =>
+              typeof proc === 'string'
+                ? { name: proc, price: 0 }
+                : proc
+            )
+          : [],
+        weight: appointment.weight || null,
+        temperature: appointment.temperature || null,
+        heartRate: appointment.heartRate || null,
+        nextAppointment: appointment.nextAppointment || '',
+      };
 
-            // Select performedProcedures in UI select
-            this.selectedProcedures = this.services.filter(service =>
-              this.info.performedProcedures.some(proc => proc.name === service.name)
-            );
-          },
-          error: (error) => console.error('Error fetching appointment data:', error)
-        });
-      },
-      error: (err) => console.error('Failed to load services:', err),
-    });
-  }
+      // Select performedProcedures in UI select
+      this.selectedProcedures = this.services.filter(service =>
+        this.info.performedProcedures.some(proc => proc.name === service.name)
+      );
+
+      // Now load pet data
+      const petId = appointment.petId;
+      this._petService.getOne(petId._id).subscribe({
+        next: (petData) => {
+          this.species = petData.species;
+          this._loadingService.hide();
+        },
+        error: (error) => {
+          this._loadingService.hide();
+          console.error('Error fetching pet data:', error);
+        }
+      });
+    },
+    error: (err) => {
+      this._loadingService.hide();
+      console.error('Failed to load services or appointment:', err);
+    }
+  });
+}
 
   onProceduresChange(selected: any[]) {
     this.selectedProcedures = selected;  // Keep UI in sync
@@ -98,8 +109,10 @@ export class EditInfoComponent implements OnInit {
     this.info.symptoms = symptomsArray as any; // Cast to any to satisfy type, or update type if needed
 
     console.log('Updated info:', this.info);
+    this._loadingService.show();
     this._appointmentService.updateAppointmentInfo(this.id, this.info).subscribe({
       next: (data) => {
+        this._loadingService.hide();
         Swal.fire({
           icon: 'success',
           title: 'Success!',
@@ -109,6 +122,7 @@ export class EditInfoComponent implements OnInit {
         this._router.navigate(['../..'], { relativeTo: this._route }).then();
       },
       error: (error) => {
+        this._loadingService.hide();
         console.error('Error updating info:', error);
       }
     });

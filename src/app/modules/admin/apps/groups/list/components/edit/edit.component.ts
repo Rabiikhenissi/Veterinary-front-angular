@@ -102,9 +102,11 @@ export class EditComponent implements OnInit {
     }
     updateOne(myForm: NgForm) {
         if (myForm.valid) {
+            this._loadingService.show()
             this._groupService.updateOne(this.group, this.groupFeature).subscribe(
                 {
                     next: () => {
+                        this._loadingService.hide()
                         this._router.navigate([`../`], { relativeTo: this._route }).then();
                     },
                     error: (err) => {

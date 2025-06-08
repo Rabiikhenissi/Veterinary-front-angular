@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PetSpecies } from 'app/shared/models/petSpecies';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import Swal from 'sweetalert2';
 
@@ -15,13 +16,13 @@ import Swal from 'sweetalert2';
 export class EditComponent implements OnInit {
   speciesForm!: FormGroup;
   speciesId!: string;
-  loading = false;
+  
 
   private _fb = inject(FormBuilder);
   private _petSpeciesService = inject(PetSpeciesService);
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
-
+  _loadingService = inject(LoadingService);
   ngOnInit() {
     this.speciesForm = this._fb.group({
       name: ['', Validators.required],
@@ -30,15 +31,17 @@ export class EditComponent implements OnInit {
 
     this.speciesId = this._route.snapshot.paramMap.get('id')!;
     console.log('speciesId', this.speciesId);
-    
+    this._loadingService.show();
     this._petSpeciesService.getOne(this.speciesId).subscribe({
       next: (species: PetSpecies) => {
         this.speciesForm.patchValue({
           name: species.name,
           icon: species.icon,
         });
+        this._loadingService.hide();
       },
       error: err => {
+        this._loadingService.hide();
         console.error(err);
       }
     });
@@ -47,15 +50,15 @@ export class EditComponent implements OnInit {
   submit() {
     if (this.speciesForm.invalid) return;
 
-    this.loading = true;
+    
     const updatedSpecies = {
       _id: this.speciesId,
       ...this.speciesForm.value
     };
-
+    this._loadingService.show();
     this._petSpeciesService.updateOne(updatedSpecies).subscribe({
       next: () => {
-        this.loading = false;
+        this._loadingService.hide();
         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
@@ -67,7 +70,7 @@ export class EditComponent implements OnInit {
       },
       error: err => {
         console.error(err);
-        this.loading = false;
+        this._loadingService.hide();
       }
     });
   }

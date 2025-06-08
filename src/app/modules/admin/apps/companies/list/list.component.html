@@ -127,8 +127,9 @@
       <!-- Map display (only if map is visible) -->
       <div *ngIf="showMap" class="relative w-full h-[calc(100vh-4rem)] mt-2">
         <!-- The Map itself -->
-        <div id="map" class="absolute inset-0 w-full h-full bg-gray-200 z-0"></div>
-
+         
+        <div  id="map" class="absolute inset-0 w-full h-full bg-gray-200 z-0"></div>
+         
         <!-- Return to List Button on top-right -->
         <button (click)="toggleMap()"
           class="absolute top-4 right-4 z-10 bg-white text-gray-800 hover:bg-blue-600 hover:text-white shadow-md rounded-md px-4 py-2 flex items-center gap-2 transition-all duration-300">
