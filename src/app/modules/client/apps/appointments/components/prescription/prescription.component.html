@@ -1,3 +1,4 @@
+
 <div class="bg-white p-6 rounded-2xl shadow-lg my-8 w-full border border-gray-100">
   <h3 class="text-3xl font-bold text-green-800 mb-6 tracking-tight flex items-center gap-2">
     <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2M9 17H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-2M9 17v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"></path></svg>
@@ -37,6 +38,7 @@
             placeholder="Instructions (e.g., Twice a day)"
             class="p-2 border border-green-200 rounded-lg w-full focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none transition"
             (click)="$event.stopPropagation()"
+
           />
         </div>
       </div>
@@ -47,10 +49,12 @@
   <div class="mt-8 flex flex-wrap gap-4 justify-end">
     <button
       (click)="savePrescription()"
+
       class="bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-lg text-base font-semibold shadow-md flex items-center gap-2 transition"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path><polyline points="15 10 20 10 20 15"></polyline><line x1="10" y1="14" x2="20" y2="4"></line></svg>
       Save Prescription
+
     </button>
   </div>
 </div>

@@ -7,9 +7,11 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CompanyService } from 'app/shared/services/company.service';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,6 +29,7 @@ export class AddInfoComponent implements OnInit {
   _companyService=inject(CompanyService);
   _petService=inject(PetService);
   _medicalServicesService=inject(MedicalServicesService);
+  _loadingService = inject(LoadingService);
   id = this._route.snapshot.paramMap.get('id')!;
  services: any[] = [];
   info = {
@@ -41,32 +44,33 @@ performedProcedures: [] as { name: string, price: number }[],
 
 
   ngOnInit(): void {
-    // get Appointment
-    this._appointmentService.getAppointment(this.id).subscribe({
-      next: (appointmentData) => {
-        //get pet to get the species
-        const petId = appointmentData.petId;
-        this._petService.getOne(petId._id).subscribe({
-          next: (petData) => {
-            this.species = petData.species;
-            console.log('Species:', this.species);
-          },
-          error: (error) => {
-            console.error('Error fetching pet data:', error);
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error fetching appointment data:', error);
-      }
-    });
- this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany')).subscribe({
-      next: (response) => {
-        this.services = response.data; 
-      },
-      error: (err) => console.error('Failed to load services:', err),
-    });
-  }
+  this._loadingService.show();
+
+  // Get appointment, then use its petId for the pet request
+  this._appointmentService.getAppointment(this.id).subscribe({
+    next: (appointmentData) => {
+      const petId = appointmentData.petId._id;
+      forkJoin({
+        pet: this._petService.getOne(petId),
+        services: this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany'))
+      }).subscribe({
+        next: ({ pet, services }) => {
+          this.species = pet.species;
+          this.services = services.data;
+          this._loadingService.hide();
+        },
+        error: (error) => {
+          this._loadingService.hide();
+          console.error('Error fetching pet or services:', error);
+        }
+      });
+    },
+    error: (error) => {
+      this._loadingService.hide();
+      console.error('Error fetching appointment data:', error);
+    }
+  });
+}
   
   handleSymptomsInput(symptomInput: string) {
     const symptomsArray = symptomInput.split(',').map(symptom => symptom.trim());
@@ -81,17 +85,19 @@ performedProcedures: [] as { name: string, price: number }[],
     }));
   }
   onSubmit() {
-  console.log('Submitted info:', this.info);
+  this._loadingService.show();
     this._appointmentService.addAppointmentInfo(this.id, this.info).subscribe({
       next: (data) => {
+        this._loadingService.hide();
         Swal.fire({
           icon: 'success',
           title: 'Success!',
           text: 'Appointment info added successfully!',
-          timer: 1500,
+          timer: 1000,
         });        this._router.navigate([`../`], { relativeTo: this._route }).then();  
       },
       error: (error) => {
+        this._loadingService.hide();
         console.error('Error adding info:', error);
       }
     });

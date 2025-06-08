@@ -22,6 +22,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { CompanyService } from 'app/shared/services/company.service';
 import { Company } from 'app/shared/models/company';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -71,9 +72,28 @@ export class ListComponent implements OnInit {
   featureActions = FeatureActions;
   companies:Company[]=[]
   ngOnInit(): void {
-    this.getCompanies();
-    this.getList();
-  }
+  this._loadingService.show();
+  forkJoin({
+    companies: this._companyService.getAll(),
+    groups: this._groupService.getList({
+      limit: this.currentSize.toString(),
+      page: this.currentPage.toString(),
+      search: this.filterSearch,
+      types: this.filterType,
+      companies: this.filterCompany,
+      archived: this.filterArchived,
+    })
+  }).subscribe({
+    next: ({ companies, groups }) => {
+      this.companies = companies.data;
+      this.displayedList = groups;
+      this._loadingService.hide();
+    },
+    error: () => {
+      this._loadingService.hide();
+    }
+  });
+}
   getCompanies(): void {
     this._companyService.getAll().subscribe({
       next: (res) => {

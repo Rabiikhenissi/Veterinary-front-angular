@@ -70,9 +70,9 @@ export class DetailsComponent implements OnInit {
                     if (this.company.firstCalendarDay) {
                         this.company.firstCalendarDay = this.formatDateForInput(this.company.firstCalendarDay);
                       }
-                    this._loadingService.hide()
-                    
-        setTimeout(() => this.initMapbox(), 100);
+                      
+                      setTimeout(() => this.initMapbox(), 0);
+                      
                 },
                 error: () => {
                     this._loadingService.hide()
@@ -91,7 +91,9 @@ export class DetailsComponent implements OnInit {
           zoom: 13,
         });
       
-      
+      this.map.on('load', () => {
+        this._loadingService.hide(); // Hide loading when map is ready
+    });
     this.map.addControl(new mapboxgl.NavigationControl());
     const marker = new mapboxgl.Marker()
         .setLngLat([this.company.longitude, this.company.latitude])
@@ -106,6 +108,8 @@ export class DetailsComponent implements OnInit {
         .setLngLat([this.company.longitude, this.company.latitude])
         .setPopup(new mapboxgl.Popup({ offset: 25 }) ) 
         .addTo(this.map);
+
+        
 }
     formatDateForInput(date: string): string {
         const formattedDate = new Date(date);

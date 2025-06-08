@@ -6,9 +6,11 @@ import { BusinessHour } from 'app/shared/models/company';
 import { Pet } from 'app/shared/models/pet';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { CompanyService } from 'app/shared/services/company.service';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -26,6 +28,7 @@ _petService= inject(PetService);
 _notificationService = inject(NotificationService); 
 _formBuilder= inject(FormBuilder);
  _companyService=inject(CompanyService)
+ _loadingService = inject(LoadingService);
   isSubmitted = false;
 selectedTime: string = '';
   appointmentForm!: FormGroup;
@@ -38,32 +41,49 @@ selectedTime: string = '';
    outsideBusinessHours = false;
    allowedTimes: string[] = [];
   ngOnInit(): void {
-    this.allowedTimes = this.generateTimes();
-    this.companyId = localStorage.getItem('connectedUserCompany') ;
-    const date = this._route.snapshot.queryParamMap.get('date') || '';
-    const time = this._route.snapshot.queryParamMap.get('time') || '';
-const companyId=localStorage.getItem("connectedUserCompany")
-    this.getCompanyBusinessHours(this.companyId);
+  this._loadingService.show();
+  this.allowedTimes = this.generateTimes();
+  this.companyId = localStorage.getItem('connectedUserCompany');
+  const date = this._route.snapshot.queryParamMap.get('date') || '';
+  const time = this._route.snapshot.queryParamMap.get('time') || '';
+
   if (time) {
-    const timeParts = time.split('+')[0]; 
-    this.selectedTime = timeParts ? timeParts.substr(0, 5) : ''; 
-  } 
+    const timeParts = time.split('+')[0];
+    this.selectedTime = timeParts ? timeParts.substr(0, 5) : '';
+  }
 
-  console.log('Selected time:', this.selectedTime);
+  this.appointmentForm = this._formBuilder.group({
+    clientId: ['', Validators.required],
+    petId: ['', Validators.required],
+    date: [date, Validators.required],
+    time: [this.selectedTime, Validators.required],
+  });
 
-        
-    this.appointmentForm = this._formBuilder.group({
-      clientId: ['', Validators.required],
-      petId: ['', Validators.required],
-      date: [date, Validators.required],
-      time: [this.selectedTime, Validators.required],    });
-// Set allowedTimes initially if date is pre-filled
+  // Set allowedTimes initially if date is pre-filled
   this.allowedTimes = this.generateTimesForBusinessHours(this.appointmentForm.value.date);
   this.appointmentForm.get('date')?.valueChanges.subscribe(date => {
     this.onDateChange(date);
   });
-    this.loadClients();
-  }
+
+  // Use forkJoin to load clients and company business hours in parallel
+  forkJoin({
+    clients: this._userService.getExternalUsers(this.companyId),
+    company: this._companyService.getOne(this.companyId)
+  }).subscribe({
+    next: ({ clients, company }) => {
+      this.clients = clients;
+      this.companyBusinessHours = company.businessHours || [];
+      // Now that business hours are loaded, generate allowedTimes
+      const date = this.appointmentForm?.get('date')?.value || '';
+      this.allowedTimes = this.generateTimesForBusinessHours(date);
+      this._loadingService.hide();
+    },
+    error: (err) => {
+      this._loadingService.hide();
+      console.error('Failed to fetch initial data:', err);
+    }
+  });
+}
 
   loadClients(): void {
     this._userService.getExternalUsers(this.companyId).subscribe((res: any) => {

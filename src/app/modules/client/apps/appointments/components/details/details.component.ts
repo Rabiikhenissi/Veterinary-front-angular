@@ -16,6 +16,7 @@ import { UserService } from 'app/shared/services/user.service';
 import Swal from 'sweetalert2';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { User } from 'app/shared/models/user';
+import { forkJoin, of } from 'rxjs';
 @Component({
     selector: 'app-details',
     imports: [CommonModule, DatePipe, FeaturesDirective],
@@ -41,49 +42,43 @@ export class DetailsComponent implements OnInit {
     medications: any[] = [];
     userRole: string = '';
     ngOnInit(): void {
-        const userId = localStorage.getItem('connectedUserId');
-        console.log('userId', userId);
-        this._userService.getOne(userId!).subscribe({
-            next: (userData) => {
-                console.log('userData', userData);
-                this.userRole = userData.groupsId.code;
-                console.log('userRole', this.userRole);
-            },
-            error: () => console.error('Failed to fetch user data'),
-        });
-        this._loadingService.show();
-        this._appointmentService.getAppointment(this.id).subscribe({
-            next: (data) => {
-                this.appointment = data;
-                this._loadingService.hide();
-                console.log('petId', this.appointment.petId._id);
-                console.log(this.appointment);
+    const userId = localStorage.getItem('connectedUserId');
+    this._loadingService.show();
 
-                this._petService.getOne(this.appointment.petId._id).subscribe({
-                    next: (petData) => {
-                        this.pet = petData;
-                        this._loadingService.hide();
-                    },
-                    error: () => this._loadingService.hide(),
-                });
+    // First, get the appointment (since we need petId and medications)
+    this._appointmentService.getAppointment(this.id).subscribe({
+        next: (appointmentData) => {
+            this.appointment = appointmentData;
 
-                if (this.appointment.medications?.length > 0) {
-                    this.appointment.medications.forEach((medicationId) => {
-                        this._productService.getOne(medicationId).subscribe({
-                            next: (medicationData) => {
-                                this.medications.push(medicationData);
-                            },
-                            error: () =>
-                                console.error(
-                                    'Failed to fetch medication data'
-                                ),
-                        });
-                    });
+            // Prepare observables for forkJoin
+            const user$ = this._userService.getOne(userId!);
+            const pet$ = this._petService.getOne(this.appointment.petId._id);
+            const medications$ = this.appointment.medications?.length
+                ? forkJoin(this.appointment.medications.map((medId) => this._productService.getOne(medId)))
+                : of([]);
+
+            forkJoin({
+                user: user$,
+                pet: pet$,
+                medications: medications$
+            }).subscribe({
+                next: ({ user, pet, medications }) => {
+                    this.userRole = user.groupsId.code;
+                    this.pet = pet;
+                    this.medications = medications;
+                    this._loadingService.hide();
+                },
+                error: () => {
+                    this._loadingService.hide();
                 }
-            },
-            error: () => this._loadingService.hide(),
-        });
-    }
+            });
+        },
+        error: () => {
+            this._loadingService.hide();
+        }
+    });
+    
+}
     getFormattedTime(time: string): string {
         const dateTime = new Date(`2025-04-08T${time}`);
         return new Intl.DateTimeFormat('en-US', {
@@ -94,129 +89,115 @@ export class DetailsComponent implements OnInit {
     }
 
     confirmAppointment(): void {
-        this.appointment.status = 'confirmed';
-        const updatedAppointment = {
-            ...this.appointment,
-            companyId: this.appointment.companyId,
-            userId: this.appointment.userId._id,
-            petId: this.appointment.petId._id,
-        };
-        let user: User;
-        this._userService.getOne(this.appointment.userId._id).subscribe({
-            next: (userData) => {
-                user = userData;
-                console.log('user', user);
-            },
-            error: () => console.error('Failed to fetch user data'),
-        });
+    this._loadingService.show();
+    this.appointment.status = 'confirmed';
+    const updatedAppointment = {
+        ...this.appointment,
+        companyId: this.appointment.companyId,
+        userId: this.appointment.userId._id,
+        petId: this.appointment.petId._id,
+    };
+    let user: User;
+    this._userService.getOne(this.appointment.userId._id).subscribe({
+        next: (userData) => {
+            user = userData;
+            this._appointmentService
+                .updateAppointmentStatus(updatedAppointment)
+                .subscribe({
+                    next: () => {
+                        const title = 'Appointment Confirmed';
+                        const message = `Your appointment for ${this.appointment.petId.name} (${this.appointment.petId.species}) has been successfully scheduled for ${this.appointment.date} at ${this.appointment.time}.`;
+                        const type = 'Appointment Confirmation';
+                        this._loadingService.hide();
+                        Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Success!',
+                                                    text: 'Appointment confirmed successfully.',
+                                                    timer: 1500,
+                                                });
+                        this._notificationService
+                            .createNotification({
+                                userId: this.appointment.userId._id,
+                                title,
+                                message,
+                                type,
+                            })
+                            .subscribe(
+                                () => {
+                                    // Send Email Notification
+                                    const emailMessage = `A new appointment is scheduled for your pet ${this.appointment.petId.name} (${this.appointment.petId.species}) for ${this.appointment.date} at ${this.appointment.time}.`;
 
-        console.log('Updated Appointment:', updatedAppointment);
-        this._appointmentService
-            .updateAppointmentStatus(updatedAppointment)
-            .subscribe({
-                next: () => {
-                    const title = 'Appointment Confirmed';
-                    const message = `Your appointment for ${this.appointment.petId.name} (${this.appointment.petId.species}) has been successfully scheduled for ${this.appointment.date} at ${this.appointment.time}.`;
-                    const type = 'Appointment Confirmation';
-
-                    console.log('Notification Payload:', {
-                        userId: this.appointment.userId._id,
-                        title,
-                        message,
-                        type,
-                    });
-
-                    // Create notification
-                    this._notificationService
-                        .createNotification({
-                            userId: this.appointment.userId._id,
-                            title,
-                            message,
-                            type,
-                        })
-                        .subscribe(
-                            () => {
-                                console.log('Notification sent successfully.');
-
-                                // Send Email Notification
-                                const emailMessage = `A new appointment is scheduled for your pet ${this.appointment.petId.name} (${this.appointment.petId.species}) for ${this.appointment.date} at ${this.appointment.time}.`;
-
-                                this._notificationService
-                                    .sendEmailNotification(
-                                        user.email,
-                                        'Appointment Confirmation',
-                                        emailMessage
-                                    )
-                                    .subscribe({
-                                        next: () => {
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: 'Success!',
-                                                text: 'Appointment confirmed successfully.',
-                                                timer: 1500,
-                                            }).then(() => {});
-                                        },
-                                        error: (error) => {
-                                            console.error(
-                                                'Error sending email:',
-                                                error
-                                            );
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Oops...',
-                                                text: 'Something went wrong while sending the email notification.',
-                                            });
-                                        },
+                                    this._notificationService
+                                        .sendEmailNotification(
+                                            user.email,
+                                            'Appointment Confirmation',
+                                            emailMessage
+                                        )
+                                        .subscribe({
+                                            next: () => {
+                                                
+                                                
+                                            },
+                                            error: (error) => {
+                                                
+                                                console.error('Error sending email:', error);
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'Something went wrong while sending the email notification.',
+                                                });
+                                            },
+                                        });
+                                },
+                                (error) => {
+                                    
+                                    console.error('Error sending notification:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Something went wrong while sending the notification.',
                                     });
-                            },
-                            (error) => {
-                                console.error(
-                                    'Error sending notification:',
-                                    error
-                                );
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
-                                    text: 'Something went wrong while sending the notification.',
-                                });
-                            }
-                        );
-                },
-                error: (err) => {
-                    console.error('Error confirming appointment:', err);
-                    if (err.status === 409) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Already updated',
-                            text: 'This appointment has already been updated by another user.',
-                        });
-                        this._appointmentService
-                            .getAppointment(this.appointment._id)
-                            .subscribe({
-                                next: (updatedData) => {
-                                    this.appointment = updatedData;
-                                },
-                                error: () => {
-                                    console.error(
-                                        'Failed to refresh appointment'
-                                    );
-                                },
+                                }
+                            );
+                    },
+                    error: (err) => {
+                        this._loadingService.hide();
+                        console.error('Error confirming appointment:', err);
+                        if (err.status === 409) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Already updated',
+                                text: 'This appointment has already been updated by another user.',
                             });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong while confirming the appointment.',
-                        });
-                    }
-                },
-            });
-
-        this._loadingService.hide();
-    }
+                            this._appointmentService
+                                .getAppointment(this.appointment._id)
+                                .subscribe({
+                                    next: (updatedData) => {
+                                        this.appointment = updatedData;
+                                    },
+                                    error: () => {
+                                        console.error('Failed to refresh appointment');
+                                    },
+                                });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong while confirming the appointment.',
+                            });
+                        }
+                    },
+                });
+        },
+        error: () => {
+            this._loadingService.hide();
+            console.error('Failed to fetch user data');
+        },
+    });
+}
 
     cancelAppointment(): void {
-        this._loadingService.show();
+        
         const confirmation = this._fuseConfirmationService.open({
             title: 'Cancel Appointment',
             message: 'Would you like to confirm the cancel ?',
@@ -232,6 +213,7 @@ export class DetailsComponent implements OnInit {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
+                this._loadingService.show();
                 this._appointmentService
                     .archiveAppointment(this.appointment._id!)
                     .subscribe({
@@ -311,4 +293,5 @@ export class DetailsComponent implements OnInit {
 
         return false;
     }
+    
 }

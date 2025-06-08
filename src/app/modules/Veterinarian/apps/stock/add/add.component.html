@@ -22,7 +22,7 @@
           [(ngModel)]="product.category"
           name="category"
           #category="ngModel"
-          (selectionChange)="onCategoryChange()"
+          
           required
           [disableRipple]="true"
         >
@@ -37,7 +37,7 @@
       </mat-form-field>
 
       <!-- Species -->
-      <div *ngIf="product.category !== 'Medical Supplies'">
+      <div >
         <label class="block font-semibold text-green-700 mb-2">Species</label>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div *ngFor="let sp of speciesOptions"

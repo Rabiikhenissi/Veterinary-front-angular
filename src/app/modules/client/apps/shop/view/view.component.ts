@@ -8,6 +8,7 @@ import { ProductService } from 'app/shared/services/product.service';
 import { CartSidebarComponent } from "../cart-sidebar/cart-sidebar.component";
 import Swal from 'sweetalert2';
 import { getImageUrl } from 'app/shared/utils/image-utils';
+import { LoadingService } from 'app/shared/services/loading.service';
 
 @Component({
   selector: 'app-view',
@@ -22,8 +23,9 @@ export class ViewComponent {
   currentPage = 1;
   total = 0;
   currentSize = 99999999; // Large enough to fetch all products
+  _loadingService = inject(LoadingService);
 @ViewChild('slider', { static: false }) slider: ElementRef<HTMLDivElement>;
-
+isAddingToCart = false;
   route=inject(ActivatedRoute);
   _productService = inject(ProductService);
   _cartService = inject(CartService);
@@ -74,11 +76,23 @@ export class ViewComponent {
   }
 
   addToCart() {
+    if (this.isAddingToCart) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Please wait',
+        text: 'You are clicking too fast. Please wait for the previous action to complete.',
+        confirmButtonColor: '#f87171',
+      });
+      return; // Prevent double click
+    }
+    this.isAddingToCart = true;
     this._cartService.addToCart(this.product._id, this.quantity).subscribe({
       next: () => {
         this._cartService.fetchCart();
+        this.isAddingToCart = false;
       },
       error: (error) => {
+        this.isAddingToCart = false;
         console.error('Error adding to cart:', error);
         if (error.status == 409) {
                   Swal.fire({
@@ -111,7 +125,10 @@ export class ViewComponent {
     this._productService.getList(
       this.currentSize.toString(),
       this.currentPage.toString(),
-      this.searchQuery).subscribe(response => {
+      this.searchQuery).subscribe({
+      next: (response) => {
+        this._loadingService.show();
+      
         const products = response.data;
 
         this.recommendedProducts = products.filter(prod =>
@@ -123,17 +140,29 @@ export class ViewComponent {
               prod.species.some(s => this.product.species.includes(s)))
           )
         );
-        console.log('Recommended products loaded:', this.recommendedProducts);
+        this._loadingService.hide();
         
-      });
+      },
+      error: (error) => {
+        console.error('Error loading recommended products:', error);
+        this._loadingService.hide();
+      }})
   }
 
     loadProduct(id: string): void {
-      this._productService.getOne(id).subscribe(product => {
+      this._loadingService.show();
+      this._productService.getOne(id).subscribe(
+        { next:(product)=> {
         this.product = product;
         this.quantity = 1;
-        this.loadRecommendedProducts(); 
-      });
+        this.loadRecommendedProducts();
+    },
+    error: (error) => {
+        console.error('Error loading product:', error);
+        this._loadingService.hide();
+        
+      }
+  });
     }
 
   viewProduct(productId: string): void {

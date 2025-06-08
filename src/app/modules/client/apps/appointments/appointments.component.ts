@@ -54,6 +54,7 @@ export class CalendarComponent implements OnInit {
     _notificationService = inject(NotificationService);
     _fuseConfirmationService=inject(FuseConfirmationService)
     _loadingService=inject(LoadingService)
+    
 _companyService = inject(CompanyService);
 _route= inject(ActivatedRoute);
     pets: any[] = [];

@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PetSpecies } from 'app/shared/models/petSpecies';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 
 @Component({
@@ -21,6 +22,7 @@ _router = inject(Router);
 _route = inject(ActivatedRoute);
 _fuseConfirmationService = inject(FuseConfirmationService);
 total = 0;
+_loadingService = inject(LoadingService);
   currentSize = 10; // Default page size
   currentPage = 1;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -31,15 +33,18 @@ total = 0;
 
   // Fetch all pet species
   getSpeciesList() {
+    this._loadingService.show();
     this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId'),
   this.currentSize.toString(),
       this.currentPage.toString()
   ).subscribe({
       next: (res) => {
+        this._loadingService.hide();
         this.speciesList = res.data;
         this.total = res.total;
       },
       error: (err) => {
+        this._loadingService.hide();
         console.error('Failed to fetch species', err);
       }
     });

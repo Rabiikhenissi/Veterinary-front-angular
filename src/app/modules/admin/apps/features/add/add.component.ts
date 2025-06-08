@@ -82,20 +82,24 @@ export class AddComponent implements OnInit {
         
     }
     addFeature(myForm: NgForm): void {
+        
         if (myForm.valid) {
             if (this.feature.type === FeatureType.group) {
                 this.feature.link = null;
             } else {
                 this.feature.subtitle = null;
             }
+            this._loadingService.show()
             console.log(this.feature);
             this._featureService.createFeature(this.feature).subscribe({
                 next: () => {
+                    this._loadingService.hide();
                     this._router
                         .navigate(['../'], { relativeTo: this._route })
                         .then();
                 },
                 error: (error) => {
+                    this._loadingService.hide();
                     console.error('Error creating feature:', error);
                     if (error.status === 400) {
                         Swal.fire({

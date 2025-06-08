@@ -1,4 +1,4 @@
-@if (!loading && pet) {
+@if ( pet) {
   <div class="max-w-5xl w-full mx-auto mt-10 mb-16 p-6 bg-green-50 rounded-2xl shadow-xl border border-green-100">
     <!-- Pet Header -->
     <div class="flex flex-col items-center mb-8">
@@ -38,7 +38,7 @@
           </button>
         </a>
       </div>
-      @if (!loadingAppointments) {
+      
         @if (appointments && appointments.length > 0) {
           <ul class="space-y-4">
             @for (appt of appointments ; track $index) {
@@ -74,13 +74,7 @@
             (page)="pageChanged($event)">
           </mat-paginator>
         </div>
-      } @else {
-        <div class="text-center text-gray-400 mt-4">Loading appointments...</div>
-      }
+       
     </div>
   </div>
 }
-
-<ng-template #loadingTemplate>
-  <div class="text-center mt-10 text-gray-500">Loading pet details...</div>
-</ng-template>

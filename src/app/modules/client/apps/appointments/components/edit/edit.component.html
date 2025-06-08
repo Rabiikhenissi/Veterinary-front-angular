@@ -1,61 +1,83 @@
-<div class="max-w-4xl w-full mx-auto p-8 bg-white rounded-xl shadow-lg border border-green-100 mt-8">
-  <h2 class="text-3xl font-bold text-green-800 mb-6">Edit Appointment</h2>
-
-  <form (ngSubmit)="updateAppointment()" class="space-y-6">
-    <!-- Date Input -->
-    <div>
-      <label class="block text-lg font-medium text-gray-700 mb-1">Date</label>
-      <input
-  type="date"
-  [(ngModel)]="selectedDate"
-  name="date"
-  required
-  (ngModelChange)="updateAllowedTimes()"
-  class="w-full px-4 py-2 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-/>
-    </div>
-
-    <!-- Time Input -->
-    <div>
-  <label class="block text-lg font-medium text-gray-700 mb-1">Time</label>
-  <select
-  [(ngModel)]="selectedTime"
-  name="time"
-  required
-  class="w-full px-4 py-2 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+<div
+    class="max-w-4xl w-full mx-auto p-8 bg-white rounded-xl shadow-lg border border-green-100 mt-8"
 >
-  <option value="">-- Select time --</option>
-  <option *ngFor="let t of allowedTimes" [value]="t">{{ t }}</option>
-</select>
-</div>
+    <h2 class="text-3xl font-bold text-green-800 mb-6">Edit Appointment</h2>
 
-    <div>
-        <label class="block text-lg font-medium text-gray-700 mb-3">Select Animal</label>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div
-            *ngFor="let pet of pets"
-            (click)="selectPet(pet)"
-            class="cursor-pointer border-2 rounded-lg p-4 flex flex-col items-center text-center transition-all duration-200"
-            [ngClass]="{
-              'border-green-500 bg-green-50 shadow-lg': selectedPetId === pet._id,
-              'border-gray-200 hover:border-green-300': selectedPetId !== pet._id
-            }"
+    <form (ngSubmit)="updateAppointment()" class="space-y-6">
+        <!-- Date Input -->
+        <div>
+            <label class="block text-lg font-medium text-gray-700 mb-1"
+                >Date</label
+            >
+            <input
+                type="date"
+                [(ngModel)]="selectedDate"
+                name="date"
+                required
+                (ngModelChange)="updateAllowedTimes()"
+                class="w-full px-4 py-2 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+            />
+        </div>
+
+        <!-- Time Input -->
+        <div>
+          <label class="block text-lg font-medium text-gray-700 mb-1"
+            >Time</label
           >
-            <img [src]="pet.icon" alt="{{ pet.name }}" class="w-20 h-20 object-cover rounded-full mb-2" />
-            <span class="font-medium text-gray-800">{{ pet.name }}</span>
-            <span class="text-sm text-gray-500">{{ pet.species }}</span>
+          <select
+            [(ngModel)]="selectedTime"
+            name="time"
+            required
+            #timeCtrl="ngModel"
+            class="w-full px-4 py-2 border rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+          >
+            <option value="">-- Select time --</option>
+            <option *ngFor="let t of allowedTimes" [value]="t">
+              {{ t }}
+            </option>
+          </select>
+          <div *ngIf="timeCtrl.invalid && timeCtrl.touched" class="text-red-600 text-base mt-1">
+            Please select a time.
           </div>
         </div>
-      </div>
 
-    <!-- Submit -->
-    <div class="text-right pt-4">
-      <button
-        type="submit"
-        class="bg-green-600 hover:bg-green-700 text-white text-lg font-medium px-6 py-3 rounded-md shadow"
-      >
-        ✅ Save Changes
-      </button>
-    </div>
-  </form>
+        <div>
+            <label class="block text-lg font-medium text-gray-700 mb-3"
+                >Select Animal</label
+            >
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div
+                    *ngFor="let pet of pets"
+                    (click)="selectPet(pet)"
+                    class="cursor-pointer border-2 rounded-lg p-4 flex flex-col items-center text-center transition-all duration-200"
+                    [ngClass]="{
+                        'border-green-500 bg-green-50 shadow-lg':
+                            selectedPetId === pet._id,
+                        'border-gray-200 hover:border-green-300':
+                            selectedPetId !== pet._id
+                    }"
+                >
+                    <img
+                        [src]="pet.icon"
+                        alt="{{ pet.name }}"
+                        class="w-20 h-20 object-cover rounded-full mb-2"
+                    />
+                    <span class="font-medium text-gray-800">{{
+                        pet.name
+                    }}</span>
+                    <span class="text-sm text-gray-500">{{ pet.species }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="text-right pt-4">
+            <button
+                type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white text-lg font-medium px-6 py-3 rounded-md shadow"
+            >
+                ✅ Save Changes
+            </button>
+        </div>
+    </form>
 </div>
