@@ -71,6 +71,7 @@ ngOnInit(): void {
   });
 }
 
+
   loadAppointment(id: string): void {
     this._appointmentService.getAppointment(id).subscribe({
       next: (appointmentData) => {
