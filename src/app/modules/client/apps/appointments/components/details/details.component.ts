@@ -64,6 +64,7 @@ export class DetailsComponent implements OnInit {
             }).subscribe({
                 next: ({ user, pet, medications }) => {
                     this.userRole = user.groupsId.code;
+                    console.log('User Role:', this.userRole);
                     this.pet = pet;
                     this.medications = medications;
                     this._loadingService.hide();
@@ -263,6 +264,7 @@ export class DetailsComponent implements OnInit {
             .then();
     }
     addInfo(): boolean {
+        console.log("baw")
         if (!this.appointment?.date || !this.appointment?.time) {
             console.log('no date or time');
             return false;
