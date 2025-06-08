@@ -66,7 +66,7 @@ allTypes: string[] = [];
   this.currentSize.toString(),
   this.currentPage.toString(),
   this.filteredType,
-  false,
+  true,
   this.userId
 ).subscribe({
   next: (response) => {

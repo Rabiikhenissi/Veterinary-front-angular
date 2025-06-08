@@ -1,42 +1,44 @@
-<div class="bg-white p-6 rounded-2xl shadow-lg my-8 w-full max-w-4xl mx-auto">
-  <h3 class="text-2xl font-bold text-green-700 mb-6 text-center">Prescribed Medications</h3>
+
+<div class="bg-white p-6 rounded-2xl shadow-lg my-8 w-full border border-gray-100">
+  <h3 class="text-3xl font-bold text-green-800 mb-6 tracking-tight flex items-center gap-2">
+    <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2M9 17H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4h-2M9 17v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"></path></svg>
+    Prescribed Medications
+  </h3>
 
   <div>
-    <label class="block font-semibold text-green-800 mb-2 text-lg">Prescribed Medications</label>
-    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-6">
+    <label class="block font-semibold text-green-900 mb-2 text-lg">Select Medications</label>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-6">
       <div
         *ngFor="let med of medication"
-        class="flex flex-col items-center cursor-pointer p-4 rounded-xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white relative"
-        [class.border-green-500]="selectedMedications.includes(med)"
-        [class.bg-green-50]="selectedMedications.includes(med)"
+        class="flex flex-col items-center cursor-pointer p-4 rounded-2xl border-2 transition-all duration-200 ease-in-out shadow hover:shadow-lg bg-white hover:border-green-400 group"
+        [class.border-green-600]="selectedMedications.includes(med)"
+        [class.border-gray-200]="!selectedMedications.includes(med)"
         (click)="selectMedication(med)"
       >
-        <img [src]="med.image" [alt]="med.name" class="w-16 h-16 mb-2 object-cover rounded-full border border-green-200 shadow" />
-        <span class="text-base font-medium text-green-700 mb-1">{{ med.name }}</span>
-        <span class="text-xs text-green-500 mb-2">{{ med.price | currency }}</span>
-
-        <!-- Checkmark for selected -->
-        <span *ngIf="selectedMedications.includes(med)" class="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1 shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-          </svg>
-        </span>
+        <div class="relative">
+          
+<img [src]="med.imageUrl" [alt]="med.name" class="w-20 h-20 mb-2 object-cover rounded-lg border border-gray-200 group-hover:scale-105 transition-transform" />
+          <span *ngIf="selectedMedications.includes(med)" class="absolute top-0 right-0 bg-green-600 text-white text-xs px-2 py-0.5 rounded-full shadow">✔</span>
+        </div>
+        <span class="text-base font-semibold text-green-800 mb-1 text-center">{{ med.name }}</span>
+        <span class="text-sm text-green-500 mb-2">{{ med.price | currency:'TND':'symbol' }}</span>
 
         <!-- Dosage & Instructions for selected ones -->
-        <div *ngIf="selectedMedications.includes(med)" class="w-full mt-4 bg-green-50 border border-green-200 rounded-lg p-3" (click)="$event.stopPropagation()">
-          <label class="block text-green-700 font-semibold mb-1">Dosage</label>
+        <div *ngIf="selectedMedications.includes(med)" class="w-full mt-2 space-y-2">
           <input
             type="text"
             [(ngModel)]="med.dosage"
-            placeholder="e.g., 2ml"
-            class="mb-3 p-2 border border-green-300 rounded-md w-full focus:ring-2 focus:ring-green-400"
+            placeholder="Dosage (e.g., 2ml)"
+            class="p-2 border border-green-200 rounded-lg w-full focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none transition"
+            (click)="$event.stopPropagation()"
           />
-          <label class="block text-green-700 font-semibold mb-1">Instructions</label>
           <input
             type="text"
             [(ngModel)]="med.instructions"
-            placeholder="e.g., Twice a day"
-            class="p-2 border border-green-300 rounded-md w-full focus:ring-2 focus:ring-green-400"
+            placeholder="Instructions (e.g., Twice a day)"
+            class="p-2 border border-green-200 rounded-lg w-full focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none transition"
+            (click)="$event.stopPropagation()"
+
           />
         </div>
       </div>
@@ -47,9 +49,12 @@
   <div class="mt-8 flex flex-wrap gap-4 justify-end">
     <button
       (click)="savePrescription()"
-      class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg text-base shadow flex items-center gap-2"
+
+      class="bg-green-700 hover:bg-green-800 text-white px-6 py-2.5 rounded-lg text-base font-semibold shadow-md flex items-center gap-2 transition"
     >
-      💾 Save Prescription
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path><polyline points="15 10 20 10 20 15"></polyline><line x1="10" y1="14" x2="20" y2="4"></line></svg>
+      Save Prescription
+
     </button>
   </div>
 </div>
