@@ -44,11 +44,13 @@ petSpecies: any[] = [];
     address: string | undefined;
     connectedUserId: string | null = null;
     connectedCompanyId: string | null = null;
+    connectedUserType: string | null = null;
     services: MedicalServices[] = [];
 daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     ngOnInit(): void {
         this.connectedUserId = localStorage.getItem('connectedUserId');
         this.connectedCompanyId = localStorage.getItem('connectedUserCompany');
+        this.connectedUserType = localStorage.getItem('connectedUserType');
         console.log(this.isConnected());
         if (this.id) {
         

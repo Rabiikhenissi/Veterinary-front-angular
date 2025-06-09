@@ -133,6 +133,7 @@ loadAppointment(id: string): void {
     }
   }
 
+
   const medications = this.selectedMedications.map((med) => ({
     productId: med._id,
     dosage: med.dosage,
