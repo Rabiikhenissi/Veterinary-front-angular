@@ -70,7 +70,7 @@ selectedInvoiceType: 'invoice' | 'invoiceNoMeds' = 'invoice';
 
   // Function to fetch the prescription and get its invoiceId
   getPrescriptionInvoiceId(prescriptionId: string): void {
-
+    this._loadingService.show();
   this._prescriptionService.getPrescription(prescriptionId).subscribe({
     next: (prescriptionData) => {
       this.invoices = prescriptionData;
@@ -96,12 +96,15 @@ selectedInvoiceType: 'invoice' | 'invoiceNoMeds' = 'invoice';
 
   // Open the prescription PDF
   viewPrescriptionPDF(prescriptionId: string): void {
+    this._loadingService.show();
     this._appointmentService.getPrescriptionPdf(prescriptionId).subscribe(
       (blob) => {
+        this._loadingService.hide();
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank');
       },
       (error) => {
+        this._loadingService.hide();
         console.error('Error fetching prescription PDF', error);
       }
     );

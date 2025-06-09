@@ -78,6 +78,10 @@ body fuse-splash-screen .spinner .bounce2 ,.fuse-splash-screen .spinner .bounce2
         transform: scale(1.0);
     }
 }
+.fuse-splash-screen {
+  pointer-events: all;
+  backdrop-filter: blur(2px); /* Optional: adds visual clarity that it's blocking */
+}
 
 body:not(.fuse-splash-screen-hidden) {
     overflow: hidden;
