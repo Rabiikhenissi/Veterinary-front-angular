@@ -63,55 +63,68 @@ export class AddComponent implements AfterViewInit {
 
 
     ngAfterViewInit(): void {
-      setTimeout(() => {
-        (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
-  
-      // init the map
-      this.map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [10.1658, 36.8065],
-                zoom: 9
-      });
-  
-      // handle map click
-      this.map.on('click', (event) => {
-        const { lng, lat } = event.lngLat;
-        this._changeDetectorRef.detectChanges();
-        // drop or move marker
-        if (!this.marker) {
-          this.marker = new mapboxgl.Marker({ draggable: true })
-            .setLngLat([lng, lat])
-            .addTo(this.map);
-  
-          this.marker.on('draged', () => {
-            const pos = this.marker!.getLngLat();
-            this.company.latitude = pos.lat;
-            this.company.longitude = pos.lng;
-            this._changeDetectorRef.detectChanges();
-          });
-        } else {
-          this.marker.setLngLat([lng, lat]);
-        }
-  
-        // set the lat/lng in model
-        this.company.latitude = lat;
-        this.company.longitude = lng;
-      });    }, 10); 
+  this._loadingService.show(); // Show loading before map starts
+  setTimeout(() => {
+    (mapboxgl as any).accessToken = 'pk.eyJ1IjoieW9zcmEtbmFqYXIiLCJhIjoiY2xmdGw2a20wMDF4eTNxcDBiMHZycnZpdCJ9.PTo1tyEyJry6uEKaqRLkRQ';
 
-    }
+    // init the map
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [10.1658, 36.8065],
+      zoom: 9
+    });
+
+    // Hide loading when map is fully loaded
+    this.map.on('load', () => {
+      this._loadingService.hide();
+    });
+
+    // handle map click
+    this.map.on('click', (event) => {
+      const { lng, lat } = event.lngLat;
+      this._changeDetectorRef.detectChanges();
+      // drop or move marker
+      if (!this.marker) {
+        this.marker = new mapboxgl.Marker({ draggable: true })
+          .setLngLat([lng, lat])
+          .addTo(this.map);
+
+        this.marker.on('draged', () => {
+          const pos = this.marker!.getLngLat();
+          this.company.latitude = pos.lat;
+          this.company.longitude = pos.lng;
+          this._changeDetectorRef.detectChanges();
+        });
+      } else {
+        this.marker.setLngLat([lng, lat]);
+      }
+
+      // set the lat/lng in model
+      this.company.latitude = lat;
+      this.company.longitude = lng;
+    });
+  }, 10);
+}
   
 
 
 
   addOne(myForm: NgForm): void {
-    if (myForm.valid) {
-      this.company.firstCalendarDay = this.addOneDay(this.company.firstCalendarDay);
-        this._companyService.createOne(this.company).subscribe(() => {
-            this._router.navigate([`../`], { relativeTo: this._route }).then();
-        })
-    }
+  if (myForm.valid) {
+    this._loadingService.show();
+    this.company.firstCalendarDay = this.addOneDay(this.company.firstCalendarDay);
+    this._companyService.createOne(this.company).subscribe({
+      next: () => {
+        this._router.navigate([`../`], { relativeTo: this._route }).then();
+        this._loadingService.hide();
+      },
+      error: () => {
+        this._loadingService.hide();
+      }
+    });
   }
+}
   addOneDay(date: string): string {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 1); 

@@ -95,11 +95,13 @@ export class DetailsComponent implements OnInit {
             },
         });
 
-        // Subscribe to the confirmation dialog closed action
         confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-                this._groupService.deleteOne(this.group._id).subscribe(() => {});
+                this._loadingService.show();
+                this._groupService.deleteOne(this.group._id).subscribe(() => {
+                    this._loadingService.hide();
+                });
                 this._router.navigate(['/home/groups']).then();
             }
         });

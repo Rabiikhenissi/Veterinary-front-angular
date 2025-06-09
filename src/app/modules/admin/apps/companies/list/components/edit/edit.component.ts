@@ -58,8 +58,8 @@ export class EditComponent implements OnInit {
     map: mapboxgl.Map | undefined;
 
     ngOnInit(): void {
-        if (this.id) {
-            this._loadingService.show()
+      this._loadingService.show()
+      if (this.id) {
             forkJoin([
                 this._companyService.getOne(this.id),
             ]).subscribe({
@@ -68,7 +68,7 @@ export class EditComponent implements OnInit {
                     if (this.company.firstCalendarDay) {
                       this.company.firstCalendarDay = this.formatDateForInput(this.company.firstCalendarDay);
                     }
-                    this._loadingService.hide()
+                    
                     setTimeout(() => this.initMapbox(), 100);
                 },
                 error: () => {
@@ -87,7 +87,9 @@ export class EditComponent implements OnInit {
           center: [this.company.longitude, this.company.latitude],
           zoom: 13,
         });
-      
+      this.map.on('load', () => {
+        this._loadingService.hide(); // Hide loading when map is ready
+    });
       
     this.map.addControl(new mapboxgl.NavigationControl());
     const marker = new mapboxgl.Marker({ draggable: true })

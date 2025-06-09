@@ -12,6 +12,7 @@ import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
 import { getImageUrl } from 'app/shared/utils/image-utils';
+import { LoadingService } from 'app/shared/services/loading.service';
 
 @Component({
   selector: 'app-list',
@@ -26,7 +27,7 @@ export class ListComponent implements OnInit {
   _fuseConfirmationService = inject(FuseConfirmationService);
 _route = inject(ActivatedRoute);
   products: Product[] = [];
-  categories: string[] = ['Medications', 'Accessories', 'Food', 'Hygiene', 'Medical Supplies'];
+  categories: string[] = ['Medications', 'Accessories', 'Food', 'Hygiene'];
   selectedCategories: string[] = [];
   lowStockOnly: boolean = false;
   searchQuery: string = '';
@@ -40,12 +41,13 @@ _route = inject(ActivatedRoute);
   doneTypingInterval = 500;
   filterSearch: string;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
+_loadingService = inject(LoadingService);
   ngOnInit(): void {
     this.fetchProducts();
   }
 
   fetchProducts(): void {
+    this._loadingService.show();
     this._productService
       .getList(
         this.currentSize.toString(),
@@ -60,9 +62,11 @@ _route = inject(ActivatedRoute);
             ? results.data.filter(p => p.quantity < 5) 
             : results.data;
           this.total = results.total;
+          this._loadingService.hide();
         },
         error: error => {
           console.error('Error fetching products:', error);
+          this._loadingService.hide();
         }
       });
   }

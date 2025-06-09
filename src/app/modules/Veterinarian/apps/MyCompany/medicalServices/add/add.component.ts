@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Vet_SERVICES } from 'app/shared/enums/services';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import Swal from 'sweetalert2';
 
@@ -16,6 +17,7 @@ export class AddComponent implements OnInit {
   _medicalServicesService = inject(MedicalServicesService); 
   _router = inject(Router);
   _route = inject(ActivatedRoute);
+  _loadingService = inject(LoadingService);
   predefinedServices = Vet_SERVICES;
   selectedService = '';
   price: number | null = null;
@@ -24,6 +26,7 @@ export class AddComponent implements OnInit {
   }
 submit() {
     if (!this.selectedService || this.price == null) return;
+    this._loadingService.show();
 console.log('Selected Service:', this.selectedService);
     console.log('Price:', this.price);
     console.log('Company ID:', localStorage.getItem('connectedUserCompany'));
@@ -38,6 +41,7 @@ console.log('Selected Service:', this.selectedService);
 
     this._medicalServicesService.createOne(newService).subscribe({
       next: () => {
+        this._loadingService.hide();
         Swal.fire({
           icon: 'success',
           title: 'Success!',
@@ -49,6 +53,7 @@ console.log('Selected Service:', this.selectedService);
         });
       },
       error: (err) => {
+        this._loadingService.hide();
         console.error('Failed to add medical service', err);
       },
     });

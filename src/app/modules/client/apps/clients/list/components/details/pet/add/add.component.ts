@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PetSpecies } from 'app/shared/models/petSpecies';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -25,7 +26,7 @@ userId:string;
 today: string = new Date().toISOString().split('T')[0];
   _userService = inject(UserService);
     _petSpeciesService = inject(PetSpeciesService);
-  
+  _loadingService = inject(LoadingService);
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
   name: ['', Validators.required],
@@ -41,11 +42,14 @@ today: string = new Date().toISOString().split('T')[0];
  speciesOptions: PetSpecies[] = []; 
   
     ngOnInit() {
+      this._loadingService.show();
     this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
         next: (res) => {
           this.speciesOptions = res.data;
+          this._loadingService.hide();
         },
         error: (err) => {
+          this._loadingService.hide()
           console.error('Failed to fetch species', err);
         }
       });
@@ -61,11 +65,11 @@ today: string = new Date().toISOString().split('T')[0];
 
   onSubmit() {
     if (this.petForm.valid) {
+      this._loadingService.show();
       this.petForm.patchValue({ ownerId: this.userId });
       this._petService.createOneSecretary(this.petForm.value).subscribe({
         next: () => {
-          console.log('Pet added successfully!');
-          console.log(this.petForm.value);
+          this._loadingService.hide();
           this.router.navigate(['../..'], { relativeTo: this.route });
         },
         error: (error) => {

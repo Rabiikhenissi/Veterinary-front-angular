@@ -73,14 +73,16 @@ today: string = new Date().toISOString().split('T')[0];
       
       const newPet = this.petForm.value;
       console.log('Pet to add:', newPet);
+      this._loadingService.show(); // Start loading
       this._petService.createOne(newPet).subscribe({
         next: () => {
-          console.log('Pet added successfully!');
+          this._loadingService.hide(); // Stop loading
           this.router.navigate(['/home/profile']);
         },
         error: (error) => {
+          this._loadingService.hide(); // Stop loading
           console.error('Error adding pet:', error);
-          if(error.status === 400) {
+          if (error.status === 400) {
             Swal.fire({
               icon: 'error',
               title: 'cant add pet',

@@ -88,15 +88,15 @@ speciesOptions: PetSpecies[] = [];
   onSubmit() {
     if (this.petForm.valid) {
       const updatedPet = this.petForm.value;
-       updatedPet._id = this.petId; // Ensure the ID is included in the updated pet object
+      this._loadingService.show(); // Start loading
+      updatedPet._id = this.petId; // Ensure the ID is included in the updated pet object
       this._petService.updateOne(updatedPet).subscribe({
         next: () => {
-          console.log('Pet updated successfully!');
-          console.log('Updated pet:', updatedPet);
+          this._loadingService.hide(); // Stop loading
           this.router.navigate(['/home/profile']);
-          console.log(this.petForm.value);
         },
         error: (err) => {
+          this._loadingService.hide(); // Stop loading
           console.error('Error updating pet:', err);
         },
       });

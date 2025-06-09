@@ -88,8 +88,17 @@ export class DetailsComponent implements OnInit {
     confirmation.afterClosed().subscribe((result) => {
       // If the confirm button pressed...
       if (result === 'confirmed') {
-        this._featureService.deleteFeature(this.feature._id).subscribe(() => {});
-        this._router.navigate(['/home/features']).then();
+        this._loadingService.show()
+        this._featureService.deleteFeature(this.feature._id).subscribe({
+          next: () => {
+            this._loadingService.hide()
+            this._router.navigate(['/home/features']).then();
+          },
+          error: () => {
+            this._loadingService.hide()
+            console.log('Error deleting feature');
+          }
+        });
       }
     });
   }

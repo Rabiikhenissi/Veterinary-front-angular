@@ -4,9 +4,11 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { Product } from 'app/shared/models/product';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { ProductService } from 'app/shared/services/product.service';
 import { getImageUrl } from 'app/shared/utils/image-utils';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,12 +20,13 @@ import Swal from 'sweetalert2';
 export class EditComponent implements OnInit {
   _route = inject(ActivatedRoute);
   _router = inject(Router);
+  _loadingService = inject(LoadingService);
   _fb = inject(FormBuilder);
   _petSpeciesService = inject(PetSpeciesService);
   _productService = inject(ProductService);
   productForm!: FormGroup;
   id = this._route.snapshot.paramMap.get('id')!;
-  categories = ['Medications', 'Accessories', 'Food', 'Hygiene', 'Medical Supplies'];
+  categories = ['Medications', 'Accessories', 'Food', 'Hygiene'];
   
     species: PetSpecies[] = []; 
   
@@ -38,18 +41,22 @@ getProductImageUrl(imagePath: string): string {
     return this.species.find(s => s.name === name)?.icon;
   }
   ngOnInit(): void {
-    this._productService.getOne(this.id).subscribe(product => {
+  this._loadingService.show();
+  forkJoin({
+    product: this._productService.getOne(this.id),
+    species: this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId'))
+  }).subscribe({
+    next: ({ product, species }) => {
       this.initForm(product);
-    });
-    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe({
-      next: (res) => {
-        this.species = res.data;
-      },
-      error: (err) => {
-        console.error('Failed to fetch species', err);
-      }
-    });
-  }
+      this.species = species.data;
+      this._loadingService.hide();
+    },
+    error: (err) => {
+      this._loadingService.hide();
+      console.error('Failed to fetch product or species', err);
+    }
+  });
+}
 
   initForm(product: Product) {
     const formattedDate = product.expirationDate
@@ -70,16 +77,26 @@ getProductImageUrl(imagePath: string): string {
 
   onSubmit() {
     if (this.productForm.valid) {
+      this._loadingService.show();
       const updated = { ...this.productForm.value, _id: this.id };
-      this._productService.updateOne(updated).subscribe(() => {
-        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: 'Product updated successfully.',
-                              timer: 1000,
-                              showConfirmButton: false,
-                          }).then(() => {
-                            this._router.navigate([`../..`], { relativeTo: this._route }).then();        });
+      this._productService.updateOne(updated).subscribe({
+        next: () => {
+          this._loadingService.hide();
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Product updated successfully.',
+            timer: 1000,
+            showConfirmButton: false,
+          }).then(() => {
+            this._loadingService.hide();
+            this._router.navigate([`../..`], { relativeTo: this._route }).then();
+          });
+        },
+        error: (err) => {
+          console.error('Failed to update product', err);
+          this._loadingService.hide();
+        }
       });
     }
   }

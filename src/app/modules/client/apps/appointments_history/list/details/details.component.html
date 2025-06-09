@@ -29,15 +29,15 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <div class="text-xs text-gray-500">Weight</div>
+            <div class="text-md text-gray-500">Weight</div>
             <div class="font-bold text-lg">{{ appointment?.weight || 'N/A' }}</div>
           </div>
           <div>
-            <div class="text-xs text-gray-500">Temperature</div>
+            <div class="text-md text-gray-500">Temperature</div>
             <div class="font-bold text-lg">{{ appointment?.temperature || 'N/A' }}</div>
           </div>
           <div>
-            <div class="text-xs text-gray-500">Heart Rate</div>
+            <div class="text-md text-gray-500">Heart Rate</div>
             <div class="font-bold text-lg">{{ appointment?.heartRate || 'N/A' }}</div>
           </div>
         </div>
@@ -180,6 +180,7 @@
         </h3>
         <p class="font-bold text-green-800 text-lg">{{ appointment.nextAppointment | date : 'dd/MM/yyyy' }}</p>
       </div>
+      <div >
     </div>
   </div>
 </div>
