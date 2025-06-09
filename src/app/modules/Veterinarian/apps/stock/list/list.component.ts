@@ -73,7 +73,6 @@ _loadingService = inject(LoadingService);
 
 getProductImageUrl(imagePath: string): string {
   const url = getImageUrl(imagePath);
-  console.log('getProductImageUrl called with:', imagePath, '-> returns:', url);
   return url;
 }
   onSearchChange() {

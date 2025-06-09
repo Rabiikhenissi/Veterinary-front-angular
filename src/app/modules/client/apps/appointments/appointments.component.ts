@@ -134,7 +134,33 @@ this.initializeCalendarOptions();
         initialView: 'timeGridWeek', // Or 'timeGridDay' depending on your needs
         initialDate: this.TODAY_STR,
         weekends: true,
-        editable: true,
+        editable: true, // allow editing by default
+  eventDurationEditable: true,
+  eventStartEditable: true,
+  views: {
+    dayGridMonth: {
+      editable: false, // ⛔ disables moving/resizing in month view
+      eventDurationEditable: false,
+      eventResizableFromStart: false
+    },
+    timeGridWeek: {
+      eventDurationEditable: false,
+      eventResizableFromStart: false
+    }
+  },
+  eventResize: (info) => {
+    if (info.view.type === 'dayGridMonth' || info.view.type === 'timeGridWeek') {
+      info.revert();
+    }
+  },
+  eventDrop: (info) => {
+  if (info.view.type === 'dayGridMonth') {
+    info.revert();
+  }
+  else {
+    this.handleEventDrop(info);
+  }
+},
         height: 'auto',
                 selectable: true,
         selectMirror: true,
@@ -147,7 +173,6 @@ this.initializeCalendarOptions();
         select: this.handleDateSelect.bind(this),
         eventClick: this.handleEventClick.bind(this),
         eventsSet: this.handleEvents.bind(this),
-        eventDrop: this.handleEventDrop.bind(this),
 
         handleWindowResize: true,
 windowResizeDelay: 150,
@@ -257,6 +282,33 @@ windowResizeDelay: 150,
 
             calendarApi.unselect();
             return;
+        } 
+
+    const companyId = localStorage.getItem('connectedUserCompany');
+    const appointmentId = null;
+    const utcMidnight = new Date(Date.UTC(
+        selectStart.getFullYear(),
+        selectStart.getMonth(),
+        selectStart.getDate()
+    )).toISOString();
+
+    this._appointmentService
+        .isAvailable(
+            utcMidnight,
+            selectStart.toTimeString().substring(0, 5),
+            companyId,
+            appointmentId
+        )       .subscribe((res) => {
+        console.log('Availability response:', res);
+        if (!res.available) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Time Unavailable',
+            text: 'This time is not available for appointments.',
+            confirmButtonColor: '#f87171',
+          });
+          calendarApi.unselect();
+          return;
         }
         if(this.userType === 'external') {
             if(this.connectedUser.petId.length === 0) {
@@ -269,111 +321,162 @@ windowResizeDelay: 150,
             return;}
             
         Swal.fire({
-            title: 'Select a Pet',
-            input: 'select',
-            inputOptions: this.pets.reduce((acc, pet) => {
-                acc[pet._id] = `${pet.name} (${pet.species})`;
-                return acc;
-            }, {}),
-            inputPlaceholder: 'Choose a pet...',
-            showCancelButton: true,
-            cancelButtonColor: '#FF5733',
-            confirmButtonColor: '#4CAF50',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to select a pet!';
-                }
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const selectedPetId = result.value;
-                const pet = this.pets.find((pet) => pet._id === selectedPetId);
-
-                if (pet) {
-                    const appointment: Appointment = {
-                        userId: {
-                            _id: pet.ownerId._id,
-                            name: pet.ownerId.name,
-                        },
-                        petId: {
-                            _id: pet._id,
-                            name: pet.name,
-                            species: pet.species,
-                            icon: pet.icon,
-                        },
-                        companyId: localStorage.getItem('connectedUserCompany'),
-                        date: startDate.split('T')[0],
-                        time: startDate.split('T')[1]?.split('+')[0]?.substring(0, 5),
-                        
-                        status: 'pending',
-                    };
-
-                    this._appointmentService
-                        .createAppointment(appointment)
-                        .subscribe(
-                            (response) => {
-                                const title = 'New Appointment Booked';
-                                const message = `A new appointment has been booked by ${appointment.userId.name} for their pet ${appointment.petId.name} (${appointment.petId.species}).\nThe appointment is scheduled for ${appointment.date} at ${appointment.time}.`;
-                                const type = 'Appointment Booking';
-                                
-                                this._userService.getInternalUsers().subscribe({
-                                    next: (internalUsersResponse: any) => {
-                                      const internalUsers = internalUsersResponse;
-                                      if (Array.isArray(internalUsers)) {
-                                        internalUsers.forEach(user => {
-                                          this._notificationService.createNotification({
-                                            userId: user._id,
-                                            title: title,
-                                            message: message,
-                                            type: type
-                                          }).subscribe(() => {
-                                             this._notificationService.sendEmailNotification(
-                                              user.email,
-                                              title,
-                                              message
-                                            ).subscribe(() => {
-                                              console.log(`Email sent to internal user ${user.name}`);
-                                            }, (error) => {
-                                              console.error('Error sending email to internal user:', error);
-                                            });
-                                          }, (error) => {
-                                            console.error('Error sending notification to internal user:', error);
-                                          });
-                                        });
-                                      } else {
-                                        console.error('Expected an array but got:', internalUsers);
-                                      }
-                                    },
-                                    error: (error) => {
-                                      console.error('Error fetching internal users:', error);
-                                    }
-                                  });
-                            
-                                Swal.fire({
-                                    title: 'Appointment created!',
-                                    text: 'Your appointment has been added.Waiting for confirmation.',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                    confirmButtonColor: '#28a745',
-                                }).then(() => {
-                                    calendarApi.removeAllEvents();
-                                    this.loadAppointments();
-                                });
-                            },
-                            (error) => {
-                                Swal.fire(
-                                    'Error!',
-                                    'There was an error creating the appointment.',
-                                    'error'
-                                );
-                                console.error(
-                                    'Error creating appointment:',
-                                    error
-                                );
-                            }
-                        );
-                }
+          title: '<span style="font-size: 1.5rem; color: #222; font-weight: 600; letter-spacing: 0.5px;">Select a Pet</span>',
+          html: `
+            <div style="margin-bottom: 1rem; display: flex; flex-direction: column; align-items: center;">
+            <div id="pet-list" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+              ${this.pets.map(pet => `
+              <div class="pet-card" data-pet-id="${pet._id}" style="
+                cursor: pointer;
+                border-radius: 1rem;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+                padding: 1rem 1.2rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: box-shadow 0.2s, border 0.2s;
+                border: 2px solid transparent;
+                min-width: 120px;
+                max-width: 140px;
+              ">
+                <img src="${pet.icon || pet.image || 'https://cdn-icons-png.flaticon.com/512/616/616408.png'}"
+                alt="${pet.name}" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid #a5b4fc;">
+                <div style="font-weight: 500; color: #3730a3; font-size: 1.05rem;">${pet.name}</div>
+                <div style="font-size: 0.95rem; color: #6366f1; opacity: 0.85;">${pet.species}</div>
+              </div>
+              `).join('')}
+            </div>
+            <input type="hidden" id="pet-select" class="swal2-input" />
+            </div>
+            <style>
+            .pet-card.selected {
+              border: 2px solid #6366f1 !important;
+              box-shadow: 0 4px 20px rgba(99,102,241,0.15);
+              background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
             }
+            .pet-card:hover {
+              border: 2px solid #818cf8;
+            }
+            </style>
+          `,
+          showCancelButton: true,
+          confirmButtonText: '<span style="padding: 0 2rem; font-weight: 500;">Book</span>',
+          cancelButtonText: '<span style="padding: 0 2rem;">Cancel</span>',
+          focusConfirm: false,
+          customClass: {
+            popup: 'swal2-custom-popup',
+            confirmButton: 'swal2-custom-confirm',
+            cancelButton: 'swal2-custom-cancel'
+          },
+          didOpen: () => {
+            // Card selection logic
+            const petCards = Swal.getPopup().querySelectorAll('.pet-card');
+            petCards.forEach(card => {
+              card.addEventListener('click', () => {
+                petCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                const petId = card.getAttribute('data-pet-id');
+                (document.getElementById('pet-select') as HTMLInputElement).value = petId || '';
+              });
+            });
+          },
+          preConfirm: () => {
+            const selectedPetId = (document.getElementById('pet-select') as HTMLInputElement).value;
+            if (!selectedPetId) {
+              Swal.showValidationMessage('You need to select a pet!');
+            }
+            return selectedPetId;
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const selectedPetId = result.value;
+            const pet = this.pets.find((pet) => pet._id === selectedPetId);
+
+            if (pet) {
+              const appointment: Appointment = {
+                userId: {
+                  _id: pet.ownerId._id,
+                  name: pet.ownerId.name,
+                },
+                petId: {
+                  _id: pet._id,
+                  name: pet.name,
+                  species: pet.species,
+                  icon: pet.icon,
+                },
+                companyId: localStorage.getItem('connectedUserCompany'),
+                date: startDate.split('T')[0],
+                time: startDate.split('T')[1]?.split('+')[0]?.substring(0, 5),
+                status: 'pending',
+              };
+
+              this._appointmentService
+                .createAppointment(appointment)
+                .subscribe(
+                  (response) => {
+                    const title = 'New Appointment Booked';
+                    const message = `A new appointment has been booked by ${appointment.userId.name} for their pet ${appointment.petId.name} (${appointment.petId.species}).\nThe appointment is scheduled for ${appointment.date} at ${appointment.time}.`;
+                    const type = 'Appointment Booking';
+                    
+                    this._userService.getInternalUsers().subscribe({
+                      next: (internalUsersResponse: any) => {
+                        const internalUsers = internalUsersResponse;
+                        if (Array.isArray(internalUsers)) {
+                        internalUsers.forEach(user => {
+                          this._notificationService.createNotification({
+                          userId: user._id,
+                          title: title,
+                          message: message,
+                          type: type
+                          }).subscribe(() => {
+                           this._notificationService.sendEmailNotification(
+                            user.email,
+                            title,
+                            message
+                          ).subscribe(() => {
+                            console.log(`Email sent to internal user ${user.name}`);
+                          }, (error) => {
+                            console.error('Error sending email to internal user:', error);
+                          });
+                          }, (error) => {
+                          console.error('Error sending notification to internal user:', error);
+                          });
+                        });
+                        } else {
+                        console.error('Expected an array but got:', internalUsers);
+                        }
+                      },
+                      error: (error) => {
+                        console.error('Error fetching internal users:', error);
+                      }
+                      });
+                  
+                    Swal.fire({
+                      title: 'Appointment created!',
+                      text: 'Your appointment has been added. Waiting for confirmation.',
+                      icon: 'success',
+                      confirmButtonText: 'OK',
+                      confirmButtonColor: '#28a745',
+                    }).then(() => {
+                      calendarApi.removeAllEvents();
+                      this.loadAppointments();
+                    });
+                  },
+                  (error) => {
+                    Swal.fire(
+                      'Error!',
+                      'There was an error creating the appointment.',
+                      'error'
+                    );
+                    console.error(
+                      'Error creating appointment:',
+                      error
+                    );
+                  }
+                );
+            }
+          }
         });
 
         calendarApi.unselect();}
@@ -394,8 +497,8 @@ windowResizeDelay: 150,
               }
             }).then();
           }
-    }
-    handleEventClick(clickInfo: EventClickArg) {
+  });
+}    handleEventClick(clickInfo: EventClickArg) {
         const appointmentId = clickInfo.event.id;
         console.log('Clicked appointment ID:', appointmentId);
         if (this.userType === 'external') {
@@ -459,7 +562,7 @@ windowResizeDelay: 150,
     loadPets(): void {
 
         const currentUserId = localStorage.getItem('connectedUserId');
-        this._petService.getList('10', '1', '',currentUserId).subscribe(
+        this._petService.getList('10', '1', '', currentUserId, [], false).subscribe(
 
             (response) => {
                 this.pets = response.data;
@@ -547,14 +650,14 @@ windowResizeDelay: 150,
                 }
         
                 // Secretary or internal user view
-                let title = `${appointment.userId?.name || 'Unknown User'} with ${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
+                let title = `${appointment.userId?.name || 'Deleted User'} with ${appointment.petId?.name || 'Deleted Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
                 console.log('Appointment Title:', title);
-        
-                if (appointment.status === 'pending') {
-                  // External user view
-                  if (connectedUserType === 'external') {
+        if (connectedUserType === 'external') {
                     title = `${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
                   }
+                if (appointment.status === 'pending') {
+                  // External user view
+                  
         
                   return [
                     {
