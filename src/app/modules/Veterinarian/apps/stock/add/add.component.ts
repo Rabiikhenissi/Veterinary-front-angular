@@ -24,7 +24,8 @@ export class AddComponent  {
  
 _productService = inject(ProductService);
 _petSpeciesService = inject(PetSpeciesService);
-
+speciesTouched = false;
+imageTouched = false;
   _router = inject(Router);
   _route = inject(ActivatedRoute);
   product: Product = {
@@ -85,6 +86,12 @@ _petSpeciesService = inject(PetSpeciesService);
 }
 
   addProduct() {
+          this.speciesTouched = true;
+
+     this.imageTouched = true;
+  if (!this.product.image) {
+    return;
+  }
     console.log(this.product);
     this._productService.createOne(this.product).subscribe(() => {Swal.fire({
                     icon: 'success',

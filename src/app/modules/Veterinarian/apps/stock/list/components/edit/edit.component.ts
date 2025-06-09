@@ -55,17 +55,17 @@ getProductImageUrl(imagePath: string): string {
     const formattedDate = product.expirationDate
     ? new Date(product.expirationDate).toISOString().split('T')[0]
     : '';
-    this.productForm = this._fb.group({
-      name: [product.name, Validators.required],
-      category: [product.category, Validators.required],
-      species: [product.species || []],
-      quantity: [product.quantity, [Validators.required, Validators.min(0)]],
-      price: [product.price, [Validators.required, Validators.min(0)]],
-      expirationDate: [formattedDate],
-      description: [product.description || ''],
-      image: [product.image],
-      limitPerUser: [product.limitPerUser || 0],
-    });
+   this.productForm = this._fb.group({
+  name: [product.name, [Validators.required, Validators.minLength(2)]], // <-- updated
+  category: [product.category, Validators.required],
+  species: [product.species || [], [Validators.required, Validators.minLength(1)]], // <-- updated
+  quantity: [product.quantity, [Validators.required, Validators.min(0)]],
+  price: [product.price, [Validators.required, Validators.min(0)]],
+  expirationDate: [formattedDate],
+  description: [product.description || ''],
+  image: [product.image, Validators.required],
+  limitPerUser: [product.limitPerUser ?? 0], // can be 0
+});
   }
 
   onSubmit() {

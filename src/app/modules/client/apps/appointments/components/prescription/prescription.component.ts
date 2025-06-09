@@ -88,8 +88,26 @@ export class PrescriptionComponent implements OnInit {
   }
 
   savePrescription(): void {
-    // Construct the prescription data with selected medications
-    const medications = this.selectedMedications.map((med) => ({
+  if (this.selectedMedications.length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'No Medications Selected',
+      text: 'Please select at least one medication to prescribe.',
+      timer: 1500,
+    });
+    return;
+  }   for (const med of this.selectedMedications) {
+    if (!med.dosage || !med.instructions) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Medication Info',
+        text: 'Please fill in both dosage and instructions for all selected medications.',
+        timer: 1500,
+      });
+      return;
+    }
+  }
+  const medications = this.selectedMedications.map((med) => ({
       productId: med._id,
       dosage: med.dosage,
       instructions: med.instructions,
@@ -142,4 +160,11 @@ export class PrescriptionComponent implements OnInit {
       },
     });
   }
+
+  isPrescriptionInvalid(): boolean {
+  return (
+    this.selectedMedications.length === 0 ||
+    this.selectedMedications.some((med: any) => !med.dosage || !med.instructions)
+  );
+}
 }

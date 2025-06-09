@@ -1,58 +1,77 @@
-<div class="max-w-7xl w-full mx-auto p-6 bg-green-50 rounded-xl shadow-lg border border-green-100">
-    <div class="flex flex-col lg:flex-row gap-12">
-    
-        <!-- Product Image -->
-        <div class="lg:w-[40%] w-full">
-                        <img [src]="getProductImageUrl(product.image) "
-
-            alt="{{ product.name }}"
-            class="w-full h-[420px] object-cover rounded-xl border border-gray-300 shadow-sm" />
-        </div>
-    
-        <!-- Product Details -->
-        <div class="lg:w-[60%] w-full flex flex-col justify-between space-y-8 text-gray-900">
-          
-          <!-- Title + Info -->
-          <div>
-            <h2 class="text-5xl font-extrabold tracking-tight mb-6">{{ product.name }}</h2>
-    
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-12 text-lg">
-              <p><span class="font-semibold">📂 Category:</span> {{ product.category }}</p>
-    
-              <!-- Species with image -->
-              <div>
-                <span class="font-semibold">🐾 Species:</span>
-                <div class="flex flex-wrap items-center gap-3 mt-2">
-                  <ng-container *ngIf="product.species?.length; else allSpecies">
-                    <div 
-                      *ngFor="let spec of product.species" 
-                      class="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow border border-gray-200">
-                      <img 
-                        [src]="getSpeciesImage(spec)" 
-                        [alt]="spec" 
-                        class="w-8 h-8 object-contain rounded-full" />
-                      <span>{{ spec }}</span>
-                    </div>
-                  </ng-container>
-              
-                  <ng-template #allSpecies>
-                    <span class="text-gray-600">All</span>
-                  </ng-template>
-                </div>
-              </div>
-              <p><span class="font-semibold">📦 Quantity:</span> {{ product.quantity }}</p>
-              <p><span class="font-semibold">💰 Price:</span> {{ product.price | currency:'TND ':'symbol':'1.2-2' }}</p>
-              
-              <!-- Limit -->
-              <p><span class="font-semibold">📉 Limit per user:</span> {{ product.limitPerUser || 'N/A' }}</p>
-            </div>
-          </div>
-    
-          <!-- Description -->
-          <div *ngIf="product.description" class="text-gray-700">
-            <h3 class="font-semibold text-2xl mb-2">📝 Description</h3>
-            <p class="text-base leading-relaxed">{{ product.description }}</p>
-          </div>
-        </div>
+<div
+  class="max-w-5xl w-full mx-auto p-8 md:p-12 bg-gradient-to-br from-green-100 via-white to-green-200 rounded-3xl shadow-xl border border-green-300 overflow-hidden"
+>
+  <div class="flex flex-col lg:flex-row gap-12">
+    <!-- Product Image -->
+    <div class="lg:w-[38%] w-full flex flex-col items-center justify-center">
+      <div class="w-full h-[420px] flex items-center justify-center bg-white rounded-2xl border border-green-100 shadow-md">
+        <img
+          [src]="getProductImageUrl(product.image)"
+          alt="{{ product.name }}"
+          class="max-h-[380px] max-w-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
+        />
       </div>
     </div>
+
+    <!-- Product Details -->
+    <div class="lg:w-[62%] w-full flex flex-col justify-between space-y-10 text-gray-900">
+      <!-- Title + Info -->
+      <div>
+        <h2 class="text-4xl font-bold tracking-tight mb-4 flex items-center gap-3">
+          <span class="inline-block px-4 py-2 bg-green-700 text-white rounded-lg shadow text-2xl">{{ product.name }}</span>
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-10 text-lg">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-green-700">📂 Category:</span>
+            <span class="text-gray-800">{{ product.category }}</span>
+          </div>
+          <!-- Species with image -->
+          <div>
+            <span class="font-semibold text-green-700">🐾 Species:</span>
+            <div class="flex flex-wrap items-center gap-3 mt-2">
+              <ng-container *ngIf="product.species?.length; else allSpecies">
+                <div
+                  *ngFor="let spec of product.species"
+                  class="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg shadow border border-green-100"
+                >
+                  <img
+                    [src]="getSpeciesIcon(spec)"
+                    [alt]="spec"
+                    class="w-8 h-8 object-contain rounded-full"
+                  />
+                  <span class="text-gray-800 text-base">{{ spec }}</span>
+                </div>
+              </ng-container>
+              <ng-template #allSpecies>
+                <span class="text-gray-500 text-base">All</span>
+              </ng-template>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-green-700">📦 Quantity:</span>
+            <span class="text-gray-800">{{ product.quantity }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-green-700">💰 Price:</span>
+            <span class="text-gray-800">{{ product.price | currency:'TND ':'symbol':'1.2-2' }}</span>
+          </div>
+          <!-- Limit (only show if value exists) -->
+          <ng-container *ngIf="product.limitPerUser">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-green-700">📉 Limit per user:</span>
+              <span class="text-gray-800">{{ product.limitPerUser }}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Description (only if exists) -->
+      <ng-container *ngIf="product.description">
+        <div class="text-gray-700 bg-green-50 rounded-xl p-6 shadow-inner border border-green-100">
+          <h3 class="font-semibold text-2xl mb-2 flex items-center gap-2">📝 Description</h3>
+          <p class="text-base leading-relaxed">{{ product.description }}</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

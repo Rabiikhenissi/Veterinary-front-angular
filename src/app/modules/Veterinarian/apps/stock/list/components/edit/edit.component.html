@@ -9,7 +9,9 @@
                 alt="{{ product.name }}"
                 class="w-full h-[420px] object-cover rounded-xl border border-gray-300 shadow-sm"
             />
-
+<div *ngIf="productForm.get('image')?.invalid && productForm.get('image')?.touched" class="text-red-600 text-sm mt-1">
+  Please upload a product image.
+</div>
             <label
   class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-green-700 bg-white border border-green-300 rounded-md shadow cursor-pointer hover:bg-green-50 transition"
 >
@@ -30,14 +32,18 @@
         >
             <!-- Basic Info -->
             <div>
-                <input
-                    type="text"
-                    [(ngModel)]="product.name"
-                    name="name"
-                    required
-                    placeholder="Product Name"
-                    class="text-5xl font-extrabold tracking-tight mb-6 w-full bg-transparent border-b border-green-300 focus:outline-none focus:border-green-500"
-                />
+               <input
+  type="text"
+  [(ngModel)]="product.name"
+  name="name"
+  required
+  minlength="2"
+  placeholder="Product Name"
+  class="text-5xl font-extrabold tracking-tight mb-6 w-full bg-transparent border-b border-green-300 focus:outline-none focus:border-green-500"
+/>
+<div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-red-600 text-sm mt-1">
+  Name is required and must be at least 2 characters.
+</div>
 
                 <div
                     class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-12 text-lg"
@@ -62,23 +68,25 @@
                             >🐾 Species</label
                         >
                         <div class="flex flex-wrap items-center gap-3 mt-2">
-                            <div
-                                *ngFor="let spec of species"
-                                (click)="toggleSpecies(spec.name)"
-                                class="cursor-pointer flex items-center gap-2 px-3 py-1 rounded-lg border border-gray-300 shadow bg-white transition"
-                                [ngClass]="{
-                                    'ring-2 ring-green-400':
-                                        product.species?.includes(spec.name)
-                                }"
-                            >
-                                <img
-                                    [src]="spec.icon"
-                                    alt="{{ spec.name }}"
-                                    class="w-8 h-8 object-contain rounded-full"
-                                />
-                                <span>{{ spec.name }}</span>
-                            </div>
-                        </div>
+  <div
+    *ngFor="let spec of species"
+    (click)="toggleSpecies(spec.name)"
+    class="cursor-pointer flex items-center gap-2 px-3 py-1 rounded-lg border border-gray-300 shadow bg-white transition"
+    [ngClass]="{
+      'ring-2 ring-green-400': product.species?.includes(spec.name)
+    }"
+  >
+    <img
+      [src]="spec.icon"
+      alt="{{ spec.name }}"
+      class="w-8 h-8 object-contain rounded-full"
+    />
+    <span>{{ spec.name }}</span>
+  </div>
+</div>
+<div *ngIf="productForm.get('species')?.invalid && productForm.get('species')?.touched" class="text-red-600 text-sm mt-1">
+  Please select at least one species.
+</div>
                     </div>
 
                     <!-- Quantity -->
@@ -122,18 +130,7 @@
                         </div>
                     </div>
 
-                    <!-- Expiration Date -->
-                    <div class="sm:col-span-2">
-                        <label class="block font-semibold mb-1"
-                            >⏳ Expiration Date</label
-                        >
-                        <input
-                            type="date"
-                            [(ngModel)]="product.expirationDate"
-                            name="expirationDate"
-                            class="w-full border border-green-200 rounded-md px-4 py-2 shadow-sm"
-                        />
-                    </div>
+                  
                 </div>
             </div>
 
@@ -160,11 +157,12 @@
                     ❌ Cancel
                 </button>
                 <button
-                    type="submit"
-                    class="px-6 py-3 rounded-md bg-green-600 hover:bg-green-700 text-white shadow"
-                >
-                    💾 Save Changes
-                </button>
+  type="submit"
+  [disabled]="productForm.invalid"
+  class="px-6 py-3 rounded-md bg-green-600 hover:bg-green-700 text-white shadow"
+>
+  💾 Save Changes
+</button>
             </div>
         </div>
     </form>
