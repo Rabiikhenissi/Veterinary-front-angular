@@ -166,7 +166,7 @@ if (!this.isTimeWithinBusinessHours(this.selectedDate, this.selectedTime)) {
           Swal.fire({
             icon: 'error',
             title: 'Unavailable',
-            text: 'This time slot is already booked. Please choose another one.',
+            text: 'This time is not available for appointments. Please choose another one.',
           });
         }
       }, (error) => {
