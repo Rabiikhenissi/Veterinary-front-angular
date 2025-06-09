@@ -115,3 +115,34 @@ simple-snack-bar {
   width: 100% !important;
   max-width: 100% !important;
 }
+
+.swal2-custom-confirm {
+  background-color: #22c55e !important; /* Green */
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+.swal2-custom-confirm:hover, .swal2-custom-confirm:focus {
+  background-color: #16a34a !important; /* Darker green */
+}
+
+.swal2-custom-cancel {
+  background-color: #ef4444 !important; /* Red */
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+  margin-left: 1rem;
+}
+.swal2-custom-cancel:hover, .swal2-custom-cancel:focus {
+  background-color: #b91c1c !important; /* Darker red */
+}

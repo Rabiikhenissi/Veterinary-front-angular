@@ -24,12 +24,7 @@
         <span class="text-sm text-green-500 mb-2">{{ med.price | currency:'TND':'symbol' }}</span>
 
 
-        <!-- Checkmark for selected -->
-        <span *ngIf="selectedMedications.includes(med)" class="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1 shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-          </svg>
-        </span>
+        
 
 
         <!-- Dosage & Instructions for selected ones -->
