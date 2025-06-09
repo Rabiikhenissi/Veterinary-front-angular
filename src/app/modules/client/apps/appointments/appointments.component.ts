@@ -200,11 +200,18 @@ windowResizeDelay: 150,
         ///fixing the colored slots position
         eventDidMount: (info) => {
             const event = info.event;
+            
             if (event.backgroundColor && event.backgroundColor !== 'grey') {
+              if(info.view.type === 'timeGridDay'){
+                  const width = '104%';
+                info.el.style.width = width;
+                  const leftPosition = '-0.2%';
+                  info.el.style.marginLeft = leftPosition;
+                }else{
                 const width = '104%';
                 info.el.style.width = width;
-                const leftPosition = '-1%';
-                info.el.style.marginLeft = leftPosition;
+                const leftPosition = '-1.09%';
+                info.el.style.marginLeft = leftPosition;}
             }
         },
     }; }
