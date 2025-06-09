@@ -67,12 +67,14 @@ cartList:any;
 snackbar=inject(MatSnackBar)
 selectedUser: any = null;
 disabledChart=signal(false)
+
+visitPrice: number; // Initialize visit price
 overviewStats: any = {
     clientsCount: 0,
     petsCount: 0,
     productsCount: 0,
     appointmentsLast7Days: 0}
-
+company: any = {};
     appointments: any[] = [];
     appointmentData = {
     total: 0,
@@ -82,11 +84,12 @@ overviewStats: any = {
     completed: 0,
     recentAppointments: [],
   };
-  timeOptions = Array.from({length: 24 * 2}, (_, i) => {
-  const h = Math.floor(i / 2).toString().padStart(2, '0');
-  const m = i % 2 === 0 ? '00' : '30';
-  return `${h}:${m}`;
-});
+  timeOptions = Array.from({ length: (24 - 8 + 1) * 2 - 1}, (_, i) => {
+    const hour = 6 + Math.floor(i / 2);
+    const minute = i % 2 === 0 ? '00' : '30';
+    return `${hour.toString().padStart(2, '0')}:${minute}`;
+  });
+  originalVisitPrice: number; // to hold a copy of the original visit price
     /**
      * Constructor
      */
@@ -139,8 +142,11 @@ overviewStats: any = {
             this.appointmentData = result.appointmentStats;
             this.appointmentPerDayData = result.appointmentsPerDay;
             this.appointments = result.allAppointments;
+            this.company = result.company;
+            this.visitPrice = this.company.visitPrice || 0; // Set visit price from company data
             this.businessHours = result.company.businessHours || [];
             this.originalBusinessHours = JSON.parse(JSON.stringify(this.businessHours));
+            this.originalVisitPrice = this.visitPrice; // <-- Save original
             this.cartList = result.cartList.data;
             this.total = result.cartList.total;
 
@@ -517,6 +523,11 @@ onMonthChange(selectedMonth: string): void {
 
 openBusinessHours() {
   this.isBusinessHoursOpen = true;
+  this._companyService.updateVisitSetUp(this.companyId, this.businessHours, this.visitPrice).subscribe({
+    next: () => console.log('Business hours and visit price updated!'),
+    error: (err) => console.error('Update error:', err),
+  });
+  this.originalVisitPrice = this.visitPrice; // Update original after save
 }
 
 saveBusinessHours() {
@@ -539,7 +550,7 @@ saveBusinessHours() {
   }
 
   this.isBusinessHoursOpen = false;
-  this._companyService.updateBusinessHours(this.companyId, this.businessHours).subscribe({
+  this._companyService.updateVisitSetUp(this.companyId, this.businessHours, this.visitPrice).subscribe({
     next: () => console.log('Business hours updated!'),
     error: (err) => console.error('Update error:', err),
   });
@@ -549,9 +560,9 @@ saveBusinessHours() {
 getBusinessHours() {
   this._companyService.getOne(this.companyId).subscribe({
     next: (response) => {
-      const company = response;
-      this.businessHours = company.businessHours 
-      console.log("business Hours:",company)
+       this.company = response;
+      this.businessHours = this.company.businessHours 
+      console.log("business Hours:",this.company)
       this.initializeBusinessHours();
       this.originalBusinessHours = JSON.parse(JSON.stringify(this.businessHours));
     },
@@ -618,6 +629,8 @@ isTimeInvalid(day: string): boolean {
 resetBusinessHours(): void {
   // Restore original business hours
   this.businessHours = JSON.parse(JSON.stringify(this.originalBusinessHours));
+  this.visitPrice = this.originalVisitPrice; // Restore original
   this.isBusinessHoursOpen = false; // optional: close the form
+  
 }
 }
