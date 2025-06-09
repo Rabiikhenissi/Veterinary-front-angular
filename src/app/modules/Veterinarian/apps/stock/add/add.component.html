@@ -9,9 +9,12 @@
       <!-- Name -->
       <div>
         <label class="block font-semibold text-green-700 mb-2">Product Name <span class="text-red-500">*</span></label>
-        <input [(ngModel)]="product.name" name="name" #name="ngModel" required
-               class="w-full px-4 py-3 rounded-xl shadow-sm border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white text-lg"
-               [class.border-red-500]="name.invalid && name.touched" />
+       <input [(ngModel)]="product.name" name="name" #name="ngModel" required minlength="2"
+       class="w-full px-4 py-3 rounded-xl shadow-sm border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-400 bg-white text-lg"
+       [class.border-red-500]="(name.invalid && name.touched) || (name.value?.length < 2 && name.touched)" />
+<div *ngIf="(name.invalid && name.touched) || (name.value?.length < 2 && name.touched)" class="text-red-600 text-sm mt-1">
+  Product name must be at least 2 characters.
+</div>
         <div *ngIf="name.invalid && name.touched" class="text-red-600 text-sm mt-1">Product name is required.</div>
       </div>
 
@@ -37,18 +40,24 @@
       </mat-form-field>
 
       <!-- Species -->
-      <div >
-        <label class="block font-semibold text-green-700 mb-2">Species</label>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div *ngFor="let sp of speciesOptions"
-               class="flex flex-col items-center cursor-pointer p-3 rounded-2xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
-               [class.border-green-500]="product.species?.includes(sp.name)"
-               (click)="selectSpecies(sp.name)">
-            <img [src]="sp.icon" [alt]="sp.name" class="w-14 h-14 mb-1 object-cover rounded" />
-            <span class="text-base font-medium text-green-700">{{ sp.name }}</span>
-          </div>
-        </div>
-      </div>
+<div *ngIf="product.category !== 'Medical Supplies'">
+  <label class="block font-semibold text-green-700 mb-2">Species</label>
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div *ngFor="let sp of speciesOptions"
+         class="flex flex-col items-center cursor-pointer p-3 rounded-2xl border-2 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"
+         [class.border-green-500]="product.species?.includes(sp.name)"
+         (click)="selectSpecies(sp.name)">
+      <img [src]="sp.icon" [alt]="sp.name" class="w-14 h-14 mb-1 object-cover rounded" />
+      <span class="text-base font-medium text-green-700">{{ sp.name }}</span>
+    </div>
+  </div>
+  <!-- Validation message for species -->
+  <div *ngIf="speciesTouched && (!product.species || product.species.length === 0)" class="text-red-600 text-sm mt-1">
+    Please select at least one species.
+  </div>
+</div>
+
+      
 
       <!-- Price & Quantity -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -101,7 +110,9 @@
           />
         </div>
       </div>
-
+<div *ngIf="imageTouched && !product.image" class="text-red-600 text-sm mt-1">
+  Please upload a product image.
+</div>
       <!-- Description -->
       <div>
         <label class="block font-semibold text-green-700 mb-2">Description</label>
@@ -111,10 +122,18 @@
 
       <!-- Submit Button -->
       <div class="flex justify-end pt-2">
-        <button type="submit" [disabled]="form.invalid"
-                class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-          ➕ Add Product
-        </button>
+        <button
+  type="submit"
+  [disabled]="
+    form.invalid ||
+    product.name.length < 2 ||
+    (product.category !== 'Medical Supplies' && (!product.species || product.species.length === 0)) ||
+    !product.image
+  "
+  class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+>
+  ➕ Add Product
+</button>
       </div>
     </form>
   </div>

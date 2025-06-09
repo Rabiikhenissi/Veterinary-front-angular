@@ -49,5 +49,8 @@ Thumbs.db
 ./src/app/sign-in-form/sign-in-form.component.ts
 
 
-./src/proxy.conf.json
-.src/environments/environment.ts
+# Ignore proxy config
+src/proxy.conf.json
+
+# Ignore environment file
+src/environments/environment.ts

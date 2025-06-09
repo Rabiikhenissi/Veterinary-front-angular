@@ -25,7 +25,12 @@ export class AddComponent  {
  
 _productService = inject(ProductService);
 _petSpeciesService = inject(PetSpeciesService);
+
+speciesTouched = false;
+imageTouched = false;
+
 _loadingService = inject(LoadingService);
+
   _router = inject(Router);
   _route = inject(ActivatedRoute);
   product: Product = {
@@ -85,6 +90,12 @@ _loadingService = inject(LoadingService);
 }
 
   addProduct() {
+          this.speciesTouched = true;
+
+     this.imageTouched = true;
+  if (!this.product.image) {
+    return;
+  }
     console.log(this.product);
     this._loadingService.show();
     this._productService.createOne(this.product).subscribe(() => {
