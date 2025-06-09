@@ -26,7 +26,7 @@ export class InvoicesComponent implements OnInit {
   _cartService = inject(CartService);
   _loadingService=inject(LoadingService)
   _snackBar = inject(MatSnackBar);
-  currentSize = 10;
+  currentSize = 5;
     currentPage = 1;
     total = 0;
     filterSearch: string;
