@@ -20,6 +20,7 @@ import {Feature} from "../../../../../../../shared/models/feature";
 import {FeatureService} from "../../../../../../../shared/services/feature.service";
 import {MatTooltip} from "@angular/material/tooltip";
 import Swal from 'sweetalert2';
+import { MatIcon } from '@angular/material/icon';
 @Component({
     selector: 'app-edit',
     templateUrl: './edit.component.html',
@@ -39,6 +40,8 @@ import Swal from 'sweetalert2';
         MatSelectTrigger,
         MatSlideToggle,
         MatTooltip,
+        MatIcon,
+        MatTooltip
     ],
 })
 export class EditComponent implements OnInit {
@@ -102,6 +105,16 @@ export class EditComponent implements OnInit {
     }
     updateOne(myForm: NgForm) {
         if (myForm.valid) {
+            if (!this.groupFeature[0].featuresId?._id) {
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Please select at least one feature',
+                                confirmButtonColor: '#f87171',
+                            });
+                        }
+            else{            
             this._loadingService.show()
             this._groupService.updateOne(this.group, this.groupFeature).subscribe(
                 {
@@ -121,7 +134,7 @@ export class EditComponent implements OnInit {
                     }
                 }}
             );
-        }
+        }}
     }
     cancelEdit(myForm: NgForm) {
         if (myForm.pristine) {
@@ -168,8 +181,58 @@ export class EditComponent implements OnInit {
         confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-                this._groupService.deleteOne(row._id).subscribe(() => {
-                    this._router.navigate([`../`], { relativeTo: this._route }).then();
+                this._groupService.deleteOne(row._id).subscribe(
+                    {
+                        next: () => {
+                            this._loadingService.hide();
+                            this._router.navigate([`../`], { relativeTo: this._route }).then();
+                        },
+                        error: (err) => {
+                            this._loadingService.hide();
+                            if (err.status === 400) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Cannot delete group because users are assigned to it',
+                                    confirmButtonColor: '#f87171',
+                                });
+                            }
+                        }
+                    }
+                );
+            }
+        });
+    }
+    archiveOne(row: Group) {
+        // Open the confirmation dialog
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Archive',
+            message: 'Do you want to archive this group?',
+            actions: {
+                confirm: { label: 'Archive' },
+                cancel: { label: 'Cancel' },
+            },
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this._groupService.archiveOne(row._id).subscribe({
+                    next: () => {
+                        this._loadingService.hide();
+                        this._router.navigate([`../`], { relativeTo: this._route }).then();
+                    },
+                    error: (err) => {
+                        this._loadingService.hide();
+                        if (err.status === 400) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Cannot archive group because users are assigned to it',
+                                confirmButtonColor: '#f87171',
+                            });
+                        }
+                    }
                 });
             }
         });

@@ -23,6 +23,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { Company } from 'app/shared/models/company';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -43,7 +44,8 @@ import { forkJoin } from 'rxjs';
         FeaturesDirective,
         MatSelect,
         MatOption,
-        CommonModule
+        CommonModule,
+        
     ],
 })
 export class ListComponent implements OnInit {
@@ -152,8 +154,23 @@ archiveOne(row: Group) {
 
   confirmation.afterClosed().subscribe((result) => {
     if (result === 'confirmed') {
-      this._groupService.archiveOne(row._id).subscribe(() => {
-        this.getList();
+      this._loadingService.show();
+      this._groupService.archiveOne(row._id).subscribe({
+        next: () => {
+          this._loadingService.hide();
+          this.getList();
+        },
+        error: (err) => {
+          this._loadingService.hide();
+          if(err.status === 400) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Cannot archive group because users are assigned to it.',
+              confirmButtonColor: '#f87171',
+            });
+          }
+        }
       });
     }
   });

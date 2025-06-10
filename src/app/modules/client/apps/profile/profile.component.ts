@@ -212,5 +212,20 @@ cancelRestoreRequest(petId: string): void {
 get isFiltering(): boolean {
   return (this.filterSpecies && this.filterSpecies.length > 0) || this.filterArchived ==null;
 }
+getUser(){
+  this._userService.getOne(this.connectedUser).subscribe({
+    next: (user) => {
+      this.user.name = user.name;
+      this.user.email = user.email;
+      this.user.phone = user.phone;
+      this.user.id = user._id;
+      this.user.type = user.type;
+      this.selectedAvatar = user.avatar;
+    },
+    error: (err) => {
+      console.error('Error fetching user:', err);
+    }
+  });
+}
 
 }
