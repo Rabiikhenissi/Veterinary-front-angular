@@ -238,9 +238,7 @@
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4">
-                                    <button #hidden class="hidden">
-
-                                    </button>
+                                    
                                     <!-- Chart Display -->
                                     @if(!disabledChart()){
                                     <apx-chart class="flex-auto w-full h-80" [chart]="chartAppointmentsPerDay.chart"
@@ -514,7 +512,7 @@
                                                 Client name
                                             </th>
                                             <td mat-cell *matCellDef="let cart">
-                                                {{ cart.clientName }}
+                                                {{ cart.clientName  }}
                                             </td>
                                         </ng-container>
 
@@ -560,10 +558,13 @@
                                             "></tr>
                                     </table>
 
-                                    <mat-paginator [length]="total" [pageSize]="currentSize"
-                                        [pageIndex]="currentPage - 1" [pageSizeOptions]="[5, 10, 20, 50, 100]"
-                                        (page)="pageChanged($event)">
-                                    </mat-paginator>
+                                    <mat-paginator
+                                     [length]="total" 
+                                     [pageSize]="currentSize"
+                                     [pageIndex]="currentPage - 1" 
+                                     [pageSizeOptions]="[5, 10, 20, 50, 100]"
+                                     (page)="pageChanged($event)">
+                                    </mat-paginator> 
                                 </div>
                             </div>
                         </div>

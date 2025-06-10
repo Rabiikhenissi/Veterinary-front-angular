@@ -46,9 +46,7 @@ export class ShopComponent implements OnInit{
   selectedCategories: string[] = [];
 
   searchQuery: string = '';
-  constructor() {
-    this._cartService.cart$.subscribe(c => this.cart = c);
-  }
+
   cart: any;
   
   
@@ -58,23 +56,24 @@ export class ShopComponent implements OnInit{
   @ViewChild(CartSidebarComponent) sidebar!: CartSidebarComponent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
-  this._loadingService.show();
-
-  forkJoin({
-    products: this._productService.getList(
-      this.currentSize.toString(),
-      this.currentPage.toString(),
-      this.searchQuery,
-      this.selectedCategories.join(','),
-      this.selectedSpecies.join(',')
-    ),
-    species: this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId'))
-  }).subscribe({
-    next: ({ products, species }) => {
-      this.products = products.data.filter(product =>
-        this.categories.includes(product.category)
-      );
-      this.total = this.products.length;
+    this._loadingService.show();
+    this._cartService.cart$.subscribe(c => { this.cart = c; });
+    forkJoin({
+      products: this._productService.getList(
+        this.currentSize.toString(),
+        this.currentPage.toString(),
+        this.searchQuery,
+        this.selectedCategories.join(','),
+        this.selectedSpecies.join(',')
+      ),
+      species: this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')),
+      
+    }).subscribe({
+      next: ({ products, species }) => {
+        this.products = products.data.filter(product =>
+          this.categories.includes(product.category)
+        );
+        this.total = this.products.length;
       this.speciesList = species.data;
       this._loadingService.hide();
     },

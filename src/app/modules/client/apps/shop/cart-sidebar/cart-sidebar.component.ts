@@ -1,5 +1,6 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CartService } from 'app/shared/services/cart.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import Swal from 'sweetalert2';
@@ -11,6 +12,7 @@ import Swal from 'sweetalert2';
 })
 export class CartSidebarComponent {
   _loadingService = inject(LoadingService);
+  _snackBar = inject(MatSnackBar);
   isOpen = false;
   cart: any;
   constructor(public cartService: CartService) {
@@ -149,30 +151,20 @@ export class CartSidebarComponent {
     });
   }
   confirmPurchase() {
-    this._loadingService.show();
+    this._snackBar.open('Opening your invoice PDF, please wait...', '', { duration: 2000 ,verticalPosition:'top', });
     this.cartService.confirmPurchase().subscribe({
       next: (pdfBlob: Blob) => {
-        this._loadingService.hide();
-        Swal.fire({
-          icon: 'success',
-          title: 'Purchase Confirmed',
-          text: 'Your invoice has been Created!',
-          confirmButtonColor: '#38a169',
-        });
+        
+        this._snackBar.open('Invoice PDF generated successfully!', '', { duration: 2000 ,verticalPosition:'top', });
           const pdfUrl = URL.createObjectURL(pdfBlob);
           window.open(pdfUrl, '_blank');
           this.clearCart();
           this.cartService.fetchCart();
           this.closeCart();
+          
       },
       error: (error) => {
-        this._loadingService.hide();
-        Swal.fire({
-          icon: 'error',
-          title: 'Purchase Failed',
-          text: 'Something went wrong while generating the invoice.',
-          confirmButtonColor: '#e53e3e',
-        });
+        this._snackBar.open('Purchase Failed', '', { duration: 2000 ,verticalPosition:'top', });
         console.error('Error confirming purchase:', error);
       }
     });
