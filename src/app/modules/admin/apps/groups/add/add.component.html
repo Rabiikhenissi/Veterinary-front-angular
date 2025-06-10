@@ -247,9 +247,11 @@
                                     </mat-select>
                                 </mat-form-field>
                             </div>
-                            <div class="col-span-1 flex justify-center mt-3">
+                            
+                            <div  class="col-span-1 flex justify-center mt-3">
                                 @if (groupFeature[index]) {
                                     <mat-slide-toggle
+                                    [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         [disabled]="!featureId[index]"
                                         name="list{{ index }}"
                                         [(ngModel)]="groupFeature[index].list"
@@ -257,9 +259,10 @@
                                     ></mat-slide-toggle>
                                 }
                             </div>
-                            <div class="col-span-1 flex justify-center mt-3">
+                            <div  class="col-span-1 flex justify-center mt-3">
                                 @if (groupFeature[index]) {
                                     <mat-slide-toggle
+                                    [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         [disabled]="!featureId[index]"
                                         name="create{{ index }}"
                                         [(ngModel)]="groupFeature[index].create"
@@ -267,9 +270,10 @@
                                     ></mat-slide-toggle>
                                 }
                             </div>
-                            <div class="col-span-1 flex justify-center mt-3">
+                            <div  class="col-span-1 flex justify-center mt-3">
                                 @if (groupFeature[index]) {
                                     <mat-slide-toggle
+                                    [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         [disabled]="!featureId[index]"
                                         name="read{{ index }}"
                                         [(ngModel)]="groupFeature[index].read"
@@ -277,9 +281,10 @@
                                     ></mat-slide-toggle>
                                 }
                             </div>
-                            <div class="col-span-1 flex justify-center mt-3">
+                            <div  class="col-span-1 flex justify-center mt-3">
                                 @if (groupFeature[index]) {
                                     <mat-slide-toggle
+                                    [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         [disabled]="!featureId[index]"
                                         name="update{{ index }}"
                                         [(ngModel)]="groupFeature[index].update"
@@ -287,9 +292,10 @@
                                     ></mat-slide-toggle>
                                 }
                             </div>
-                            <div class="col-span-1 flex justify-center mt-3">
+                            <div  class="col-span-1 flex justify-center mt-3">
                                 @if (groupFeature[index]) {
                                     <mat-slide-toggle
+                                    [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         [disabled]="!featureId[index]"
                                         name="delete{{ index }}"
                                         [(ngModel)]="groupFeature[index].delete"
@@ -300,6 +306,7 @@
                             <div class="col-span-1 flex justify-center mt-3">
                                 @if (groupFeature[index]) {
                                     <mat-slide-toggle
+                                     [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         [disabled]="!featureId[index]"
                                         name="status{{ index }}"
                                         [(ngModel)]="groupFeature[index].status"
@@ -307,9 +314,10 @@
                                     ></mat-slide-toggle>
                                 }
                             </div>
-                            <div class="col-span-1 flex justify-center mt-3">
+                            <div  class="col-span-1 flex justify-center">
                                 @if (groupFeature[index]) {
                                     <mat-radio-button
+                                    [ngStyle]="{ visibility: featureId[index]?.type === 'basic' ? 'visible' : 'hidden' }"
                                         (change)="default(index)"
                                         [checked]="groupFeature[index].defaultFeature"
                                         [disabled]="

@@ -129,4 +129,30 @@ export class EditComponent implements OnInit {
           }
         });
       }
+    archiveOne(row: User) {
+        // Open the confirmation dialog
+        const confirmation = this._fuseConfirmationService.open({
+          title: 'Archive',
+          message: 'Would you like to confirm the archiving ?',
+          actions: {
+            confirm: {
+              label: 'yes',
+            },
+            cancel: {
+              label: 'no',
+            },
+          },
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+          // If the confirm button pressed...
+          if (result === 'confirmed') {
+            this._userService.ArchiveOne(row._id).subscribe(() => {
+                this._router.navigate([`../`], { relativeTo: this._route }).then();
+            });
+          }
+        });
+      }
+
 }

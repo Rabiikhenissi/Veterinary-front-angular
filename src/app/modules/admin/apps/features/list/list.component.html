@@ -26,15 +26,18 @@
     <div class="flex flex-col flex-auto sm:mb-18">
       <!-- Header -->
       <div
-        class="feature-grid grid z-10 top-0 shadow items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+        class="feature-grid grid grid-cols-8 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+
         <div class="hidden sm:flex">N°</div>
         <div class="hidden sm:flex">{{ 'code' | transloco }}</div>
         <div class="flex">{{ 'title' | transloco }}</div>
         <div class="hidden md:flex">{{ 'type' | transloco }}</div>
         <div class="hidden sm:flex">{{ 'parent' | transloco }}</div>
-        <div class="flex ">{{ 'link' | transloco }}</div>
+        <div class="flex">{{ 'link' | transloco }}</div>
         <div class="hidden md:flex">{{ 'status' | transloco }}</div>
-        <div class="flex ">
+
+        <!-- Filter Button aligned to the right -->
+        <div class="flex justify-end col-span-1">
           <button mat-icon-button (click)="openFilter = true">
             <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
           </button>
@@ -46,7 +49,7 @@
           <!-- Rows -->
           <ng-container>
             @for (feature of displayedList?.data; track feature) {
-            <div class="feature-grid grid items-center gap-4 py-1 hover:bg-gray-100  px-4 md:px-6 border-b"
+            <div class="feature-grid grid grid-cols-8 items-center gap-4 py-1 hover:bg-gray-100  px-4 md:px-6 border-b"
               (click)="isScreenSmall ? openShow(feature) : null">
               <div class="hidden sm:flex">{{ $index + 1 }}</div>
               <div class="hidden sm:flex truncate">{{ feature.code }}</div>
@@ -69,7 +72,7 @@
               <div class="hidden md:flex truncate">
                 <span>{{ feature.status }}</span>
               </div>
-              <div class="flex">
+              <div class="flex justify-end col-span-1">
                 <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
                   <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
 
@@ -112,58 +115,56 @@
     </div>
   </div>
   <!-- Filter Sidebar -->
-<div
-  class="sidebar-filter fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white dark:bg-gray-900 shadow-2xl transition-transform duration-300"
-  [class.translate-x-0]="openFilter"
-  [class.translate-x-full]="!openFilter"
-  style="transform: translateX(100%)"
->
-  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-    <span class="text-lg font-bold text-gray-700 dark:text-gray-100">{{ 'Filters' | transloco }}</span>
-    <button mat-icon-button (click)="openFilter = false">
-      <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
-    </button>
-  </div>
-  <div class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]">
-    <!-- Type Filter -->
-    <div>
-      <div class="flex items-center gap-2 font-semibold text-base mb-2">
-        <mat-icon [svgIcon]="'feather:activity'"></mat-icon>
-        {{ 'Filter by Type' | transloco }}
-      </div>
-      <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
-        <mat-select [(ngModel)]="filterType" multiple name="filterType" placeholder="Select Type(s)">
-          @for (item of listFeatureType; track item) {
-            <mat-option [value]="item.key">{{ item.value }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <!-- Status Filter -->
-    <div>
-      <div class="flex items-center gap-2 font-semibold text-base mb-2">
-        <mat-icon [svgIcon]="'feather:check-circle'"></mat-icon>
-        {{ 'Filter by Status' | transloco }}
-      </div>
-      <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
-        <mat-select [(ngModel)]="filterStatus" multiple name="filterStatus" placeholder="Select Status(es)">
-          @for (item of listFeatureStatus; track item) {
-            <mat-option [value]="item.key">{{ item.value }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <!-- Actions -->
-    <div class="flex gap-2 mt-4">
-      <button mat-stroked-button color="primary" class="flex-1" (click)="getList()">
-        <mat-icon class="mr-1" [svgIcon]="'feather:filter'"></mat-icon>
-        <span>Apply</span>
-      </button>
-      <button mat-stroked-button color="warn" class="flex-1" (click)="resetFilters()">
-        <mat-icon class="mr-1" [svgIcon]="'feather:rotate-ccw'"></mat-icon>
-        <span>Reset</span>
+  <div
+    class="sidebar-filter fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white dark:bg-gray-900 shadow-2xl transition-transform duration-300"
+    [class.translate-x-0]="openFilter" [class.translate-x-full]="!openFilter" style="transform: translateX(100%)">
+    <div
+      class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+      <span class="text-lg font-bold text-gray-700 dark:text-gray-100">{{ 'Filters' | transloco }}</span>
+      <button mat-icon-button (click)="openFilter = false">
+        <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
       </button>
     </div>
+    <div class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]">
+      <!-- Type Filter -->
+      <div>
+        <div class="flex items-center gap-2 font-semibold text-base mb-2">
+          <mat-icon [svgIcon]="'feather:activity'"></mat-icon>
+          {{ 'Filter by Type' | transloco }}
+        </div>
+        <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
+          <mat-select [(ngModel)]="filterType" multiple name="filterType" placeholder="Select Type(s)">
+            @for (item of listFeatureType; track item) {
+            <mat-option [value]="item.key">{{ item.value }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- Status Filter -->
+      <div>
+        <div class="flex items-center gap-2 font-semibold text-base mb-2">
+          <mat-icon [svgIcon]="'feather:check-circle'"></mat-icon>
+          {{ 'Filter by Status' | transloco }}
+        </div>
+        <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
+          <mat-select [(ngModel)]="filterStatus" multiple name="filterStatus" placeholder="Select Status(es)">
+            @for (item of listFeatureStatus; track item) {
+            <mat-option [value]="item.key">{{ item.value }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- Actions -->
+      <div class="flex gap-2 mt-4">
+        <button mat-stroked-button color="primary" class="flex-1" (click)="getList()">
+          <mat-icon class="mr-1" [svgIcon]="'feather:filter'"></mat-icon>
+          <span>Apply</span>
+        </button>
+        <button mat-stroked-button color="warn" class="flex-1" (click)="resetFilters()">
+          <mat-icon class="mr-1" [svgIcon]="'feather:rotate-ccw'"></mat-icon>
+          <span>Reset</span>
+        </button>
+      </div>
+    </div>
   </div>
-</div>
 </div>
