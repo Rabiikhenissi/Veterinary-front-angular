@@ -2,22 +2,16 @@
     <!-- Header -->
     <div class="bg-card">
         <div class="flex flex-col w-full max-w-screen-xl mx-auto px-6 sm:px-8">
-            <div
-                class="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 my-8 sm:my-12"
-            >
+            <div class="flex flex-col sm:flex-row flex-auto sm:items-center min-w-0 my-8 sm:my-12">
                 <!-- Avatar and name -->
                 <div class="flex flex-auto items-center min-w-0">
                     <div class="flex-0 w-16 h-16 rounded-full overflow-hidden">
-                        <img
-                            class="w-full h-full object-cover"
-                            [src]="user?.avatar"
-                        />
+                        <img class="w-full h-full object-cover" [src]="user?.avatar" />
                     </div>
                     <div class="flex flex-col min-w-0 ml-4">
                         <ng-container *transloco="let t">
                             <div
-                                class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate"
-                            >
+                                class="text-2xl md:text-5xl font-semibold tracking-tight leading-7 md:leading-snug truncate">
                                 {{ t("welcome-back") }}, {{ user?.name }}!
                             </div>
                         </ng-container>
@@ -27,138 +21,102 @@
                 <div class="flex items-center mt-6 sm:mt-0 sm:ml-2 space-x-3">
                     <button
                         class="bg-accent text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md hover:bg-accent-dark transition"
-                        mat-flat-button
-                        [color]="'accent'"
-                        id="messagesButton"
-                        (click)="openUserList()"
-                    >
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_solid:envelope'"
-                        ></mat-icon>
+                        mat-flat-button [color]="'accent'" id="messagesButton" (click)="openUserList()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
                         <span>Mail a client</span>
                     </button>
                     <!-- Business Hours Button -->
                     <button
                         class="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 shadow-md hover:bg-blue-700 transition"
-                        mat-flat-button
-                        (click)="openBusinessHours()"
-                    >
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'heroicons_solid:clock'"
-                        ></mat-icon>
-                        <span>Business Hours</span>
+                        mat-flat-button (click)="openBusinessHours()">
+                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:clock'"></mat-icon>
+                        <span>Visit Setup</span>
                     </button>
                     <!-- Business Hours Modal -->
-                    <div
-                        *ngIf="isBusinessHoursOpen"
-                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                    >
-                        <div
-                            class="bg-white rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto p-6"
-                        >
+                    <div *ngIf="isBusinessHoursOpen"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-lg shadow-lg w-96 max-h-[90vh] overflow-auto p-6">
                             <h3 class="text-xl font-semibold mb-4">
                                 Veterinary Business Hours
                             </h3>
 
                             <form (ngSubmit)="saveBusinessHours()">
-                                <div
-                                    *ngFor="
+                                <div *ngFor="
                                         let day of daysOfWeek;
                                         trackBy: trackByDay
-                                    "
-                                >
-                                    <label
-                                        class="block font-semibold text-gray-700 mb-1"
-                                    >
+                                    ">
+                                    <label class="block font-semibold text-gray-700 mb-1">
                                         {{ day }}
                                     </label>
                                     <div class="flex gap-4">
-                                        <select
-                                            [ngModel]="getBusinessHour(day)?.open"
+                                        <select [ngModel]="getBusinessHour(day)?.open"
                                             (ngModelChange)="updateBusinessHour(day, 'open', $event)"
-                                            name="{{ day }}_open"
-                                            class="flex-1 border p-2 rounded"
-                                        >
+                                            name="{{ day }}_open" class="flex-1 border p-2 rounded">
                                             <option value="">--</option>
                                             <option *ngFor="let t of timeOptions" [value]="t">{{ t }}</option>
                                         </select>
 
-                                        <select
-                                            [ngModel]="getBusinessHour(day)?.close"
+                                        <select [ngModel]="getBusinessHour(day)?.close"
                                             (ngModelChange)="updateBusinessHour(day, 'close', $event)"
-                                            name="{{ day }}_close"
-                                            class="flex-1 border p-2 rounded"
-                                        >
+                                            name="{{ day }}_close" class="flex-1 border p-2 rounded">
                                             <option value="">--</option>
                                             <option *ngFor="let t of timeOptions" [value]="t">{{ t }}</option>
                                         </select>
                                     </div>
-                                    
-                                </div>
 
+                                </div>
+                                <div class="mt-6">
+                                    <label class="block font-semibold text-gray-700 mb-1" for="visitPrice">
+                                        Visit Price
+                                    </label>
+                                    <input id="visitPrice" type="number" min="0" step="0.01" [(ngModel)]="visitPrice"
+                                        name="visitPrice" class="w-full border p-2 rounded"
+                                        placeholder="Enter visit price" required placeholder="Enter visit price"
+                                        required />
+                                </div>
                                 <div class="flex justify-between mt-6">
-                                    <button
-                                        type="submit"
-                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
-                                    >
+                                    <button type="submit"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
                                         Save
                                     </button>
-                                    <button
-                                        type="button"
-                                        (click)="resetBusinessHours()"
-                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow"
-                                    >
+                                    <button type="button" (click)="resetBusinessHours()"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">
                                         Cancel
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div
-                        *ngIf="isUserListOpen"
-                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                    >
-                        <div
-                            class="bg-white rounded-lg shadow-lg w-80 max-h-96 overflow-auto p-6"
-                        >
-                            <h3 class="text-xl font-semibold mb-4">
-                                Select a user to message
-                            </h3>
-                            <ul>
-                                <li
-                                    *ngFor="let user of users"
-                                    class="py-2 px-3 rounded cursor-pointer hover:bg-accent hover:text-white transition flex justify-between items-center"
-                                >
-                                    <span (click)="selectUser(user)">
-                                        {{ user.name }}
-                                    </span>
-                                    <a
-                                        *ngIf="user.email"
-                                        [href]="'mailto:' + user.email"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center hover:text-white"
-                                        (click)="$event.stopPropagation()"
-                                    >
-                                        <mat-icon
-                                            class="icon-size-5 text-hint"
-                                            [svgIcon]="
+
+                </div>
+
+                <div *ngIf="isUserListOpen"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-lg w-80 max-h-96 overflow-auto p-6">
+                        <h3 class="text-xl font-semibold mb-4">
+                            Select a user to message
+                        </h3>
+                        <ul>
+                            <li *ngFor="let user of users"
+                                class="py-2 px-3 rounded cursor-pointer hover:bg-accent hover:text-white transition flex justify-between items-center">
+                                <span (click)="selectUser(user)">
+                                    {{ user?.name }}
+                                </span>
+                                <a *ngIf="user.email" [href]="'mailto:' + user.email" target="_blank"
+                                    rel="noopener noreferrer" class="flex items-center hover:text-white"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon class="icon-size-5 text-hint" [svgIcon]="
                                                 'heroicons_solid:envelope'
-                                            "
-                                        ></mat-icon>
-                                        <span class="ml-2">Email</span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <button
-                                (click)="isUserListOpen = false"
-                                class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow"
-                            >
-                                Close
-                            </button>
-                        </div>
+                                            "></mat-icon>
+                                    <span class="ml-2">Email</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <button (click)="isUserListOpen = false"
+                            class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">
+                            Close
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -169,344 +127,232 @@
     <div class="flex-auto border-t -mt-px pt-4 sm:pt-6">
         <div class="w-full max-w-screen-xl mx-auto">
             <!-- Tabs -->
-            <mat-tab-group
-                class="sm:px-2"
-                mat-stretch-tabs="false"
-                [animationDuration]="'0'"
-            >
+            <mat-tab-group class="sm:px-2" mat-stretch-tabs="false" [animationDuration]="'0'">
                 <!-- Home -->
                 <mat-tab label="Home">
                     <ng-template matTabContent>
-                        <div
-                            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full min-w-0"
-                            *ngIf="overviewStats"
-                        >
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full min-w-0"
+                            *ngIf="overviewStats">
                             <!-- Clients -->
-                            <div
-                                class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="flex items-start justify-between">
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         Clients
                                     </div>
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
-                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-blue-500"
-                                    >
+                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-blue-500">
                                         {{ overviewStats.clientsCount }}
                                     </div>
-                                    <div
-                                        class="text-lg font-medium text-blue-600 dark:text-blue-500"
-                                    >
+                                    <div class="text-lg font-medium text-blue-600 dark:text-blue-500">
                                         Total clients
                                     </div>
-                                    <div
-                                        class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    ></div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary"></div>
                                 </div>
                             </div>
                             <!-- pets -->
-                            <div
-                                class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="flex items-start justify-between">
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         Pets
                                     </div>
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
-                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-red-500"
-                                    >
+                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-red-500">
                                         {{ overviewStats.petsCount }}
                                     </div>
-                                    <div
-                                        class="text-lg font-medium text-red-600 dark:text-red-500"
-                                    >
+                                    <div class="text-lg font-medium text-red-600 dark:text-red-500">
                                         Total Pets
                                     </div>
-                                    <div
-                                        class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    ></div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary"></div>
                                 </div>
                             </div>
                             <!-- Products -->
-                            <div
-                                class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="flex items-start justify-between">
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         Products
                                     </div>
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
-                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-amber-500"
-                                    >
+                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-amber-500">
                                         {{ overviewStats.productsCount }}
                                     </div>
-                                    <div
-                                        class="text-lg font-medium text-amber-600 dark:text-amber-500"
-                                    >
+                                    <div class="text-lg font-medium text-amber-600 dark:text-amber-500">
                                         Total products
                                     </div>
-                                    <div
-                                        class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    ></div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary"></div>
                                 </div>
                             </div>
                             <!-- Appointments -->
-                            <div
-                                class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
+                            <div class="flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="flex items-start justify-between">
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         Appointments
                                     </div>
                                 </div>
                                 <div class="flex flex-col items-center mt-2">
                                     <div
-                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-green-500"
-                                    >
+                                        class="text-7xl sm:text-8xl font-bold tracking-tight leading-none text-green-500">
                                         {{
-                                            overviewStats.appointmentsLast7Days
+                                        overviewStats.appointmentsLast7Days
                                         }}
                                     </div>
-                                    <div
-                                        class="text-sm font-medium text-green-600 dark:text-green-500"
-                                    >
+                                    <div class="text-sm font-medium text-green-600 dark:text-green-500">
                                         total appointments in last 7 days
                                     </div>
-                                    <div
-                                        class="flex items-baseline justify-center w-full mt-5 text-secondary"
-                                    ></div>
+                                    <div class="flex items-baseline justify-center w-full mt-5 text-secondary"></div>
                                 </div>
                             </div>
                             <!-- Appointment per day chart -->
                             <div
-                                class="sm:col-span-2 md:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
-                                <div
-                                    class="flex flex-col sm:flex-row items-start justify-between"
-                                >
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                class="sm:col-span-2 md:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex flex-col sm:flex-row items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         Appointments per Day
                                     </div>
                                     <!-- Month Selector -->
-                                    <div
-                                        class="mt-3 sm:mt-0 sm:ml-2 flex items-center gap-4"
-                                    >
-                                        <label
-                                            class="text-sm font-medium text-gray-600"
-                                            >Select Month:</label
-                                        >
+                                    <div class="mt-3 sm:mt-0 sm:ml-2 flex items-center gap-4">
+                                        <label class="text-sm font-medium text-gray-600">Select Month:</label>
 
-                                        <mat-form-field
-                                            appearance="outline"
-                                            class="w-56"
-                                        >
-                                            <mat-select
-                                                [(ngModel)]="selectedMonth"
-                                               
-                                            >
-                                                <mat-option     (click)="
+                                        <mat-form-field appearance="outline" class="w-56">
+                                            <mat-select [(ngModel)]="selectedMonth">
+                                                <mat-option (click)="
                                                 onMonthChange('all')
-                                            " value="all"
-                                                    >All Time</mat-option
-                                                >
-                                                <mat-option
-                                                    *ngFor="
+                                            " value="all">All Time</mat-option>
+                                                <mat-option *ngFor="
                                                         let month of availableMonths
-                                                    "
-                                                    [value]="month"
-                                                    (click)="
+                                                    " [value]="month" (click)="
                                                     onMonthChange(month)
-                                                "
-                                                >
+                                                ">
                                                     {{
-                                                        month
-                                                            | date : "MMMM yyyy"
+                                                    month
+                                                    | date : "MMMM yyyy"
                                                     }}
                                                 </mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
                                 </div>
-                                <div
-                                    class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4"
-                                >
-                                <button #hidden class="hidden">
-
-                                </button>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-6 w-full mt-8 sm:mt-4">
+                                    
                                     <!-- Chart Display -->
-                                     @if(!disabledChart()){
-                                    <apx-chart
-                                        
-                                        class="flex-auto w-full h-80"
-                                        [chart]="chartAppointmentsPerDay.chart"
+                                    @if(!disabledChart()){
+                                    <apx-chart class="flex-auto w-full h-80" [chart]="chartAppointmentsPerDay.chart"
                                         [colors]="
                                             chartAppointmentsPerDay.colors
-                                        "
-                                        [dataLabels]="
+                                        " [dataLabels]="
                                             chartAppointmentsPerDay.dataLabels
-                                        "
-                                        [grid]="chartAppointmentsPerDay.grid"
-                                        [labels]="
+                                        " [grid]="chartAppointmentsPerDay.grid" [labels]="
                                             chartAppointmentsPerDay.labels
-                                        "
-                                        [legend]="
+                                        " [legend]="
                                             chartAppointmentsPerDay.legend
-                                        "
-                                        [plotOptions]="
+                                        " [plotOptions]="
                                             chartAppointmentsPerDay.plotOptions
-                                        "
-                                        [series]="
+                                        " [series]="
                                             chartAppointmentsPerDay.series
-                                        "
-                                        [states]="
+                                        " [states]="
                                             chartAppointmentsPerDay.states
-                                        "
-                                        [stroke]="
+                                        " [stroke]="
                                             chartAppointmentsPerDay.stroke
-                                        "
-                                        [tooltip]="
+                                        " [tooltip]="
                                             chartAppointmentsPerDay.tooltip
-                                        "
-                                        [xaxis]="chartAppointmentsPerDay.xaxis"
-                                        [yaxis]="chartAppointmentsPerDay.yaxis"
-                                    ></apx-chart>}
+                                        " [xaxis]="chartAppointmentsPerDay.xaxis"
+                                        [yaxis]="chartAppointmentsPerDay.yaxis"></apx-chart>}
                                     @else {
-                                        <div class="w-full">
-                                            loading data ....
-                                        </div>
+                                    <div class="w-full">
+                                        loading data ....
+                                    </div>
                                     }
                                     <!-- Overview -->
                                     <div class="flex flex-col">
                                         <div class="font-medium text-secondary">
                                             Overview
                                         </div>
-                                        <div
-                                            class="flex-auto grid grid-cols-4 gap-4 mt-6"
-                                        >
+                                        <div class="flex-auto grid grid-cols-4 gap-4 mt-6">
                                             <!-- New issues -->
                                             <div
-                                                class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-indigo-50 text-indigo-800 dark:bg-white dark:bg-opacity-5 dark:text-indigo-400"
-                                            >
+                                                class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-indigo-50 text-indigo-800 dark:bg-white dark:bg-opacity-5 dark:text-indigo-400">
                                                 <div
-                                                    class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight"
-                                                >
+                                                    class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
                                                     {{
-                                                        appointmentData.stats
-                                                            ?.total
+                                                    appointmentData.stats
+                                                    ?.total
                                                     }}
                                                 </div>
-                                                <div
-                                                    class="mt-1 text-sm sm:text-lg font-medium"
-                                                >
+                                                <div class="mt-1 text-sm sm:text-lg font-medium">
                                                     all appointments
                                                 </div>
                                             </div>
                                             <!-- Closed -->
                                             <div
-                                                class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500"
-                                            >
+                                                class="col-span-2 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-green-50 text-green-800 dark:bg-white dark:bg-opacity-5 dark:text-green-500">
                                                 <div
-                                                    class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight"
-                                                >
+                                                    class="text-5xl sm:text-7xl font-semibold leading-none tracking-tight">
                                                     {{
-                                                        appointmentData.stats
-                                                            ?.completed +
-                                                            appointmentData
-                                                                .stats
-                                                                ?.confirmed
+                                                    appointmentData.stats
+                                                    ?.completed +
+                                                    appointmentData
+                                                    .stats
+                                                    ?.confirmed
                                                     }}
                                                 </div>
-                                                <div
-                                                    class="mt-1 text-sm sm:text-lg font-medium"
-                                                >
+                                                <div class="mt-1 text-sm sm:text-lg font-medium">
                                                     confirmed
                                                 </div>
                                             </div>
                                             <!-- Fixed -->
                                             <div
-                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
-                                            >
-                                                <div
-                                                    class="text-5xl font-semibold leading-none tracking-tight"
-                                                >
+                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
                                                     {{
-                                                        appointmentData.stats
-                                                            ?.pending
+                                                    appointmentData.stats
+                                                    ?.pending
                                                     }}
                                                 </div>
-                                                <div
-                                                    class="mt-1 text-sm font-medium text-center"
-                                                >
+                                                <div class="mt-1 text-sm font-medium text-center">
                                                     pending
                                                 </div>
                                             </div>
                                             <!-- Won't fix -->
                                             <div
-                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
-                                            >
-                                                <div
-                                                    class="text-5xl font-semibold leading-none tracking-tight"
-                                                >
+                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
                                                     {{
-                                                        appointmentData.stats
-                                                            ?.canceled
+                                                    appointmentData.stats
+                                                    ?.canceled
                                                     }}
                                                 </div>
-                                                <div
-                                                    class="mt-1 text-sm font-medium text-center"
-                                                >
+                                                <div class="mt-1 text-sm font-medium text-center">
                                                     canceled
                                                 </div>
                                             </div>
                                             <!-- Re-opened -->
                                             <div
-                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
-                                            >
-                                                <div
-                                                    class="text-5xl font-semibold leading-none tracking-tight"
-                                                >
+                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
                                                     {{
-                                                        appointmentData.stats
-                                                            ?.completed
+                                                    appointmentData.stats
+                                                    ?.completed
                                                     }}
                                                 </div>
-                                                <div
-                                                    class="mt-1 text-sm font-medium text-center"
-                                                >
+                                                <div class="mt-1 text-sm font-medium text-center">
                                                     completed
                                                 </div>
                                             </div>
                                             <!-- Needs triage -->
                                             <div
-                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5"
-                                            >
-                                                <div
-                                                    class="text-5xl font-semibold leading-none tracking-tight"
-                                                >
+                                                class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center py-8 px-1 rounded-2xl bg-gray-100 text-secondary dark:bg-white dark:bg-opacity-5">
+                                                <div class="text-5xl font-semibold leading-none tracking-tight">
                                                     {{
-                                                        appointmentData.stats
-                                                            ?.confirmed
+                                                    appointmentData.stats
+                                                    ?.confirmed
                                                     }}
                                                 </div>
-                                                <div
-                                                    class="mt-1 text-sm font-medium text-center"
-                                                >
+                                                <div class="mt-1 text-sm font-medium text-center">
                                                     not completed
                                                 </div>
                                             </div>
@@ -516,133 +362,88 @@
                             </div>
                             <!-- Task distribution -->
                             <div
-                                class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
-                                <div
-                                    class="flex flex-col sm:flex-row items-start justify-between"
-                                >
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex flex-col sm:flex-row items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         Animal per category
                                     </div>
                                 </div>
                                 <div class="flex flex-col flex-auto mt-6">
-                                    <apx-chart
-                                        *ngIf="chartTaskDistribution"
-                                        class="flex-auto w-full h-80"
-                                        [chart]="chartTaskDistribution.chart"
-                                        [labels]="chartTaskDistribution.labels"
-                                        [legend]="chartTaskDistribution.legend"
-                                        [plotOptions]="
+                                    <apx-chart *ngIf="chartTaskDistribution" class="flex-auto w-full h-80"
+                                        [chart]="chartTaskDistribution.chart" [labels]="chartTaskDistribution.labels"
+                                        [legend]="chartTaskDistribution.legend" [plotOptions]="
                                             chartTaskDistribution.plotOptions
-                                        "
-                                        [series]="chartTaskDistribution.series"
-                                        [states]="chartTaskDistribution.states"
-                                        [stroke]="chartTaskDistribution.stroke"
-                                        [theme]="chartTaskDistribution.theme"
-                                        [tooltip]="
+                                        " [series]="chartTaskDistribution.series"
+                                        [states]="chartTaskDistribution.states" [stroke]="chartTaskDistribution.stroke"
+                                        [theme]="chartTaskDistribution.theme" [tooltip]="
                                             chartTaskDistribution.tooltip
-                                        "
-                                        [yaxis]="chartTaskDistribution.yaxis"
-                                    ></apx-chart>
+                                        " [yaxis]="chartTaskDistribution.yaxis"></apx-chart>
                                 </div>
                                 <ng-template #loading>
-                                    <div
-                                        class="text-center text-sm text-gray-400"
-                                    >
+                                    <div class="text-center text-sm text-gray-400">
                                         Chart data not available
                                     </div>
                                 </ng-template>
                             </div>
                             <!-- Schedule -->
                             <div
-                                class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
-                                <div
-                                    class="flex flex-col sm:flex-row items-start justify-between"
-                                >
-                                    <div
-                                        class="text-lg font-medium tracking-tight leading-6 truncate"
-                                    >
+                                class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="flex flex-col sm:flex-row items-start justify-between">
+                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                         last
                                         {{
-                                            appointmentData.recentAppointments
-                                                .length
+                                        appointmentData.recentAppointments
+                                        .length
                                         }}
                                         appointments in the last 7 days
                                     </div>
                                 </div>
                                 <div class="flex flex-col mt-2 divide-y">
-                                    <ng-container
-                                        *ngFor="
+                                    <ng-container *ngFor="
                                             let appointment of appointmentData.recentAppointments;
                                             trackBy: trackByFn
-                                        "
-                                    >
-                                        <div
-                                            class="flex flex-row items-center justify-between py-4 px-0.5"
-                                        >
+                                        ">
+                                        <div class="flex flex-row items-center justify-between py-4 px-0.5">
                                             <div class="flex flex-col">
                                                 <div class="font-medium">
-                                                    {{ appointment.petId.name }}
+                                                    {{ appointment.petId?.name }}
                                                 </div>
                                                 <div
-                                                    class="flex flex-col sm:flex-row sm:items-center -ml-0.5 mt-2 sm:mt-1 space-y-1 sm:space-y-0 sm:space-x-3"
-                                                >
+                                                    class="flex flex-col sm:flex-row sm:items-center -ml-0.5 mt-2 sm:mt-1 space-y-1 sm:space-y-0 sm:space-x-3">
                                                     <ng-container>
-                                                        <div
-                                                            class="flex items-center"
-                                                        >
-                                                            <mat-icon
-                                                                class="icon-size-5 text-hint"
-                                                                [svgIcon]="
+                                                        <div class="flex items-center">
+                                                            <mat-icon class="icon-size-5 text-hint" [svgIcon]="
                                                                     'heroicons_solid:clock'
-                                                                "
-                                                            ></mat-icon>
-                                                            <div
-                                                                class="ml-1.5 text-md text-secondary"
-                                                            >
+                                                                "></mat-icon>
+                                                            <div class="ml-1.5 text-md text-secondary">
                                                                 {{
-                                                                    appointment.time
+                                                                appointment.time
                                                                 }}
                                                             </div>
                                                         </div>
                                                     </ng-container>
                                                     <ng-container>
-                                                        <div
-                                                            class="flex items-center"
-                                                        >
-                                                            <mat-icon
-                                                                class="icon-size-5 text-hint"
-                                                                [svgIcon]="
+                                                        <div class="flex items-center">
+                                                            <mat-icon class="icon-size-5 text-hint" [svgIcon]="
                                                                     'heroicons_solid:calendar-days'
-                                                                "
-                                                            ></mat-icon>
-                                                            <div
-                                                                class="ml-1.5 text-md text-secondary"
-                                                            >
+                                                                "></mat-icon>
+                                                            <div class="ml-1.5 text-md text-secondary">
                                                                 {{
-                                                                    appointment.date
-                                                                        | date
+                                                                appointment.date
+                                                                | date
                                                                 }}
                                                             </div>
                                                         </div>
                                                     </ng-container>
                                                 </div>
                                             </div>
-                                            <button
-                                                mat-icon-button
-                                                [routerLink]="[
+                                            <button mat-icon-button [routerLink]="[
                                                     '/home/appointments',
                                                     appointment._id
-                                                ]"
-                                            >
-                                                <mat-icon
-                                                    [svgIcon]="
+                                                ]">
+                                                <mat-icon [svgIcon]="
                                                         'heroicons_mini:chevron-right'
-                                                    "
-                                                ></mat-icon>
+                                                    "></mat-icon>
                                             </button>
                                         </div>
                                     </ng-container>
@@ -658,117 +459,79 @@
                         <div class="grid grid-cols-1 gap-y-5 w-full min-w-0">
                             <!-- Most Sold Categories -->
                             <div
-                                class="sm:col-span-3 lg:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
-                                <div
-                                    class="text-lg font-medium tracking-tight leading-6 truncate"
-                                >
+                                class="sm:col-span-3 lg:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                     Most Sold Categories
                                 </div>
                                 <div class="flex flex-col flex-auto">
-                                    <apx-chart
-                                        *ngIf="chartMostSoldCategories"
-                                        class="flex-auto w-full h-100"
-                                        [chart]="chartMostSoldCategories.chart"
-                                        [colors]="
+                                    <apx-chart *ngIf="chartMostSoldCategories" class="flex-auto w-full h-100"
+                                        [chart]="chartMostSoldCategories.chart" [colors]="
                                             chartMostSoldCategories.colors
-                                        "
-                                        [dataLabels]="
+                                        " [dataLabels]="
                                             chartMostSoldCategories.dataLabels
-                                        "
-                                        [markers]="
+                                        " [markers]="
                                             chartMostSoldCategories.markers
-                                        "
-                                        [plotOptions]="
+                                        " [plotOptions]="
                                             chartMostSoldCategories.plotOptions
-                                        "
-                                        [series]="
+                                        " [series]="
                                             chartMostSoldCategories.series
-                                        "
-                                        [stroke]="
+                                        " [stroke]="
                                             chartMostSoldCategories.stroke
-                                        "
-                                        [tooltip]="
+                                        " [tooltip]="
                                             chartMostSoldCategories.tooltip
-                                        "
-                                        [xaxis]="chartMostSoldCategories.xaxis"
-                                        [yaxis]="chartMostSoldCategories.yaxis"
-                                    >
+                                        " [xaxis]="chartMostSoldCategories.xaxis"
+                                        [yaxis]="chartMostSoldCategories.yaxis">
                                     </apx-chart>
                                 </div>
                             </div>
 
                             <!-- shopping carts lists -->
                             <div
-                                class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden"
-                            >
-                                <div
-                                    class="text-lg font-medium tracking-tight leading-6 truncate"
-                                >
+                                class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
+                                <div class="text-lg font-medium tracking-tight leading-6 truncate">
                                     Shopping carts lists
                                 </div>
-                                <div
-                                    class="flex flex-col flex-auto mt-2 overflow-x-auto"
-                                >
-                                    <table
-                                        class="min-w-240 overflow-y-visible"
-                                        mat-table
-                                        [dataSource]="cartList"
-                                    >
+                                <div class="flex flex-col flex-auto mt-2 overflow-x-auto">
+                                    <table class="min-w-240 overflow-y-visible" mat-table [dataSource]="cartList">
                                         <!-- Type -->
                                         <ng-container matColumnDef="num" sticky>
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 #
                                             </th>
-                                            <td
-                                                mat-cell
-                                                *matCellDef="
+                                            <td mat-cell *matCellDef="
                                                     let cart;
                                                     let i = index
-                                                "
-                                            >
+                                                ">
                                                 {{ i + 1 }}
                                             </td>
                                         </ng-container>
 
                                         <!-- Total -->
                                         <ng-container matColumnDef="clientName">
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 Client name
                                             </th>
                                             <td mat-cell *matCellDef="let cart">
-                                                {{ cart.clientName }}
+                                                {{ cart.clientName  }}
                                             </td>
                                         </ng-container>
 
                                         <!-- Expenses amount -->
                                         <ng-container matColumnDef="totalProd">
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 Total money
                                             </th>
                                             <td mat-cell *matCellDef="let cart">
                                                 {{
-                                                    cart.totalMoney
-                                                        | currency : "TND"
+                                                cart.totalMoney
+                                                | currency : "TND"
                                                 }}
                                             </td>
                                         </ng-container>
 
                                         <!-- Expenses percentage -->
                                         <ng-container matColumnDef="totalMoney">
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 total products
                                             </th>
                                             <td mat-cell *matCellDef="let cart">
@@ -778,40 +541,30 @@
 
                                         <!-- Remaining amount -->
                                         <ng-container matColumnDef="date">
-                                            <th
-                                                mat-header-cell
-                                                *matHeaderCellDef
-                                            >
+                                            <th mat-header-cell *matHeaderCellDef>
                                                 Date
                                             </th>
                                             <td mat-cell *matCellDef="let cart">
                                                 {{
-                                                    cart.date | date : "medium"
+                                                cart.date | date : "medium"
                                                 }}
                                             </td>
                                         </ng-container>
 
-                                        <tr
-                                            mat-header-row
-                                            *matHeaderRowDef="displayedColumns"
-                                        ></tr>
-                                        <tr
-                                            mat-row
-                                            *matRowDef="
+                                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                        <tr mat-row *matRowDef="
                                                 let row;
                                                 columns: displayedColumns
-                                            "
-                                        ></tr>
+                                            "></tr>
                                     </table>
 
                                     <mat-paginator
-                                        [length]="total"
-                                        [pageSize]="currentSize"
-                                        [pageIndex]="currentPage - 1"
-                                        [pageSizeOptions]="[5, 10, 20, 50, 100]"
-                                        (page)="pageChanged($event)"
-                                    >
-                                    </mat-paginator>
+                                     [length]="total" 
+                                     [pageSize]="currentSize"
+                                     [pageIndex]="currentPage - 1" 
+                                     [pageSizeOptions]="[5, 10, 20, 50, 100]"
+                                     (page)="pageChanged($event)">
+                                    </mat-paginator> 
                                 </div>
                             </div>
                         </div>
@@ -823,32 +576,20 @@
                     <ng-template mat-tab-label>
                         <span class="inline-flex items-center space-x-2">
                             <span class="">Team</span>
-                            <span
-                                class="px-2 py-1 text-sm rounded-full bg-primary-100 text-on-primary-100"
-                            >
+                            <span class="px-2 py-1 text-sm rounded-full bg-primary-100 text-on-primary-100">
                                 {{ teamMembers.length }}
                             </span>
                         </span>
                     </ng-template>
                     <ng-template matTabContent>
-                        <div
-                            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full min-w-0"
-                        >
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full min-w-0">
                             <ng-container *ngFor="let member of teamMembers">
                                 <div
-                                    class="flex flex-col flex-auto items-center bg-card shadow rounded-2xl overflow-hidden"
-                                >
+                                    class="flex flex-col flex-auto items-center bg-card shadow rounded-2xl overflow-hidden">
                                     <!-- Avatar & Info -->
-                                    <div
-                                        class="flex flex-col flex-auto w-full p-8 text-center"
-                                    >
-                                        <div
-                                            class="w-32 h-32 mx-auto rounded-full overflow-hidden"
-                                        >
-                                            <img
-                                                class="w-full h-full object-cover"
-                                                [src]="member.avatar"
-                                            />
+                                    <div class="flex flex-col flex-auto w-full p-8 text-center">
+                                        <div class="w-32 h-32 mx-auto rounded-full overflow-hidden">
+                                            <img class="w-full h-full object-cover" [src]="member.avatar" />
                                         </div>
                                         <div class="mt-6 font-medium">
                                             {{ member.name }}
@@ -859,38 +600,24 @@
                                         </div>
                                     </div>
                                     <!-- Email & Phone -->
-                                    <div
-                                        class="flex items-center w-full border-t divide-x"
-                                    >
+                                    <div class="flex items-center w-full border-t divide-x">
                                         <!-- Email Link -->
-                                        <a
-                                            *ngIf="member.email"
+                                        <a *ngIf="member.email"
                                             class="flex flex-auto items-center justify-center py-4 hover:bg-hover"
-                                            [href]="'mailto:' + member.email"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <mat-icon
-                                                class="icon-size-5 text-hint"
-                                                [svgIcon]="
+                                            [href]="'mailto:' + member.email" target="_blank" rel="noopener noreferrer">
+                                            <mat-icon class="icon-size-5 text-hint" [svgIcon]="
                                                     'heroicons_solid:envelope'
-                                                "
-                                            ></mat-icon>
+                                                "></mat-icon>
                                             <span class="ml-2">Email</span>
                                         </a>
 
                                         <!-- Phone Link -->
-                                        <a
-                                            *ngIf="member.phone"
+                                        <a *ngIf="member.phone"
                                             class="flex flex-auto items-center justify-center py-4 hover:bg-hover"
-                                            [href]="'tel:' + member.phone"
-                                        >
-                                            <mat-icon
-                                                class="icon-size-5 text-hint"
-                                                [svgIcon]="
+                                            [href]="'tel:' + member.phone">
+                                            <mat-icon class="icon-size-5 text-hint" [svgIcon]="
                                                     'heroicons_solid:phone'
-                                                "
-                                            ></mat-icon>
+                                                "></mat-icon>
                                             <span class="ml-2">Call</span>
                                         </a>
                                     </div>

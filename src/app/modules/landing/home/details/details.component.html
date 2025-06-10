@@ -141,7 +141,7 @@
 
                     <ng-template #switchVet>
                         <button
-                            *ngIf="this.connectedCompanyId !== company._id &&  connectedUserType === 'client'"
+                            *ngIf="this.connectedCompanyId !== company._id &&  connectedUserType === 'external'"
                             (click)="switchVeterinary()"
                             class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-full text-lg transition duration-200 shadow-md"
                         >
