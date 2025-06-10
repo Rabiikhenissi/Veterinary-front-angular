@@ -18,18 +18,30 @@
     </div>
 
     <!-- Performed Procedures -->
-    <div>
-      <label class="block text-green-700 font-semibold mb-2">Performed Procedures</label>
-      <mat-form-field appearance="fill" class="w-full rounded-xl">
-        <mat-label>Select procedures</mat-label>
-        <mat-select name="procedures" multiple (selectionChange)="onProceduresChange($event.value)">
-          <mat-option *ngFor="let service of services" [value]="service">
-            {{ service.name }} <span class="text-green-700 font-semibold">- {{ service.price }} TND</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
+<div>
+  <label class="block text-green-700 font-semibold mb-2">Performed Procedures</label>
+  <mat-form-field appearance="fill" class="w-full rounded-xl">
+    <mat-label>Select procedures</mat-label>
+    <mat-select
+      #proceduresSelect="ngModel"
+      name="procedures"
+      multiple
+      [(ngModel)]="info.performedProcedures"
+      (selectionChange)="onProceduresChange($event.value)"
+      [ngClass]="{'border-red-500': (proceduresSelect.touched || infoForm.submitted) && (!info.performedProcedures || info.performedProcedures.length === 0)}"
+    >
+      <mat-option *ngFor="let service of services" [value]="service">
+        {{ service.name }} <span class="text-green-700 font-semibold">- {{ service.price }} TND</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div
+    *ngIf="(proceduresSelect.touched || infoForm.submitted) && (!info.performedProcedures || info.performedProcedures.length === 0)"
+    class="text-red-600 text-sm mt-2"
+  >
+    At least one procedure is required.
+  </div>
+</div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Weight -->
       <div>
@@ -70,12 +82,13 @@
 
     <!-- Submit Button -->
     <div class="flex justify-end pt-4">
-      <button
-        type="submit"
-        class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl shadow-lg text-lg font-bold flex items-center gap-2 transition"
-      >
-        ✅ Save Info
-      </button>
+    <button
+  type="submit"
+  [disabled]="!info.performedProcedures || info.performedProcedures.length === 0"
+  class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl shadow-lg text-lg font-bold flex items-center gap-2 transition"
+>
+  ✅ Save Info
+</button>
     </div>
   </form>
 </div>

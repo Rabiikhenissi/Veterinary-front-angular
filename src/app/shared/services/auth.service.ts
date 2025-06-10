@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { environment } from '../../../environments/environment';
 import {AuthUtils} from "../../core/auth/auth.utils";
@@ -87,7 +87,7 @@ export class AuthService {
                     this.accessToken = response;
                  const connectedUser = this._userService.decodeToken(response);
                  this.connectedUser = connectedUser;
-                 console.log(this.connectedUser);
+                 console.log('Connected User:', this.connectedUser)
                  localStorage.setItem('connectedUserId', this.connectedUser.id);
                  this._notificationService.init(this.connectedUser.id);
                  localStorage.setItem('connectedUserType', this.connectedUser.type);
@@ -143,8 +143,9 @@ export class AuthService {
  /**
      * Sign in with google
      */
- signInWithGoogle(): Observable<any> {
+signInWithGoogle(): Observable<any> {
     const provider = new GoogleAuthProvider();
+
     return new Observable(observer => {
         signInWithPopup(this.auth, provider)
             .then(async result => {
@@ -152,61 +153,44 @@ export class AuthService {
                 if (!user) return;
 
                 const firebaseToken = await user.getIdToken();
-                this._httpClient.post<{ token: string }>(`${this.endpointAuth}/loginFire`, { firebaseToken })
+
+                this._httpClient
+                    .post<{ token: string }>(`${this.endpointAuth}/loginFire`, { firebaseToken })
                     .subscribe({
                         next: (response) => {
                             if (!response.token) {
                                 observer.error(new Error('Invalid response from server.'));
                                 return;
                             }
+
                             this.accessToken = response.token;
+
+                            // Cast decoded token to any to avoid TS errors
+                            const connectedUser = this._userService.decodeToken(response.token) as any;
+                            this.connectedUser = connectedUser;
+
+                            localStorage.setItem('connectedUserId', connectedUser.id);
+                            this._notificationService.init(connectedUser.id);
+                            localStorage.setItem('connectedUserType', connectedUser.type);
+                            localStorage.setItem('connectedUserCompany', connectedUser.companyId);
+                               console.log('Connected User:', this.connectedUser);
+                               console.log('connectedUserId:', this.connectedUserId);
+                            console.log('connectedUserId:', this.connectedUser.id);
+
+                               console.log('Decoded Token:', connectedUser);
+                               
+                               
+                            // @ts-ignore
+                            this._userService._defaultLink.next(connectedUser?.defaultLink);
                             this._authenticated = true;
+
                             observer.next(user);
                         },
-                        error: error => observer.error(error),
+                        error: (error) => observer.error(error),
                     });
             })
             .catch(error => observer.error(error));
     });
 }
-    
- /**
-     * Sign in with facebook
-     */      signInWithFacebook(): Observable<any> {
-        const provider = new FacebookAuthProvider();
-        return new Observable(observer => {
-          signInWithPopup(this.auth, provider)
-            .then(result => {
-              const user = result.user;
-              if (user) {
-                user.getIdToken().then(token => {
-                  this.accessToken = token;
-                  this._authenticated = true;
-                  observer.next(user);
-                });
-              }
-            })
-            .catch(error => observer.error(error));
-        });
-      }
-    
- /**
-     * Sign in with github
-     */      signInWithGithub(): Observable<any> {
-        const provider = new GithubAuthProvider();
-        return new Observable(observer => {
-          signInWithPopup(this.auth, provider)
-            .then(result => {
-              const user = result.user;
-              if (user) {
-                user.getIdToken().then(token => {
-                  this.accessToken = token;
-                  this._authenticated = true;
-                  observer.next(user);
-                });
-              }
-            })
-            .catch(error => observer.error(error));
-        });
-      }
+ 
 }

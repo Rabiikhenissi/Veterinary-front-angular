@@ -724,53 +724,73 @@ windowResizeDelay: 150,
         calendarApi.addEventSource(events); 
     }
 
-    handleEventDrop(dropInfo: any) {
-        const updatedStart = dropInfo.event.startStr;
-        const updatedEnd = dropInfo.event.endStr;
-        const appointmentId = dropInfo.event.id;
-    const updatedStartDate = new Date(updatedStart);
-      if (!this.businessHours(updatedStartDate)) {
+handleEventDrop(dropInfo: any) {
+  const updatedStart = dropInfo.event.startStr;
+  const appointmentId = dropInfo.event.id;
+
+  const updatedStartDate = new Date(updatedStart);
+  const date = updatedStart.split('T')[0];
+  const time = updatedStart.split('T')[1]?.split('+')[0]?.substring(0, 5);
+
+  // Step 1: Check business hours
+  if (!this.businessHours(updatedStartDate)) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Outside business hours',
+      text: 'This time is outside of our business hours.',
+      confirmButtonColor: '#f87171',
+    }).then(() => dropInfo.revert());
+    return;
+  }
+
+  // Step 2: Check slot availability
+  const companyId = localStorage.getItem('connectedUserCompany');
+
+  this._appointmentService.isAvailable(date, time, companyId, appointmentId).subscribe({
+    next: (res) => {
+      if (!res.available) {
         Swal.fire({
-            icon: 'info',
-            title: 'Outside business hours',
-            text: 'This time  is outside of our business hours.',
-            confirmButtonColor: '#f87171',
-        }).then(() => {
-            dropInfo.revert();
-        });
+          icon: 'warning',
+          title: 'Time Unavailable',
+          text: 'This time slot is not available for appointments.',
+          confirmButtonColor: '#f87171',
+        }).then(() => dropInfo.revert());
         return;
-    }
-        this._appointmentService.getAppointment(appointmentId).subscribe({
-            next: (appointment) => {
-               
-                console.log('Fetched Appointment:', appointment);
-                
-                const updatedAppointment = {
-                    ...appointment,
-                    userId: appointment.userId._id,    
-                    petId: appointment.petId._id,      
-                    companyId: appointment.companyId,  
-                    date: updatedStart.split('T')[0],  
-                    time: updatedStart.split('T')[1]?.split('+')[0]?.substring(0, 5), 
-                           
-                };
-    
-                console.log('Updated Appointment:', updatedAppointment);
-                    this._appointmentService.updateAppointment(updatedAppointment).subscribe({
-                    next: () => {
-                            this.loadAppointments();  
-                    
-                    },
-                    error: (err) => {
-                        console.error('Error updating appointment:', err);
-                    },
-                });
-            },
+      }
+
+      // Step 3: Fetch the original appointment and update it
+      this._appointmentService.getAppointment(appointmentId).subscribe({
+        next: (appointment) => {
+          const updatedAppointment = {
+            ...appointment,
+            userId: appointment.userId._id,
+            petId: appointment.petId._id,
+            companyId: appointment.companyId,
+            date,
+            time,
+          };
+
+          this._appointmentService.updateAppointment(updatedAppointment).subscribe({
+            next: () => this.loadAppointments(),
             error: (err) => {
-                console.error('Error fetching appointment:', err);
+              console.error('Error updating appointment:', err);
+              dropInfo.revert();
             }
-        });
+          });
+        },
+        error: (err) => {
+          console.error('Error fetching appointment:', err);
+          dropInfo.revert();
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error checking availability:', err);
+      dropInfo.revert();
     }
+  });
+}
+
      private convertToBusinessHoursFormat(businessHours: BusinessHour[]): any[] {
   const dayMap = {
     Sunday: 0,
