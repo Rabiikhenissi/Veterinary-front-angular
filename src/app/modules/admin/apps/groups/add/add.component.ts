@@ -24,6 +24,7 @@ import Swal from 'sweetalert2';
 import { User } from 'app/shared/models/user';
 import { CompanyService } from 'app/shared/services/company.service';
 import { Company } from 'app/shared/models/company';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-details',
@@ -47,6 +48,7 @@ import { Company } from 'app/shared/models/company';
         MatRadioButton,
         MatIcon,
         MatIconButton,
+        CommonModule
     ],
 })
 export class AddComponent implements OnInit {

@@ -1,46 +1,23 @@
-<div
-    class="md:absolute md:inset-0 flex flex-col flex-auto min-w-0 md:overflow-hidden bg-card dark:bg-transparent"
->
+<div class="md:absolute md:inset-0 flex flex-col flex-auto min-w-0 md:overflow-hidden bg-card dark:bg-transparent">
     <!-- Header -->
-    <div
-        class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900"
-    >
-        <div
-            class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white"
-        >
+    <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900">
+        <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white">
             {{ "Users" | transloco }}
         </div>
-        <div
-            class="flex w-full md:w-3/4 items-start md:items-center justify-between"
-        >
-            <mat-form-field
-                class="fuse-mat-dense fuse-mat-no-subscript md:mt-5 w-3/4"
-            >
-                <mat-icon
-                    class="icon-size-5"
-                    matPrefix
-                    [svgIcon]="'feather:search'"
-                ></mat-icon>
-                <input
-                    matInput
-                    [(ngModel)]="filterSearch"
-                    (ngModelChange)="updateSearch()"
-                    [autocomplete]="'off'"
-                    placeholder="{{ 'Search' | transloco }}"
-                />
+        <div class="flex w-full md:w-3/4 items-start md:items-center justify-between">
+            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript md:mt-5 w-3/4">
+                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:search'"></mat-icon>
+                <input matInput [(ngModel)]="filterSearch" (ngModelChange)="updateSearch()" [autocomplete]="'off'"
+                    placeholder="{{ 'Search' | transloco }}" />
             </mat-form-field>
 
-            <button
-                *appFeatures="[
+            <button *appFeatures="[
                     {
                         code: featureCodes.users,
                         actions: [featureActions.create]
                     }
-                ]"
-                class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
-                mat-stroked-button
-                (click)="addOne()"
-            >
+                ]" class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+                mat-stroked-button (click)="addOne()">
                 <span class="mx-1.5 block">{{ "Add" | transloco }}</span>
             </button>
         </div>
@@ -51,8 +28,7 @@
         <div class="flex flex-col flex-auto md:mb-18">
             <!-- Table Header -->
             <div
-                class="grid grid-cols-7 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
-            >
+                class="grid grid-cols-7 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
                 <div class="md:block">N°</div>
                 <div class="truncate">{{ "name" | transloco }}</div>
                 <div class="truncate">{{ "email" | transloco }}</div>
@@ -61,10 +37,7 @@
                 <div class="md:block">{{ "status" | transloco }}</div>
                 <div class="flex justify-end">
                     <button mat-icon-button (click)="openFilter = true">
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:filter'"
-                        ></mat-icon>
+                        <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
                     </button>
                 </div>
             </div>
@@ -75,14 +48,11 @@
                 <div class="flex-1 md:grid md:flex-0">
                     <ng-container>
                         @for (row of displayedList?.data; track row) {
-                        <div
-                            [ngClass]="{
+                        <div [ngClass]="{
                                 'bg-red-100 hover:bg-red-200': row.archived,
                                 'hover:bg-gray-100': !row.archived
-                            }"
-                            class="grid grid-cols-7 items-center gap-4 py-1 px-4 md:px-6 border-b"
-                            (click)="isScreenSmall ? openShow(row) : null"
-                        >
+                            }" class="grid grid-cols-7 items-center gap-4 py-1 px-4 md:px-6 border-b"
+                            (click)="isScreenSmall ? openShow(row) : null">
                             <div class="md:block">{{ $index + 1 }}</div>
                             <div class="truncate text-xl">{{ row.name }}</div>
                             <div class="truncate text-xl">{{ row.email }}</div>
@@ -93,147 +63,102 @@
                                 {{ getCompany(row.companyId) }}
                             </div>
                             <div class="md:block">
-                                <span
-                                    class="px-2 py-1 rounded-full text-md font-semibold"
-                                    [ngClass]="{
+                                <span class="px-2 py-1 rounded-full text-md font-semibold" [ngClass]="{
                                         'bg-green-100 text-green-800':
                                             row.status === 'verified',
                                         'bg-yellow-100 text-yellow-800':
                                             row.status === 'pending',
                                         'bg-red-100 text-red-800':
                                             row.status === 'locked'
-                                    }"
-                                >
+                                    }">
                                     {{ row.status | titlecase }}
                                 </span>
                             </div>
                             <div class="flex justify-end">
-                                <button
-                                    class="mr-4"
-                                    mat-icon-button
-                                    [matMenuTriggerFor]="budgetMenu"
-                                >
-                                    <mat-icon
-                                        class="icon-size-5"
-                                        [svgIcon]="
+                                <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
+                                    <mat-icon class="icon-size-5" [svgIcon]="
                                             'heroicons_solid:ellipsis-vertical'
-                                        "
-                                    ></mat-icon>
+                                        "></mat-icon>
                                 </button>
                                 <mat-menu #budgetMenu="matMenu">
                                     <!-- Always show Show & Edit -->
-                                    <button
-                                        *appFeatures="[
+                                    <button *appFeatures="[
                                             {
                                                 code: featureCodes.users,
                                                 actions: [featureActions.read]
                                             }
-                                        ]"
-                                        mat-menu-item
-                                        class="flex justify-between"
-                                        (click)="openShow(row)"
-                                    >
+                                        ]" mat-menu-item class="flex justify-between" (click)="openShow(row)">
                                         <span class="ml-2 mr-1 block">{{
                                             "Show" | transloco
-                                        }}</span>
-                                        <mat-icon
-                                            [svgIcon]="'heroicons_outline:eye'"
-                                        ></mat-icon>
+                                            }}</span>
+                                        <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
                                     </button>
 
-                                    <button
-                                        *appFeatures="[
+                                    <button *appFeatures="[
                                             {
                                                 code: featureCodes.users,
                                                 actions: [featureActions.update]
                                             }
-                                        ]"
-                                        mat-menu-item
-                                        class="flex justify-between"
-                                        (click)="openEdit(row)"
-                                    >
+                                        ]" mat-menu-item class="flex justify-between" (click)="openEdit(row)">
                                         <span class="ml-2 mr-1 block">{{
                                             "Edit" | transloco
-                                        }}</span>
-                                        <mat-icon
-                                            [svgIcon]="
+                                            }}</span>
+                                        <mat-icon [svgIcon]="
                                                 'heroicons_outline:pencil'
-                                            "
-                                        ></mat-icon>
+                                            "></mat-icon>
                                     </button>
 
                                     <!-- If NOT archived, show Archive -->
                                     <ng-container *ngIf="!row.archived">
-                                        <button
-                                            *appFeatures="[
+                                        <button *appFeatures="[
                                                 {
                                                     code: featureCodes.users,
                                                     actions: [
                                                         featureActions.delete
                                                     ]
                                                 }
-                                            ]"
-                                            mat-menu-item
-                                            class="flex justify-between"
-                                            (click)="ArchiveOne(row)"
-                                        >
+                                            ]" mat-menu-item class="flex justify-between" (click)="ArchiveOne(row)">
                                             <span class="ml-2 mr-1 block">{{
                                                 "Archive" | transloco
-                                            }}</span>
-                                            <mat-icon
-                                                [svgIcon]="
+                                                }}</span>
+                                            <mat-icon [svgIcon]="
                                                     'heroicons_outline:folder'
-                                                "
-                                            ></mat-icon>
+                                                "></mat-icon>
                                         </button>
                                     </ng-container>
 
                                     <!-- If archived, show Restore & Permanent Delete -->
                                     <ng-container *ngIf="row.archived">
-                                        <button
-                                            *appFeatures="[
+                                        <button *appFeatures="[
                                                 {
                                                     code: featureCodes.users,
                                                     actions: [
                                                         featureActions.update
                                                     ]
                                                 }
-                                            ]"
-                                            mat-menu-item
-                                            class="flex justify-between"
-                                            (click)="restoreOne(row)"
-                                        >
+                                            ]" mat-menu-item class="flex justify-between" (click)="restoreOne(row)">
                                             <span class="ml-2 mr-1 block">{{
                                                 "Restore" | transloco
-                                            }}</span>
-                                            <mat-icon
-                                                [svgIcon]="
+                                                }}</span>
+                                            <mat-icon [svgIcon]="
                                                     'heroicons_outline:arrow-path'
-                                                "
-                                            ></mat-icon>
+                                                "></mat-icon>
                                         </button>
 
-                                        <button
-                                            *appFeatures="[
+                                        <button *appFeatures="[
                                                 {
                                                     code: featureCodes.users,
                                                     actions: [
                                                         featureActions.delete
                                                     ]
                                                 }
-                                            ]"
-                                            mat-menu-item
-                                            class="flex justify-between"
-                                            (click)="deleteOne(row)"
-                                        >
+                                            ]" mat-menu-item class="flex justify-between" (click)="deleteOne(row)">
                                             <span class="ml-2 mr-1 block">{{
                                                 "Delete" | transloco
-                                            }}</span>
-                                            <mat-icon
-                                                [svgIcon]="
+                                                }}</span>
+                                            <mat-icon [svgIcon]="
                                                     'heroicons_outline:trash'
-                                                "
-                                            ></mat-icon>
+                                                "></mat-icon>
                                         </button>
                                     </ng-container>
                                 </mat-menu>
@@ -246,54 +171,33 @@
 
             <mat-paginator
                 class="md:absolute md:inset-x-0 md:bottom-0 border-b md:border-t md:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-                [showFirstLastButtons]="true"
-                (page)="pageChanged($event)"
-                [length]="displayedList?.total"
-                [pageSize]="currentSize"
-                [pageSizeOptions]="[5, 10, 20, 50, 100]"
-            ></mat-paginator>
+                [showFirstLastButtons]="true" (page)="pageChanged($event)" [length]="displayedList?.total"
+                [pageSize]="currentSize" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
             }
         </div>
     </div>
 
     <!-- Sidebar Filter Panel -->
-    <div
-        class="sidebar-filter fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white dark:bg-gray-900 shadow-2xl transition-transform duration-300"
-        [class.translate-x-0]="openFilter"
-        [class.translate-x-full]="!openFilter"
-        style="transform: translateX(100%)"
-    >
+    <div class="sidebar-filter fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white dark:bg-gray-900 shadow-2xl transition-transform duration-300"
+        [class.translate-x-0]="openFilter" [class.translate-x-full]="!openFilter" style="transform: translateX(100%)">
         <div
-            class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900"
-        >
+            class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
             <span class="text-lg font-bold text-gray-700 dark:text-gray-100">{{
                 "Filters" | transloco
-            }}</span>
+                }}</span>
             <button mat-icon-button (click)="openFilter = false">
                 <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
             </button>
         </div>
-        <div
-            class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]"
-        >
+        <div class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]">
             <!-- Group Filter -->
             <div>
-                <div
-                    class="flex items-center gap-2 font-semibold text-base mb-2"
-                >
+                <div class="flex items-center gap-2 font-semibold text-base mb-2">
                     <mat-icon [svgIcon]="'feather:users'"></mat-icon>
                     {{ "Filter by Group" | transloco }}
                 </div>
-                <mat-form-field
-                    class="fuse-mat-no-subscript w-full"
-                    appearance="fill"
-                >
-                    <mat-select
-                        [(ngModel)]="filtergroups"
-                        multiple
-                        placeholder="Select group(s)"
-                        name="filtergroups"
-                    >
+                <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
+                    <mat-select [(ngModel)]="filtergroups" multiple placeholder="Select group(s)" name="filtergroups">
                         @for(group of groups ;track group){
                         <mat-option [value]="group._id">
                             {{ group.label }}
@@ -305,85 +209,55 @@
 
             <!-- Status Filter -->
             <div>
-                <div
-                    class="flex items-center gap-2 font-semibold text-base mb-2"
-                >
+                <div class="flex items-center gap-2 font-semibold text-base mb-2">
                     <mat-icon [svgIcon]="'feather:activity'"></mat-icon>
                     {{ "Filter by Status" | transloco }}
                 </div>
-                <mat-form-field
-                    class="fuse-mat-no-subscript w-full"
-                    appearance="fill"
-                >
-                    <mat-select
-                        [(ngModel)]="filterstatus"
-                        multiple
-                        name="status"
-                        placeholder="Select status(es)"
-                    >
+                <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
+                    <mat-select [(ngModel)]="filterstatus" multiple name="status" placeholder="Select status(es)">
                         <mat-option value="verified">{{
                             "Verified" | transloco
-                        }}</mat-option>
+                            }}</mat-option>
                         <mat-option value="pending">{{
                             "Pending" | transloco
-                        }}</mat-option>
+                            }}</mat-option>
                         <mat-option value="locked">{{
                             "Locked" | transloco
-                        }}</mat-option>
+                            }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
 
             <!-- Archive Filter -->
             <div>
-                <div
-                    class="flex items-center gap-2 font-semibold text-base mb-2"
-                >
+                <div class="flex items-center gap-2 font-semibold text-base mb-2">
                     <mat-icon [svgIcon]="'feather:archive'"></mat-icon>
                     {{ "Filter by Archive Status" | transloco }}
                 </div>
-                <mat-form-field
-                    class="fuse-mat-no-subscript w-full"
-                    appearance="fill"
-                >
-                    <mat-select
-                        [(ngModel)]="filterarchived"
-                        name="archived"
-                        placeholder="Select archived or active"
-                    >
+                <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
+                    <mat-select [(ngModel)]="filterarchived" name="archived" placeholder="Select archived or active">
                         <mat-option value="">{{
                             "All" | transloco
-                        }}</mat-option>
+                            }}</mat-option>
                         <mat-option [value]="false">{{
                             "Active" | transloco
-                        }}</mat-option>
+                            }}</mat-option>
                         <mat-option [value]="true">{{
                             "Archived" | transloco
-                        }}</mat-option>
+                            }}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
             <!-- Company Filter -->
             <div>
-                <div
-                    class="flex items-center gap-2 font-semibold text-base mb-2"
-                >
+                <div class="flex items-center gap-2 font-semibold text-base mb-2">
                     <mat-icon [svgIcon]="'feather:briefcase'"></mat-icon>
                     {{ "Filter by Company" | transloco }}
                 </div>
-                <mat-form-field
-                    class="fuse-mat-no-subscript w-full"
-                    appearance="fill"
-                >
-                    <mat-select
-                        [(ngModel)]="filterCompany"
-                        multiple
-                        placeholder="Select company(ies)"
-                        name="filterCompany"
-                    >
-                        <ng-container
-                            *ngFor="let companyId of companyNames | keyvalue"
-                        >
+                <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
+                    <mat-select [(ngModel)]="filterCompany" multiple placeholder="Select company(ies)"
+                        name="filterCompany">
+                        <ng-container *ngFor="let companyId of companyNames | keyvalue">
                             <mat-option [value]="companyId.key">
                                 {{ companyId.value }}
                             </mat-option>
@@ -393,28 +267,12 @@
             </div>
             <!-- Actions -->
             <div class="flex gap-2 mt-4">
-                <button
-                    mat-stroked-button
-                    color="primary"
-                    class="flex-1"
-                    (click)="getList()"
-                >
-                    <mat-icon
-                        class="mr-1"
-                        [svgIcon]="'feather:filter'"
-                    ></mat-icon>
+                <button mat-stroked-button color="primary" class="flex-1" (click)="getList()">
+                    <mat-icon class="mr-1" [svgIcon]="'feather:filter'"></mat-icon>
                     <span>Apply</span>
                 </button>
-                <button
-                    mat-stroked-button
-                    color="warn"
-                    class="flex-1"
-                    (click)="resetFilters()"
-                >
-                    <mat-icon
-                        class="mr-1"
-                        [svgIcon]="'feather:rotate-ccw'"
-                    ></mat-icon>
+                <button mat-stroked-button color="warn" class="flex-1" (click)="resetFilters()">
+                    <mat-icon class="mr-1" [svgIcon]="'feather:rotate-ccw'"></mat-icon>
                     <span>Reset</span>
                 </button>
             </div>
