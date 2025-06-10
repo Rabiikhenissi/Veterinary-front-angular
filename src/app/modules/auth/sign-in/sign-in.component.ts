@@ -146,7 +146,18 @@ export class AuthSignInComponent implements OnInit {
                       message:
                           'Your account is locked due to multiple failed login attempts. Please contact an Administrator.',
                   };
+              }else if (
+                  error.error.msg ===
+                      'Your account is locked.Please contact an Administrator.'
+              ) {
+                  this.showAlert = true;
+                  this.alert = {
+                      type: 'error',
+                      message:
+                          'Your account is locked.Please contact an Administrator.',
+                  };
               }}
+              
                 // Handle other authentication errors
                 else if (error.status === 400) {
                     this.showAlert = true;
@@ -173,33 +184,5 @@ export class AuthSignInComponent implements OnInit {
         );
     }
 
-    signInWithFacebook(): void {
-        this._authService.signInWithFacebook().subscribe(
-            (user) => {
-                console.log('Facebook user:', user);
-                const redirectURL =
-                    this._userService._defaultLink.getValue() ||
-                    '/signed-in-redirect';
-                this._router.navigateByUrl(redirectURL);
-            },
-            (error) => {
-                console.error('Error during Facebook login:', error);
-            }
-        );
-    }
-
-    signInWithGithub(): void {
-        this._authService.signInWithGithub().subscribe(
-            (user) => {
-                console.log('Github user:', user);
-                const redirectURL =
-                    this._userService._defaultLink.getValue() ||
-                    '/signed-in-redirect';
-                this._router.navigateByUrl(redirectURL);
-            },
-            (error) => {
-                console.error('Error during Github login:', error);
-            }
-        );
-    }
+ 
 }

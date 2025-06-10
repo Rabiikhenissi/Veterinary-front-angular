@@ -8,6 +8,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 import { ProductService } from 'app/shared/services/product.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -186,7 +187,10 @@ console.log('Prescription:', prescription);
         });      },
     });
   }
-
+getProductImageUrl(imagePath: string): string {
+  const url = getImageUrl(imagePath);
+    return url;
+}
   isPrescriptionInvalid(): boolean {
   return (
     this.selectedMedications.length === 0 ||
