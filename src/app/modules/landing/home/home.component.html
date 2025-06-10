@@ -129,9 +129,10 @@
                     Services Offered
                   </h3>
                   <ul class="list-disc list-inside space-y-1">
-                    <li *ngFor="let service of services">
+                    <li *ngFor="let service of company.services | slice:0:2">
                       {{ service.name }} - {{ service.price | currency:'TND':'symbol':'1.2-2' }}
                     </li>
+                    <li *ngIf="company.services.length > 2" class="italic text-gray-400">...and more</li>
                   </ul>
                 </div>
               </div>

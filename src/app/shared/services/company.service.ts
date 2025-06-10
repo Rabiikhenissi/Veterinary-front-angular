@@ -44,8 +44,8 @@ export class CompanyService {
   updateOne(company: Company): Observable<null> {
     return this.http.patch<null>(`${this.endpoint}/${company._id}`, { company });
   }
-  updateBusinessHours(companyId: string, businessHours: any): Observable<any> {
-  return this.http.patch(`${this.endpoint}/${companyId}/business-hours`, { businessHours });
+  updateVisitSetUp(companyId: string, businessHours: any, visitPrice: number): Observable<any> {
+  return this.http.patch(`${this.endpoint}/${companyId}/visitSetUp`, { businessHours, visitPrice });
 }
 archiveOne(id: string): Observable<null> {
   return this.http.patch<null>(`${this.endpoint}/${id}/archive`, {});

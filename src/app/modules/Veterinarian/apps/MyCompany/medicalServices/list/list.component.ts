@@ -8,6 +8,7 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { FilterOptions } from 'app/shared/models/filter-options';
 import { CompanyService } from 'app/shared/services/company.service';
 import { LoadingService } from 'app/shared/services/loading.service';
@@ -42,7 +43,7 @@ filterPriceMax: number | null = null;
   doneTypingInterval = 500;
   filterSearch: string;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
+_fuseConfirmationService = inject(FuseConfirmationService);
 
 ngOnInit() {
   this.getList();
@@ -58,6 +59,8 @@ ngOnInit() {
     });
   }
 }
+
+
 getList(): void {
   const companyId = localStorage.getItem('connectedUserCompany');
   this._loadingService.show();
@@ -112,20 +115,24 @@ pageChanged(event: any): void {
   editService(service: any) {    
     this._router.navigate([`${service._id}/edit`], { relativeTo: this._route }).then();
   }
-
-  archiveService(service: any) {
-  this._loadingService.show();
-    this._medicalServicesService.archiveOne(service._id).subscribe({
-      next: () => {
-        this._loadingService.hide();
-        this.getList();
-      },
-      error: () => {
-        console.error('Failed to archive service');
-        this._loadingService.hide();
-      }
-    });
-  }
+archiveService(service: any) {
+  this.confirmAction(
+    'Are you sure you want to archive this medical service? You can restore it later if needed.',
+    () => {
+      this._loadingService.show();
+      this._medicalServicesService.archiveOne(service._id).subscribe({
+        next: () => {
+          this._loadingService.hide();
+          this.getList();
+        },
+        error: () => {
+          console.error('Failed to archive service');
+          this._loadingService.hide();
+        }
+      });
+    }
+  );
+}
 
 
   applyFilters() {
@@ -139,6 +146,59 @@ resetFilters() {
   this.filterArchived = false;
   this.filterPriceMin = null;
   this.filterPriceMax = null;
-  this.applyFilters();
 }
+
+restoreService(service: any) {
+  this.confirmAction(
+    'Do you want to restore this medical service? It will become available again.',
+    () => {
+      this._loadingService.show();
+      this._medicalServicesService.restoreOne(service._id).subscribe({
+        next: () => {
+          this._loadingService.hide();
+          this.getList();
+        },
+        error: () => {
+          this._loadingService.hide();
+          console.error('Failed to restore service');
+        }
+      });
+    }
+  );
+}
+
+deleteService(service: any) {
+  this.confirmAction(
+    'Are you sure you want to permanently delete this medical service? This action cannot be undone.',
+    () => {
+      this._loadingService.show();
+      this._medicalServicesService.deleteOne(service._id).subscribe({
+        next: () => {
+          this._loadingService.hide();
+          this.getList();
+        },
+        error: () => {
+          this._loadingService.hide();
+          console.error('Failed to delete service');
+        }
+      });
+    }
+  );
+}
+confirmAction(message: string, action: () => void) {
+  this._fuseConfirmationService.open({
+    title: 'Confirmation',
+    message,
+    actions: {
+      confirm: { show: true, label: 'Confirm' },
+      cancel: { show: true, label: 'Cancel' }
+    }
+  }).afterClosed().subscribe(result => {
+    if (result === 'confirmed') {
+      action();
+    }
+  });
+}
+
+
 }

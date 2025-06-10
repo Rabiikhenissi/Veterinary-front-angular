@@ -44,12 +44,14 @@ petSpecies: any[] = [];
     address: string | undefined;
     connectedUserId: string | null = null;
     connectedCompanyId: string | null = null;
+    connectedUserType: string | null = null;
     services: MedicalServices[] = [];
 daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     ngOnInit(): void {
         this.connectedUserId = localStorage.getItem('connectedUserId');
         this.connectedCompanyId = localStorage.getItem('connectedUserCompany');
-        console.log(this.isConnected());
+        this.connectedUserType = localStorage.getItem('connectedUserType');
+        console.log(this.connectedUserType);
         if (this.id) {
         
             this._loadingService.show();
@@ -211,7 +213,7 @@ daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
                         next: () => {
                         // Optionally show a success notification
                         this._fuseConfirmationService.open({
-                            icon: { name: "success", color: "primary" },
+                            icon: { name:"check_circle", color: "primary" },
                             title: 'Switched Successfully',
                             message: 'You have successfully switched company. You now have to wait for your account to be accepted.',
                             actions: {

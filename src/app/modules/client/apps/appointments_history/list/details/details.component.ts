@@ -9,6 +9,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { PrescriptionService } from 'app/shared/services/prescription.service';
 import { finalize, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-details',
@@ -20,6 +21,7 @@ export class DetailsComponent implements OnInit {
   _fuseConfirmationService = inject(FuseConfirmationService);
   _route = inject(ActivatedRoute);
   _appointmentService = inject(AppointmentService);
+  _snackbar = inject(MatSnackBar);
   _prescriptionService = inject(PrescriptionService); // Inject PrescriptionService
   appointment: any;
   _loadingService = inject(LoadingService); 
@@ -70,7 +72,7 @@ selectedInvoiceType: 'invoice' | 'invoiceNoMeds' = 'invoice';
 
   // Function to fetch the prescription and get its invoiceId
   getPrescriptionInvoiceId(prescriptionId: string): void {
-
+    this._loadingService.show();
   this._prescriptionService.getPrescription(prescriptionId).subscribe({
     next: (prescriptionData) => {
       this.invoices = prescriptionData;
@@ -96,12 +98,15 @@ selectedInvoiceType: 'invoice' | 'invoiceNoMeds' = 'invoice';
 
   // Open the prescription PDF
   viewPrescriptionPDF(prescriptionId: string): void {
+    this._snackbar.open('Opening your prescription PDF, please wait...', '', { duration: 2000, verticalPosition: 'top' });
     this._appointmentService.getPrescriptionPdf(prescriptionId).subscribe(
       (blob) => {
+        this._snackbar.dismiss(); // Dismiss the snackbar
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank');
       },
       (error) => {
+        this._snackbar.open('Error fetching prescription PDF', 'Close', { duration: 3000, verticalPosition: 'top' });
         console.error('Error fetching prescription PDF', error);
       }
     );
