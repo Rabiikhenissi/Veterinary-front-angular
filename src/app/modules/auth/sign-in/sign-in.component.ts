@@ -177,8 +177,9 @@ export class AuthSignInComponent implements OnInit {
                 const redirectURL =
                     this._userService._defaultLink.getValue() ||
                     '/signed-in-redirect';
-                this._router.navigateByUrl(redirectURL);
-            },
+ this._router.navigateByUrl(redirectURL).then(() => {
+                window.location.reload();
+            });            },
             (error) => {
                 console.error('Error during Google login:', error);
             }
