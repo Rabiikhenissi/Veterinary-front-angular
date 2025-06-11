@@ -1,15 +1,24 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, OnDestroy } from '@angular/core';
+import {
+  Directive,
+  Input,
+  TemplateRef,
+  ViewContainerRef,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+
 import { UserService } from '../services/user.service';
 import { FeatureAuth } from '../models/feature-auth';
 import { Subscription } from 'rxjs';
 
 @Directive({
   selector: '[appFeatures]',
+  standalone: true,
 })
-export class FeaturesDirective implements OnDestroy {
-  private permissions: FeatureAuth[];
+export class FeaturesDirective implements OnInit, OnDestroy {
+  private permissions: FeatureAuth[] = [];
   private sub: Subscription;
-  private isHidden = true;
+
 
   constructor(
     private viewContainer: ViewContainerRef,
@@ -20,27 +29,27 @@ export class FeaturesDirective implements OnDestroy {
   @Input()
   set appFeatures(val: FeatureAuth[]) {
     this.permissions = val;
+    this.updateView();
+  }
 
-    // Unsubscribe previous if any
-    this.sub?.unsubscribe();
-
-    // Subscribe to permission changes
+  ngOnInit() {
+    // React to permissions being updated dynamically
     this.sub = this.userService.features$.subscribe(() => {
       this.updateView();
     });
   }
 
+  ngOnDestroy() {
+    if (this.sub) this.sub.unsubscribe();
+  }
+
   private updateView() {
-    if (this.userService.checkPermission(this.permissions)) {
-      if (this.isHidden) {
-        this.viewContainer.createEmbeddedView(this.templateRef);
-        this.isHidden = false;
-      }
-    } else {
-      if (!this.isHidden) {
-        this.viewContainer.clear();
-        this.isHidden = true;
-      }
+    const canView = this.userService.checkPermission(this.permissions);
+    this.viewContainer.clear();
+
+    if (canView) {
+      this.viewContainer.createEmbeddedView(this.templateRef);
+
     }
   }
 

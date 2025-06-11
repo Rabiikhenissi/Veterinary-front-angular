@@ -78,6 +78,7 @@
                       <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
                     </button>
                     <mat-menu #budgetMenu="matMenu">
+
   <!-- Always show Show & Edit -->
   
   <button *appFeatures="[
@@ -100,6 +101,7 @@
   </button>
   <!-- If NOT archived, show Archive -->
   <ng-container *ngIf="!row.archived">
+
     <button *appFeatures="[
             { code: featureCodes.clients, actions: [featureActions.delete] }
           ]" mat-menu-item class="flex justify-between" (click)="archiveOne(row)">
@@ -110,6 +112,7 @@
 
   <!-- If archived, show Restore & Delete -->
   <ng-container *ngIf="row.archived">
+
     <button *appFeatures="[
             { code: featureCodes.clients, actions: [featureActions.update] }
           ]" mat-menu-item class="flex justify-between" (click)="restoreOne(row)">

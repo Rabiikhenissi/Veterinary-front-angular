@@ -29,7 +29,11 @@
           <label class="block font-semibold text-green-700">Name</label>
           <input type="text" formControlName="name" 
                  class="w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" />
-        </div>
+        <div *ngIf="petForm.get('name')?.touched && petForm.get('name')?.invalid" class="text-red-600 text-sm mt-1">
+    <span *ngIf="petForm.get('name')?.errors?.['required']">Name is required.</span>
+    <span *ngIf="petForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters.</span>
+  </div>
+</div>
 
         <!-- Birth Date Field -->
         <div class="mb-6">

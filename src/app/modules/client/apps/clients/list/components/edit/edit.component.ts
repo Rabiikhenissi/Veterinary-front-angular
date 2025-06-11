@@ -1,4 +1,4 @@
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { UserService } from 'app/shared/services/user.service';
 
 @Component({
   selector: 'app-edit',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './edit.component.html',
 })
 export class EditComponent {
@@ -34,13 +34,12 @@ export class EditComponent {
  ];
   constructor(private fb: FormBuilder) {
     this.profileForm = this.fb.group({
-      _id: [''],
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required]],
-      avatar: [''],
-    });
-  }
+  _id: [''],
+  name: ['', [Validators.required, Validators.minLength(3)]],
+  email: ['', [Validators.required, Validators.email]],
+  phone: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+  avatar: [''],
+});}
   ngOnInit() {
      this.userId=this.route.snapshot.paramMap.get('id') || '';
     console.log(this.userId)

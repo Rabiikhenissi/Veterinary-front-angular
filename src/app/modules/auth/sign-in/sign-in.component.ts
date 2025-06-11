@@ -104,9 +104,7 @@ export class AuthSignInComponent implements OnInit {
                 // The '/signed-in-redirect' is a dummy url to catch the internationalization and redirect the user
                 // to the correct page after a successful sign in. This way, that url can be set via
                 // routing file and we don't have to touch here.
-                this._userService.get().subscribe((user: User) => {
-                    this.user = user;
-                });
+               
                 const redirectURL =
                     this._activatedRoute.snapshot.queryParamMap.get(
                         'redirectURL'
@@ -118,7 +116,10 @@ export class AuthSignInComponent implements OnInit {
                     this.signInForm?.get('email')?.value
                 );
                 // Navigate to the redirect url
-                this._router.navigateByUrl(redirectURL);
+                 this._router.navigateByUrl(redirectURL).then(() => {
+                window.location.reload();
+            });
+
             },
             (error: HttpErrorResponse) => {
                 // Re-enable the form
@@ -176,8 +177,9 @@ export class AuthSignInComponent implements OnInit {
                 const redirectURL =
                     this._userService._defaultLink.getValue() ||
                     '/signed-in-redirect';
-                this._router.navigateByUrl(redirectURL);
-            },
+ this._router.navigateByUrl(redirectURL).then(() => {
+                window.location.reload();
+            });            },
             (error) => {
                 console.error('Error during Google login:', error);
             }

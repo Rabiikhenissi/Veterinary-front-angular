@@ -14,6 +14,7 @@ import {forkJoin} from "rxjs";
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import mapboxgl from 'mapbox-gl';
+import { CommonModule } from '@angular/common';
 
 export const MY_DATE_FORMATS = {
     parse: {
@@ -39,7 +40,7 @@ export const MY_DATE_FORMATS = {
         MatInput,
         ReactiveFormsModule,
         MatError,
-        TranslocoPipe, MatDatepickerModule
+        TranslocoPipe, MatDatepickerModule,CommonModule
     ],
     providers: [
             { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },

@@ -52,9 +52,15 @@
                       Date: {{ appt.date | date:'mediumDate' }} at {{ ('1970-01-01T' + appt.time) | date:'HH:mm' }}
                     </p>
                   </div>
-                  <div class="text-sm text-gray-500 mt-2 sm:mt-0">
-                    Company: {{ appt.companyId?.name || 'N/A' }}
-                  </div>
+                    <div class="text-sm text-gray-500 mt-2 sm:mt-0">
+                    Company: 
+                    <ng-container *ngIf="appt.companyId?.name; else deletedCompany">
+                      {{ appt.companyId.name }}
+                    </ng-container>
+                    <ng-template #deletedCompany>
+                      Deleted Company
+                    </ng-template>
+                    </div>
                 </div>
               </li>
             }

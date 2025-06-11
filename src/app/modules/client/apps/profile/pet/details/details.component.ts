@@ -8,6 +8,7 @@ import { Appointment } from 'app/shared/models/appointment';
 import { MatPaginator } from '@angular/material/paginator';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { forkJoin } from 'rxjs';
+import { UserService } from 'app/shared/services/user.service';
 @Component({
   selector: 'app-details',
   imports: [DatePipe,MatPaginator,RouterLink,CommonModule],
@@ -17,6 +18,7 @@ export class DetailsComponent {
   router= inject(Router);
   _petService = inject(PetService);
   _appointmentService = inject(AppointmentService);
+  _userService = inject(UserService);
   route = inject(ActivatedRoute);
   _loadingService = inject(LoadingService);
 total=0;
@@ -45,6 +47,9 @@ petId: string;
           next: ({ pet, appointments }) => {
             this.pet = pet;
             this.appointments = appointments.data;
+            console.log('Pet:', this.pet);
+            console.log('Appointments:', this.appointments);
+            
             this.total = appointments.total;
             this._loadingService.hide();
           },
@@ -75,6 +80,7 @@ petId: string;
     this._appointmentService.getAppointmentsByPet(this.currentSize.toString(),this.currentPage.toString(),this.filterSearch,petId).subscribe({
       next: (appts) => {
         this.appointments = appts.data;
+
         this.total = appts.total;
         
       },
@@ -84,8 +90,26 @@ petId: string;
       },
     });
   }
-  viewDetails(id: string) {
-    this.router.navigate(['/home/appointments-history', id]);
+  viewDetails(id: string): void {
+    const connectedUserId = localStorage.getItem('connectedUserId');
+    if (!connectedUserId) {
+      console.error('No connected user ID found in localStorage.');
+      return;
+    }
+    this._userService.getOne(connectedUserId).subscribe({
+      next: (connectedUser: any) => {
+        console.log('Connected User:', connectedUser);
+        const userType: string = connectedUser?.type;
+        if (userType === 'external') {
+          this.router.navigate(['/home/appointments-history', id]);
+        } else if (userType === 'internal') {
+          this.router.navigate(['/home/appointment', id]);
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching connected user:', err);
+      }
+    });
   }
   
 }
