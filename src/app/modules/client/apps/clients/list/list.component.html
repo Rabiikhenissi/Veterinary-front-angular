@@ -81,19 +81,19 @@
   <!-- Always show Show & Edit -->
   
   <button *appFeatures="[
-        { code: featureCodes.users, actions: [featureActions.read] }
+        { code: featureCodes.clients, actions: [featureActions.read] }
       ]" mat-menu-item class="flex justify-between" (click)="openShow(row)">
     <span class="ml-2 mr-1 block">{{ "Show" | transloco }}</span>
     <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
   </button>
   <button *appFeatures="[
-        { code: featureCodes.users, actions: [featureActions.update] }
+        { code: featureCodes.clients, actions: [featureActions.update] }
       ]" mat-menu-item class="flex justify-between" (click)="openEdit(row)">
     <span class="ml-2 mr-1 block">{{ "Edit" | transloco }}</span>
     <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
   </button>
 <button *appFeatures="[
-        { code: featureCodes.users, actions: [featureActions.update] }
+        { code: featureCodes.clients, actions: [featureActions.update] }
       ]" mat-menu-item class="flex justify-between" (click)="openEditDetails(row)">
     <span class="ml-2 mr-1 block">{{ "Edit Details" | transloco }}</span>
     <mat-icon [svgIcon]="'heroicons_outline:document-text'"></mat-icon>
@@ -101,7 +101,7 @@
   <!-- If NOT archived, show Archive -->
   <ng-container *ngIf="!row.archived">
     <button *appFeatures="[
-            { code: featureCodes.users, actions: [featureActions.delete] }
+            { code: featureCodes.clients, actions: [featureActions.delete] }
           ]" mat-menu-item class="flex justify-between" (click)="archiveOne(row)">
       <span class="ml-2 mr-1 block">{{ "Archive" | transloco }}</span>
       <mat-icon [svgIcon]="'heroicons_outline:folder'"></mat-icon>
@@ -111,13 +111,13 @@
   <!-- If archived, show Restore & Delete -->
   <ng-container *ngIf="row.archived">
     <button *appFeatures="[
-            { code: featureCodes.users, actions: [featureActions.update] }
+            { code: featureCodes.clients, actions: [featureActions.update] }
           ]" mat-menu-item class="flex justify-between" (click)="restoreOne(row)">
       <span class="ml-2 mr-1 block">{{ "Restore" | transloco }}</span>
       <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
     </button>
     <button *appFeatures="[
-            { code: featureCodes.users, actions: [featureActions.delete] }
+            { code: featureCodes.clients, actions: [featureActions.delete] }
           ]" mat-menu-item class="flex justify-between" (click)="deleteOne(row)">
       <span class="ml-2 mr-1 block">{{ "Delete" | transloco }}</span>
       <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>

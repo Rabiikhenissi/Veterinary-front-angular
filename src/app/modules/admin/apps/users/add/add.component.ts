@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '../../../../../../@fuse/services/confirmation';
 import { UserService } from '../../../../../shared/services/user.service';
 import { MatInput } from '@angular/material/input';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
 import { MatButton } from '@angular/material/button';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {LoadingService} from "../../../../../shared/services/loading.service";
@@ -21,6 +21,7 @@ import { Company } from 'app/shared/models/company';
 import { FilterOptions } from 'app/shared/models/filter-options';
 import { Pagination } from 'app/shared/models/pagination';
 import { SnackBarService } from 'app/shared/services/snack-bar.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-details',
@@ -38,6 +39,8 @@ import { SnackBarService } from 'app/shared/services/snack-bar.service';
         TranslocoPipe,
         MatOption,
         MatSelect,
+        CommonModule,
+        MatHint
     ],
 })
 export class AddComponent implements OnInit{
@@ -69,18 +72,16 @@ export class AddComponent implements OnInit{
     ngOnInit(): void {
     this._loadingService.show();
     forkJoin({
-        internalGroups: this._groupService.getList({ types: 'internal', archived: false }),
+        
         companies: this._companyService.getList(
             this.currentSize.toString(),
             this.currentPage.toString(),
             this.filterSearch,
         )
     }).subscribe({
-        next: ({ internalGroups, companies }) => {
-            this.listGroups = [...internalGroups.data];
+        next: ({ companies }) => {
             this.listCompany = companies.data;
             this._loadingService.hide();
-            console.log(this.listCompany);
         },
         error: () => {
             this._loadingService.hide();
@@ -101,6 +102,20 @@ export class AddComponent implements OnInit{
                 this.openFilter = false;
                 this._loadingService.hide();
                 console.log(this.listCompany);
+            },
+            error: () => {
+                this._loadingService.hide();
+                this.openFilter = false;
+            }
+        });
+    }
+    getGroups(): void {
+        this._loadingService.show();
+        this._groupService.getList({ types: 'internal',companies:this.user.companyId._id, archived: false }).subscribe({
+            next: (result) => {
+                this.listGroups = result.data;
+                this.openFilter = false;
+                this._loadingService.hide();
             },
             error: () => {
                 this._loadingService.hide();
@@ -132,6 +147,7 @@ export class AddComponent implements OnInit{
     event.stopPropagation();
     if (myForm.pristine) {
       myForm.resetForm();
+      this.listGroups=[]
     } else {
       // Open the confirmation dialog
       const confirmation = this._fuseConfirmationService.open({

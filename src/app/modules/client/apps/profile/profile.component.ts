@@ -14,10 +14,13 @@ import { PetSpecies } from 'app/shared/models/petSpecies';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { forkJoin } from 'rxjs';
 import { LoadingService } from 'app/shared/services/loading.service';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 
 @Component({
   selector: 'app-profile',
-  imports: [MatSelect,MatOption,MatIconButton,MatIcon,FormsModule,DatePipe,MatFormField,MatPaginator,CommonModule,MatButtonModule],
+  imports: [MatSelect,MatOption,MatIconButton,MatIcon,FormsModule,DatePipe,MatFormField,MatPaginator,CommonModule,MatButtonModule,FeaturesDirective],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
@@ -25,7 +28,8 @@ export class ProfileComponent {
   userPets: Pet[] = [];
   selectedAvatar = '';
   connectedUser: any;
-
+featureCodes=FeatureCodes;
+featureActions=FeatureActions;
   _authService= inject(AuthService);
   _userService= inject(UserService);
   _petSpecies=inject(PetSpeciesService)

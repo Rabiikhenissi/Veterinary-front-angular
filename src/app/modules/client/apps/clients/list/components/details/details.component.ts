@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, switchMap } from 'rxjs';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,
@@ -72,30 +72,46 @@ companyId:string=''
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
-    this.user._id = this.route.snapshot.paramMap.get('id');
-    this.companyId = localStorage.getItem("connectedUserCompany");
+  this.user._id = this.route.snapshot.paramMap.get('id');
+  this.companyId = localStorage.getItem("connectedUserCompany");
 
-    this._loadingService.show();
-    forkJoin({
-      user: this._userService.getOne(this.user._id),
-      species: this._petspeciesService.getList(this.companyId)
-    }).subscribe({
-      next: ({ user, species }) => {
-        this.user.name = user.name;
-        this.user.email = user.email;
-        this.user.phone = user.phone;
-        this.selectedAvatar = user.avatar || this.avatars[0];
-        this.availableSpecies = species.data;
-        this.getList();
-      },
-      error: (err) => {
-        console.error(err);
-      },
-      complete: () => {
-        this._loadingService.hide();
-      }
-    });
-  }
+  this._loadingService.show();
+
+  forkJoin({
+    user: this._userService.getOne(this.user._id),
+    species: this._petspeciesService.getList(this.companyId),
+  })
+  .pipe(
+    switchMap(({ user, species }) => {
+      this.user.name = user.name;
+      this.user.email = user.email;
+      this.user.phone = user.phone;
+      this.selectedAvatar = user.avatar || this.avatars[0];
+      this.availableSpecies = species.data;
+
+      // ⬇️ Return getList() Observable
+      return this._petService.getList(
+        this.currentSize.toString(),
+        this.currentPage.toString(),
+        this.filterSearch || '',
+        this.user._id,
+        this.filterSpecies.map(s => typeof s === 'string' ? s : s.name),
+        this.filterArchived
+      );
+    })
+  )
+  .subscribe({
+    next: results => {
+      this.userPets = results.data;
+      this.total = results.total;
+      this._loadingService.hide(); // ✅ Only hide after pets load
+    },
+    error: err => {
+      console.error(err);
+      this._loadingService.hide();
+    }
+  });
+}
 pageChanged(event: PageEvent ): void {
       let { pageIndex } = event;
       const { pageSize } = event;
@@ -137,6 +153,7 @@ pageChanged(event: PageEvent ): void {
     const speciesNames = this.filterSpecies.map(s =>
     typeof s === 'string' ? s : s.name
   );
+  this._loadingService.show
     this._petService.getList(
       this.currentSize.toString(),
       this.currentPage.toString(),
@@ -148,8 +165,13 @@ pageChanged(event: PageEvent ): void {
       next: results => {
         this.userPets = results.data;
         this.total = results.total;
+        this._loadingService.hide()
       },
-      error: err => console.error(err)
+
+      error: err => {
+        this._loadingService.hide()
+        console.error(err)
+      }
     });
   }
 
