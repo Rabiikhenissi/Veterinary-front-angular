@@ -10,8 +10,8 @@
                     <span class="hidden sm:flex">{{ 'Company' | transloco }}</span>
                 </div>
                 <div class="flex w-3/4 items-center justify-end">
-                    <!-- clear project button -->
-                    <button
+                    @if( company.archived ) {
+                        <button
                         class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
                         mat-stroked-button
                         type="button"
@@ -19,6 +19,18 @@
                     >
                         <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
                     </button>
+                    }
+                    @else(){
+                        <button
+                            class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                            mat-stroked-button
+                            type="button"
+                            (click)="archiveOne()"
+                        >
+                            <span class="ml-2 mr-1">{{ 'Archive' | transloco }}</span>
+                        </button>
+                    }
+                    
                     <!-- save project button -->
                     <button
                         class="mr-2 text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"

@@ -4,3 +4,20 @@
   min-width: 11rem;
   min-height: 11rem;
 }
+::ng-deep .group-disabled .mat-form-field-outline {
+  stroke: #ccc !important; /* grey border */
+  border-color: #ccc !important;
+}
+
+::ng-deep .group-disabled .mat-select-disabled {
+  color: #aaa !important; /* grey text */
+}
+
+::ng-deep .group-enabled .mat-form-field-outline {
+  stroke: #4caf50 !important; /* green border when enabled */
+  border-color: #4caf50 !important;
+}
+
+::ng-deep .group-enabled .mat-select-value {
+  color: #2e7d32 !important; /* dark green text when enabled */
+}
