@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add',
-  imports: [ReactiveFormsModule,CommonModule,MatFormFieldModule, MatInputModule, MatDatepickerModule
+  imports: [ReactiveFormsModule,CommonModule,MatFormFieldModule, MatInputModule, MatDatepickerModule,CommonModule
   ],
   templateUrl: './add.component.html',
 })
@@ -29,7 +29,7 @@ today: string = new Date().toISOString().split('T')[0];
   _loadingService = inject(LoadingService);
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
-  name: ['', Validators.required],
+  name: ['', [Validators.required, Validators.minLength(2)]],
   birthDate: ['', Validators.required],
   icon: ['', Validators.required], 
   species: ['', Validators.required],

@@ -29,7 +29,7 @@ today: string = new Date().toISOString().split('T')[0];
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
-  name: ['', Validators.required],
+  name: ['', [Validators.required, Validators.minLength(2)]],
   birthDate: ['', Validators.required],
   icon: ['', Validators.required], // acts as the species selection
   species: ['', Validators.required],

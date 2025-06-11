@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators ,ReactiveFormsModule} from '@angular/forms';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
@@ -23,7 +24,7 @@ export const MY_DATE_FORMATS = {
 };
 @Component({
   selector: 'app-edit',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule,CommonModule],
   templateUrl: './edit.component.html',
   providers: [
           { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
@@ -41,7 +42,7 @@ export class EditComponent implements OnInit {
   today: Date = new Date();
   constructor(private fb: FormBuilder, private router: Router) {
     this.petForm = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(2)]],
       species: ['', Validators.required],
       birthDate: ['', Validators.required],
       icon: [''],

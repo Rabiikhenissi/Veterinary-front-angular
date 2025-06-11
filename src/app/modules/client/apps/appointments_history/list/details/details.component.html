@@ -14,8 +14,23 @@
           Pet Info
         </h3>
         <div class="space-y-2 text-lg">
-          <p><span class="font-semibold text-green-800">Name:</span> {{ appointment?.petId?.name }}</p>
-          <p><span class="font-semibold text-green-800">Species:</span> {{ appointment?.petId?.species }}</p>
+            <ng-container *ngIf="appointment?.petId; else deletedPet">
+            <p>
+              <span class="font-semibold text-green-800">Name:</span>
+              {{ appointment.petId.name }}
+            </p>
+            <p>
+              <span class="font-semibold text-green-800">Species:</span>
+              {{ appointment.petId.species }}
+            </p>
+            </ng-container>
+            <ng-template #deletedPet>
+            <div class="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <span class="text-red-600 text-xl">❌</span>
+              <span class="font-semibold text-red-700">Pet deleted</span>
+              <span class="text-gray-500 text-sm">(This pet no longer exists)</span>
+            </div>
+            </ng-template>
           <p><span class="font-semibold text-green-800">Date:</span> {{ appointment?.date | date : 'dd/MM/yyyy' }}</p>
           <p><span class="font-semibold text-green-800">Time:</span> {{ '1970-02-01T' + appointment?.time | date : 'HH:mm' }}</p>
         </div>
