@@ -69,11 +69,12 @@ export class AddComponent implements OnInit {
     filterType: string[] = [];
     filterStatus: string[] = [];
     filterSearch: string;
+    companyId:string;
     _authService = inject(AuthService);
     ngOnInit(): void {
         this._loadingService.show();
-
-        forkJoin([  this._groupService.getList({types:'external', archived:false})]).subscribe({
+        this.companyId = localStorage.getItem('connectedUserCompany');
+        forkJoin([  this._groupService.getList({types:'external', archived:false, companies:this.companyId})]).subscribe({
             next: (result: [Pagination<Group>]) => {
                 this.listGroups = result[0].data;
                 console.log(this.listGroups);

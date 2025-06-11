@@ -51,7 +51,7 @@ export class EditDetailsComponent implements OnInit {
             this.companyId=localStorage.getItem("connectedUserCompany")
             forkJoin([
                 this._userService.getOne(this.id),
-                  this._groupService.getList({types:'external',companies:this.companyId}),
+                  this._groupService.getList({types:'external', archived:false, companies:this.companyId}),
             ]).subscribe({
                 next: (result: [User, Pagination<Group>]) => {
                     this.user = result[0];

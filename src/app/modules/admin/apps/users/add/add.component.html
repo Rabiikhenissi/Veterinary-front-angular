@@ -119,42 +119,6 @@
                         }
                     </div>
 
-                    <!-- group -->
-                    <div class="sm:col-span-3">
-                        <mat-form-field
-                            class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full"
-                        >
-                            <mat-label class="capitalize">{{
-                                "group" | transloco
-                            }}</mat-label>
-                            <mat-select
-                                placeholder="select group"
-                                [(ngModel)]="user.groupsId"
-                                name="groupsId"
-                                required
-                            >
-                                @for (item of listGroups; track item) {
-                                <mat-option [value]="item">
-                                    <div
-                                        class="font-medium items-center flex flex-row"
-                                    >
-                                        <span class="">
-                                            {{ item.label }}
-                                        </span>
-                                    </div>
-                                </mat-option>
-                                }
-                            </mat-select>
-                        </mat-form-field>
-
-                        @if ( myForm.controls['groupsId'] &&
-                        (myForm.controls['groupsId'].dirty || myForm.submitted)
-                        && myForm.controls['groupsId'].hasError('required') ) {
-                        <mat-error>
-                            {{ "This field is required" | transloco }}
-                        </mat-error>
-                        }
-                    </div>
                     <!-- company -->
 
                     <div class="sm:col-span-3">
@@ -169,6 +133,7 @@
                                 [(ngModel)]="user.companyId"
                                 name="companyId"
                                 required
+                                (selectionChange)="getGroups()"
                             >
                                 @for (item of listCompany; track item) {
                                 <mat-option [value]="item">
@@ -187,6 +152,51 @@
                         @if ( myForm.controls['companyId'] &&
                         (myForm.controls['companyId'].dirty || myForm.submitted)
                         && myForm.controls['companyId'].hasError('required') ) {
+                        <mat-error>
+                            {{ "This field is required" | transloco }}
+                        </mat-error>
+                        }
+                    </div>
+                    <!-- group -->
+                    
+                    <div class="sm:col-span-3">
+                        <mat-form-field
+                            class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full"
+                        >
+                            <mat-label class="capitalize">{{
+                                "group" | transloco
+                            }}</mat-label>
+                            <mat-select
+                                placeholder="select group"
+                                [(ngModel)]="user.groupsId"
+                                name="groupsId"
+                                required
+                                [disabled]="!listGroups || listGroups.length === 0"
+                                [ngClass]="{
+                                    'group-disabled': !listGroups || listGroups.length === 0,
+                                    'group-enabled': listGroups && listGroups.length > 0
+                                }"
+                            >
+                                @for (item of listGroups; track item) {
+                                <mat-option [value]="item">
+                                    <div
+                                        class="font-medium items-center flex flex-row"
+                                    >
+                                        <span class="">
+                                            {{ item.label }}
+                                        </span>
+                                    </div>
+                                </mat-option>
+                                }
+                            </mat-select>
+                            <mat-hint *ngIf="!listGroups || listGroups.length === 0" class="text-red-500">
+  choose a company first with internal groups.
+</mat-hint>
+                        </mat-form-field>
+
+                        @if ( myForm.controls['groupsId'] &&
+                        (myForm.controls['groupsId'].dirty || myForm.submitted)
+                        && myForm.controls['groupsId'].hasError('required') ) {
                         <mat-error>
                             {{ "This field is required" | transloco }}
                         </mat-error>

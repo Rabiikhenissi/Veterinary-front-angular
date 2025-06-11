@@ -14,10 +14,13 @@ import { PetSpecies } from 'app/shared/models/petSpecies';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { forkJoin } from 'rxjs';
 import { LoadingService } from 'app/shared/services/loading.service';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
 
 @Component({
   selector: 'app-profile',
-  imports: [MatSelect,MatOption,MatIconButton,MatIcon,FormsModule,DatePipe,MatFormField,MatPaginator,CommonModule,MatButtonModule],
+  imports: [MatSelect,MatOption,MatIconButton,MatIcon,FormsModule,DatePipe,MatFormField,MatPaginator,CommonModule,MatButtonModule,FeaturesDirective],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
@@ -25,7 +28,8 @@ export class ProfileComponent {
   userPets: Pet[] = [];
   selectedAvatar = '';
   connectedUser: any;
-
+featureCodes=FeatureCodes;
+featureActions=FeatureActions;
   _authService= inject(AuthService);
   _userService= inject(UserService);
   _petSpecies=inject(PetSpeciesService)
@@ -211,6 +215,21 @@ cancelRestoreRequest(petId: string): void {
 }
 get isFiltering(): boolean {
   return (this.filterSpecies && this.filterSpecies.length > 0) || this.filterArchived ==null;
+}
+getUser(){
+  this._userService.getOne(this.connectedUser).subscribe({
+    next: (user) => {
+      this.user.name = user.name;
+      this.user.email = user.email;
+      this.user.phone = user.phone;
+      this.user.id = user._id;
+      this.user.type = user.type;
+      this.selectedAvatar = user.avatar;
+    },
+    error: (err) => {
+      console.error('Error fetching user:', err);
+    }
+  });
 }
 
 }

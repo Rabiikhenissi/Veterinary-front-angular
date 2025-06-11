@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+
 import { UserService } from '../services/user.service';
 import { FeatureAuth } from '../models/feature-auth';
 import { Subscription } from 'rxjs';
@@ -17,6 +18,7 @@ import { Subscription } from 'rxjs';
 export class FeaturesDirective implements OnInit, OnDestroy {
   private permissions: FeatureAuth[] = [];
   private sub: Subscription;
+
 
   constructor(
     private viewContainer: ViewContainerRef,
@@ -47,6 +49,11 @@ export class FeaturesDirective implements OnInit, OnDestroy {
 
     if (canView) {
       this.viewContainer.createEmbeddedView(this.templateRef);
+
     }
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 }

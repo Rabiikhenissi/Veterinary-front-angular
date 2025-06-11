@@ -90,13 +90,24 @@ forkJoin([
     createGroup(myForm: NgForm): void {
         if (myForm.valid) {
             if (!this.groupFeature[0].featuresId?._id) {
-                console.log('Feature is required', 'error');
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please select at least one feature',
+                    confirmButtonColor: '#f87171',
+                });
             } else {
                 if (!this.groupFeature[this.groupFeature.length]) {
                     this.groupFeature.splice(this.groupFeature.length, 1);
                 }
                 if (this.groupFeature.filter((value) => value.defaultFeature).length === 0) {
-                    console.log('Default feature is required', 'error');
+                   Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Please select a default feature',
+                        confirmButtonColor: '#f87171',
+                    });
                 } else {
                     this._loadingService.show()
                     this._groupService.createOne(this.group, this.groupFeature).subscribe({
