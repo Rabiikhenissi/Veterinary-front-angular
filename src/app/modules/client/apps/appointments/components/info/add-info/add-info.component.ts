@@ -41,7 +41,7 @@ performedProcedures: [] as { name: string, price: number }[],
     nextAppointment: '',
   };
   species: string;
-
+selectedProcedures: any[] = [];
 
   ngOnInit(): void {
   this._loadingService.show();
@@ -58,6 +58,7 @@ performedProcedures: [] as { name: string, price: number }[],
           this.species = pet.species;
           this.services = services.data;
           this._loadingService.hide();
+          
         },
         error: (error) => {
           this._loadingService.hide();
@@ -79,6 +80,7 @@ performedProcedures: [] as { name: string, price: number }[],
 
 
     onProceduresChange(selected: any[]) {
+      this.selectedProcedures = selected;  // Keep UI in sync
     this.info.performedProcedures = selected.map(service => ({
       name: service.name,
       price: service.price

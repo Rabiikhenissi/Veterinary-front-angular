@@ -57,7 +57,7 @@ export class EditComponent implements OnInit {
     id = this._route.snapshot.paramMap.get('id') || undefined;
     company: Company;
     map: mapboxgl.Map | undefined;
-
+today=new Date()
     ngOnInit(): void {
       this._loadingService.show()
       if (this.id) {
@@ -98,8 +98,6 @@ export class EditComponent implements OnInit {
     .addTo(this.map);
 
     const nameElement = document.createElement('div');
-    nameElement.className = 'company-name'; 
-    nameElement.innerHTML = `<strong>${this.company.name}</strong>`;
 
 
     new mapboxgl.Marker(nameElement)
@@ -188,4 +186,28 @@ export class EditComponent implements OnInit {
         newDate.setDate(newDate.getDate() + 1); 
         return newDate.toISOString().split('T')[0]; 
       }
+      archiveOne() {
+        // Open the confirmation dialog
+        const confirmation = this._fuseConfirmationService.open({
+            title: 'Archive',
+            message: 'Would you like to confirm the archiving ?',
+            actions: {
+                confirm: {
+                    label: 'yes',
+                },
+                cancel: {
+                    label: 'no',
+                },
+            },
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+            // If the confirm button pressed...
+            if (result === 'confirmed') {
+                this._companyService.archiveOne(this.company._id).subscribe(() => {});
+                this._router.navigate(['/home/companies']).then();
+            }
+        });
+    }
 }
