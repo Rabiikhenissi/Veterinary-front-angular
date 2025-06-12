@@ -61,7 +61,7 @@ daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
                     this.company = result;
                     console.log(this.company);
             this.fetchPetSpecies();
-            this.fetchMedicalServices();
+            this.fetchMedicalServices(this.company._id);
                     if (this.company.firstCalendarDay) {
                         this.company.firstCalendarDay = this.formatDateForInput(
                             this.company.firstCalendarDay
@@ -80,8 +80,8 @@ daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 
         }
     }
-    fetchMedicalServices() {
-  this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany') || '').subscribe({
+    fetchMedicalServices(companyId: string) {
+  this._medicalServicesService.getAll(companyId).subscribe({
     next: (res) => {
       this.services = res.data;
       console.log('Medical Services:', this.services);
