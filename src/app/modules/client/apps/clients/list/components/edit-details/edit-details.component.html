@@ -9,10 +9,27 @@
       </div>
       <div class="flex w-3/4 items-center justify-end">
         <!-- delete button -->
-        <button class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
-          mat-stroked-button type="button" (click)="deleteOne(user)">
-          <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
-        </button>
+        @if(user.archived) {
+                        <!-- delete button -->
+                        <button
+                            class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                            mat-stroked-button
+                            type="button"
+                            (click)="deleteOne(user)"
+                        >
+                            <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
+                        </button>
+                    } @else {
+                        <!-- archive button-->
+                        <button
+                            class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                            mat-stroked-button
+                            type="button"
+                            (click)="archiveOne(user)"
+                        >
+                            <span class="ml-2 mr-1">{{ 'Archive' | transloco }}</span>
+                        </button>
+                    }
         <!-- cancel button -->
         <button class="mr-2 text-amber-500 hover:bg-amber-500 hover:text-gray-900 transition-all duration-400"
           mat-stroked-button (click)="cancelEdit(myForm)">
