@@ -54,12 +54,10 @@ export class EditComponent implements OnInit {
       next: (user: User) => {
         this.user = user;
         console.log("userrrr",user)
-
         const companyId =
   typeof this.user.companyId === 'string'
     ? this.user.companyId
     : this.user.companyId?._id;
-
         this._groupService.getList({types:this.user.type,companies:companyId,archived:false}).subscribe({
           next: (pagination: Pagination<Group>) => {
 
