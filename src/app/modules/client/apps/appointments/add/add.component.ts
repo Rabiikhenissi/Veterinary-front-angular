@@ -112,7 +112,7 @@ selectedTime: string = '';
   submit(): void {
     if (this.appointmentForm.invalid || this.isSubmitted ) return;
     const { date, time } = this.appointmentForm.value;
-if(!this.checkAvailableSlot(date, time,null)){
+if(this.checkAvailableSlot(date, time,null)){  
   return;
 } 
   if (!this.isTimeWithinBusinessHours(date, time)) {
@@ -284,8 +284,10 @@ onDateChange(date: string): void {
   }
 }
  checkAvailableSlot(date: string, time: string, appointmentId: string ): boolean {
+
     this._appointmentService.isAvailable(date, time, this.companyId, appointmentId).subscribe((res) => {
       console.log('Availability response:', res);
+
       if (!res.available) {
         Swal.fire({
           icon: 'warning',
@@ -293,6 +295,7 @@ onDateChange(date: string): void {
           text: 'This time is not available for appointments.',
           confirmButtonColor: '#f87171',
         });
+
         return false
       }
     });
