@@ -54,7 +54,13 @@ export class EditComponent implements OnInit {
       next: (user: User) => {
         this.user = user;
         console.log("userrrr",user)
-        this._groupService.getList({types:this.user.type}).subscribe({
+        console.log("userrrr groups",this.user.companyId);
+        const companyId =
+  typeof this.user.companyId === 'string'
+    ? this.user.companyId
+    : this.user.companyId?._id;
+
+        this._groupService.getList({types:this.user.type,companies: companyId,}).subscribe({
           next: (pagination: Pagination<Group>) => {
             this.listGroups = pagination.data;
             this.user.groupsId = this.listGroups.find(el => el._id === this.user.groupsId._id);
