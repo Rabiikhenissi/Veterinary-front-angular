@@ -7,6 +7,7 @@ import { MenuService } from '../../../shared/services/menu.service';
 import { FeatureAuth } from '../../../shared/models/feature-auth';
 import {AuthService} from "../../../shared/services/auth.service";
 import {FeatureService} from "../../../shared/services/feature.service";
+import { FeatureActions } from 'app/shared/enums/feature-actions';
 
 @Injectable({
   providedIn: 'root',
@@ -34,22 +35,24 @@ export class IsAuthorizedGuard {
    * @param route
    * @param state
    */
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): Observable<boolean> | Promise<boolean> | boolean {
-    const redirectUrl = state.url === '/sign-out' ? '/' : state.url;
-    const routeFeature = route.data['feature'];
-    return this._check(redirectUrl, routeFeature);
-  }
+ canActivate(
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+): Observable<boolean> {
+  const redirectUrl = state.url === '/sign-out' ? '/' : state.url;
+  const routeFeature = route.data['feature'];
+  const routeAction = route.data['action']; // ✅ Extract here
+  return this._check(redirectUrl, routeFeature, routeAction);
+}
   canActivateChild(
-    childRoute: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const redirectUrl = state.url === '/sign-out' ? '/' : state.url;
-    const routeFeature = childRoute.data['feature'];
-    return this._check(redirectUrl, routeFeature);
-  }
+  childRoute: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+): Observable<boolean> {
+  const redirectUrl = state.url === '/sign-out' ? '/' : state.url;
+  const routeFeature = childRoute.data['feature'];
+  const routeAction = childRoute.data['action']; // ✅ Extract here
+  return this._check(redirectUrl, routeFeature, routeAction);
+}
   // -----------------------------------------------------------------------------------------------------
   // @ Private methods
   // -----------------------------------------------------------------------------------------------------
@@ -61,7 +64,7 @@ export class IsAuthorizedGuard {
    * @param routeFeature
    * @private
    */
-  private _check(redirectURL: string, routeFeature): Observable<boolean> {
+  private _check(redirectURL: string, routeFeature,routeAction?: string): Observable<boolean> {
     // Check the authentication status
     return this._authService.check().pipe(
       switchMap((authenticated) => {
@@ -84,19 +87,19 @@ export class IsAuthorizedGuard {
             this.menuService.getMenu().subscribe(
               (data) => {
                 this.features = data.features;
+                const feature = data.features.find(f => f.code === routeFeature);
                 this.userService.features$.next(this.features);
-                const returnBoolean = data.features.map((val) => val.code).includes(routeFeature);
+                const returnBoolean =feature &&(routeAction || data.features.map((val) => val.code).includes(routeFeature));
                 if (!returnBoolean) {
-                  // check status of default feature
-                  this.featureService.getFeatureByCode(defaultLink).subscribe(
-                    (feature) => {
-                      return this._router.navigateByUrl(feature.link || '/signed-in-redirect');
-                    },
-                    () => {
-                      return this._router.navigateByUrl('/signed-in-redirect');
-                    },
-                  );
-                }
+  this.featureService.getFeatureByCode(defaultLink).subscribe(
+    (feature) => {
+      this._router.navigateByUrl(feature.link || '/signed-in-redirect');
+    },
+    () => {
+      this._router.navigateByUrl('/signed-in-redirect');
+    },
+  );
+}
                 observer.next(returnBoolean);
                 observer.complete();
               },
@@ -107,10 +110,8 @@ export class IsAuthorizedGuard {
             );
           });
         } else {
-          const returnBoolean = this.userService.features$
-            .getValue()
-            .map((val) => val.code)
-            .includes(routeFeature);
+          const feature = this.userService.features$.getValue().find(f => f.code === routeFeature);
+const returnBoolean = feature && (!routeAction || feature.actions?.includes(routeAction as FeatureActions));
           if (!returnBoolean) {
             // check status of default feature
             this.featureService.getFeatureByCode(defaultLink).subscribe(

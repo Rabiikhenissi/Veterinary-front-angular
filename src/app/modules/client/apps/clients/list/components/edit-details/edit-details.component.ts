@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -29,6 +30,7 @@ imports: [
         TranslocoModule,
         MatOption,
         MatSelect,
+        CommonModule
     ],  templateUrl: './edit-details.component.html',
   styleUrl: './edit-details.component.scss'
 })

@@ -11,14 +11,26 @@
              </div>
              <div class="flex w-3/4 items-center justify-end">
                     <!-- clear project button -->
-                    <button
+                    @if( company.archived ) {
+                        <button
                         class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
                         mat-stroked-button
                         type="button"
-                        (click)="deleteOne(company)"
+                        (click)="deleteOne()"
                     >
                         <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
                     </button>
+                    }
+                    @else(){
+                        <button
+                            class="mr-2 text-red-500 hover:bg-red-500 hover:text-gray-900 transition-all duration-400"
+                            mat-stroked-button
+                            type="button"
+                            (click)="archiveOne()"
+                        >
+                            <span class="ml-2 mr-1">{{ 'Archive' | transloco }}</span>
+                        </button>
+                    }
                     <!-- cancel project button -->
                     <button
                         class="mr-2 text-amber-500 hover:bg-amber-500 hover:text-gray-900 transition-all duration-400"
@@ -73,7 +85,7 @@
                          <div class="sm:col-span-3">
                             <mat-form-field>
                                 <mat-label>{{ 'firstCalendarDay' | transloco }}</mat-label>
-                                <input [(ngModel)]="company.firstCalendarDay" matInput name="firstCalendarDay" matInput [matDatepicker]="picker" required>
+                                <input [(ngModel)]="company.firstCalendarDay" matInput name="firstCalendarDay" [max]="today" matInput [matDatepicker]="picker" required>
                                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-datepicker #picker></mat-datepicker>
                             </mat-form-field>
