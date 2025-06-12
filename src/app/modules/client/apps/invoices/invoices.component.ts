@@ -9,8 +9,6 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { Browser } from '@capacitor/browser';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
-import { Pagination } from 'app/shared/models/pagination';
-import { Cart } from 'app/shared/models/cart';
 
 
 @Component({

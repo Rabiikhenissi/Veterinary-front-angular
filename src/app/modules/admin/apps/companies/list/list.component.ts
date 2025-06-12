@@ -18,6 +18,9 @@ import {Company} from "../../../../../shared/models/company";
 import mapboxgl from 'mapbox-gl'
 import { CommonModule } from '@angular/common';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -38,6 +41,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
         CommonModule,
         MatSelect,
         MatOption,
+        FeaturesDirective
     ],
 })
 export class ListComponent implements OnInit {
@@ -47,6 +51,8 @@ export class ListComponent implements OnInit {
   _fuseConfirmationService= inject(FuseConfirmationService);
   _route= inject(ActivatedRoute);
   _loadingService = inject(LoadingService)
+  featureCodes = FeatureCodes;
+  featureActions = FeatureActions;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   filterOptions: FilterOptions = new FilterOptions();
   currentSize = 10;

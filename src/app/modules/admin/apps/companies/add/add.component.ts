@@ -13,6 +13,8 @@ import {LoadingService} from "../../../../../shared/services/loading.service";
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import mapboxgl from 'mapbox-gl';
+import { CommonModule } from '@angular/common';
+
 export const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY', // Parsing format for input
@@ -38,6 +40,7 @@ export const MY_DATE_FORMATS = {
         MatError,
         ReactiveFormsModule,
         TranslocoPipe,
+        CommonModule,
         MatFormFieldModule, MatInputModule, MatDatepickerModule
         
     ],
@@ -56,12 +59,13 @@ export class AddComponent implements AfterViewInit {
     _fuseConfirmationService= inject(FuseConfirmationService);
     _route= inject(ActivatedRoute);
     _loadingService = inject(LoadingService)
+    
     //********* DECLARE CLASSES/ENUMS ***********//
     company = new Company();
     map!: mapboxgl.Map;
     marker?: mapboxgl.Marker;
-
-
+  today=new Date();
+mapTouched = false;
     ngAfterViewInit(): void {
   this._loadingService.show(); // Show loading before map starts
   setTimeout(() => {
@@ -103,15 +107,17 @@ export class AddComponent implements AfterViewInit {
       // set the lat/lng in model
       this.company.latitude = lat;
       this.company.longitude = lng;
+      this.mapTouched = true;
+
     });
   }, 10);
 }
-  
 
 
 
   addOne(myForm: NgForm): void {
-  if (myForm.valid) {
+
+  if (myForm.valid && this.mapTouched) {
     this._loadingService.show();
     this.company.firstCalendarDay = this.addOneDay(this.company.firstCalendarDay);
     this._companyService.createOne(this.company).subscribe({
@@ -124,6 +130,7 @@ export class AddComponent implements AfterViewInit {
       }
     });
   }
+  
 }
   addOneDay(date: string): string {
     const newDate = new Date(date);
@@ -134,6 +141,8 @@ export class AddComponent implements AfterViewInit {
     event.stopPropagation();
     if (myForm.pristine) {
       myForm.resetForm();
+      this.clearMap();
+      this.mapTouched=false
     } else {
       // Open the confirmation dialog
       const confirmation = this._fuseConfirmationService.open({
@@ -152,11 +161,36 @@ export class AddComponent implements AfterViewInit {
       confirmation.afterClosed().subscribe((result) => {
         // If the confirm button pressed...
         if (result === 'confirmed') {
+          this.clearMap()
           myForm.resetForm();
+          this.mapTouched=false
         }
       });
     }
   }
+
+  clearMap() {
+  // Remove the marker if it exists
+  if (this.marker) {
+    this.marker.remove();
+    this.marker = null;
+  }
+
+  // Reset coordinates in your model
+  this.company.latitude = null;
+  this.company.longitude = null;
+
+  // Optionally reset the view to initial center/zoom
+  if (this.map) {
+    this.map.flyTo({
+      center: [10.1658, 36.8065],
+      zoom: 9
+    });
+  }
+
+  this._changeDetectorRef.detectChanges(); // ensure UI updates
+}
+
   cancelForm(myForm: NgForm) {
     if (myForm.pristine) {
       this._router.navigate([`../`], { relativeTo: this._route }).then();
