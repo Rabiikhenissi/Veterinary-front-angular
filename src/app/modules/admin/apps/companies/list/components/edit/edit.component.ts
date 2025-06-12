@@ -13,6 +13,7 @@ import {LoadingService} from "../../../../../../../shared/services/loading.servi
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import mapboxgl from 'mapbox-gl';
+import { CommonModule } from '@angular/common';
 export const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'DD/MM/YYYY', // Parsing format for input
@@ -37,7 +38,7 @@ export const MY_DATE_FORMATS = {
     MatError,
     ReactiveFormsModule,
     TranslocoModule,
-            MatFormFieldModule, MatInputModule, MatDatepickerModule
+            MatFormFieldModule, MatInputModule, MatDatepickerModule,CommonModule
     
   ], providers: [
         { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },

@@ -74,10 +74,15 @@
                     </span>
                   </div>
                   <div class="flex justify-end">
-                    <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
+                    <button 
+                    *appFeatures="[
+        { code: featureCodes.clients, actions: [featureActions.read] },
+     
+      ]"
+                     class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
                       <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
                     </button>
-                    <mat-menu #budgetMenu="matMenu">
+                    <mat-menu #budgetMenu="matMenu" >
 
   <!-- Always show Show & Edit -->
   

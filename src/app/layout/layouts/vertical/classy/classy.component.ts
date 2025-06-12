@@ -1,5 +1,5 @@
 
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {  Router, RouterOutlet } from '@angular/router';
@@ -14,6 +14,7 @@ import { BreadcrumbsComponent } from "../../../../shared/components/breadcrumbs/
 import { CartService } from 'app/shared/services/cart.service';
 import { NotificationsComponent } from "../../../common/notifications/notifications.component";
 import { CommonModule } from '@angular/common';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
     selector: 'classy-layout',
@@ -27,6 +28,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
     navigation: FuseNavigationItem[];
     user: User;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    private _notificationService= inject(NotificationService);
     isLoading: boolean = true;
 
     itemCount: number = 0;
@@ -54,6 +56,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
     /**
      * On init
      */
+    
     ngOnInit(): void
     {
         this.menuService.getMenu().subscribe({
@@ -89,7 +92,14 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
             this._router.events.subscribe(() => {
                 this.showCart = this._router.url.includes('/shop');
               });
-          
+            const userId = localStorage.getItem('connectedUserId');
+
+    if (userId) {
+        this._notificationService.init(userId);
+        console.log('[Layout Init] NotificationService initialized with user ID:', userId);
+    } else {
+        console.warn('[Layout Init] No connectedUserId in localStorage!');
+    }
     }
 
     /**
