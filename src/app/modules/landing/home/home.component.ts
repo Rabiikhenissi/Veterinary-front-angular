@@ -42,16 +42,14 @@ minPrice: number | null = null;
 maxPrice: number | null = null;
 locationText: string = '';
 showFilters = false;
-services:MedicalServices[] = [];
+companyServicesMap: Map<string, MedicalServices[]> = new Map();
 
-  ngOnInit(): void {
-    
-     this.connectedUserId = localStorage.getItem('connectedUserId');
+   ngOnInit(): void {
+    this.connectedUserId = localStorage.getItem('connectedUserId');
     this.connectedCompanyId = localStorage.getItem('connectedUserCompany');
     console.log('connectedCompanyId', this.connectedCompanyId);
-    console.log('connectedUserId', this.connectedUserId);    
+    console.log('connectedUserId', this.connectedUserId);
     this.fetchCompanies();
-     this.fetchMedicalServices();
     this.fetchVeterinarians();
   }
 
@@ -84,36 +82,45 @@ getAddress(latitude: number, longitude: number): Promise<string> {
 getCompanyName(id: string): string {
   return this.companies.find(c => c._id === id)?.name || 'Unknown';
 }
-fetchMedicalServices() {
-  this._medicalServicesService.getAll(localStorage.getItem('connectedUserCompany') || '').subscribe({
-    next: (res) => {
-      this.services = res.data;
-      console.log('Medical Services:', this.services);
-    },
-    error: (err) => {
-      console.error('Failed to fetch medical services', err);
-    }
-  });
-}
-
 fetchCompanies() {
-  this._companyService.getAll().subscribe({
+    this._companyService.getAll().subscribe({
       next: (res) => {
         this.companies = res.data;
         this.filteredCompanies = [...this.companies];
-         // Fetch address for each company
-      this.companies.forEach(company => {
-        if (company.latitude && company.longitude) {
-          this.getAddress(company.latitude, company.longitude).then(address => {
-            this.addressMap.set(company._id!, address);
-            this.applyFilters();
-          })}})
 
-          this.applyFilters();
+        this.companies.forEach(company => {
+          if (company._id) {
+            this.fetchMedicalServices(company._id);
+          }
+          console.log(`Company details:`, company);
+          
+          
+
+          // Get address
+          if (company.latitude && company.longitude) {
+            this.getAddress(company.latitude, company.longitude).then(address => {
+              this.addressMap.set(company._id!, address);
+            });
+          }
+        });
+
+        this.applyFilters();
       },
       error: (err) => {
-        console.error('Failed to fetch companies ', err);
+        console.error('Failed to fetch companies', err);
       },
+    });
+  }
+
+  fetchMedicalServices(companyId: string) {
+    this._medicalServicesService.getAll(companyId).subscribe({
+      next: (res) => {
+        this.companyServicesMap.set(companyId, res.data);
+        console.log(`Medical services for company ${companyId}:`, this.companyServicesMap);
+      },
+      error: (err) => {
+        console.error(`Failed to fetch medical services for company ${companyId}`, err);
+      }
     });
   }
 getCompany(id: string) {

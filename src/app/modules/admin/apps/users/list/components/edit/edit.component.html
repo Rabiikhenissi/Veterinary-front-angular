@@ -40,44 +40,82 @@
       <div class="flex flex-col mb-6 w-full">
         <div class="grid sm:grid-cols-9 gap-6 p-3">
 
-          <!-- Name -->
-          <div class="sm:col-span-3">
-            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-              <mat-label class="capitalize">{{ 'name' | transloco }}</mat-label>
-              <input [(ngModel)]="user.name" matInput name="name" type="text" required />
-            </mat-form-field>
-            @if (
-            myForm.controls['name'] &&
-            (myForm.controls['name'].dirty || myForm.submitted) &&
-            myForm.controls['name'].hasError('required')
-            ) {
-            <mat-error>{{ 'This field is required' | transloco }}</mat-error>
-            }
-          </div>
+     
+  <!-- NAME -->
+<div class="sm:col-span-3">
+    <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+        <mat-label class="capitalize">{{ "name" | transloco }}</mat-label>
+        <input
+            [(ngModel)]="user.name"
+            matInput
+            name="name"
+            type="text"
+            required
+            minlength="3"
+            
+            #nameCtrl="ngModel"
+            [ngClass]="{'border-red-500': (nameCtrl.invalid && (nameCtrl.dirty || myForm.submitted))}"
+        />
+    </mat-form-field>
+    <div class="text-sm text-red-500 mt-1" *ngIf="(nameCtrl.dirty || myForm.submitted)">
+        <div *ngIf="nameCtrl.errors?.['required']">
+            {{ "This field is required" | transloco }}
+        </div>
+        <div *ngIf="nameCtrl.errors?.['minlength']">
+            Name must be at least 3 characters.
+        </div>
+    </div>
+</div>
 
-          <!-- Email -->
-          <div class="sm:col-span-3">
-            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-              <mat-label class="capitalize">{{ 'email' | transloco }}</mat-label>
-              <input [(ngModel)]="user.email" matInput name="email" type="text" required />
-            </mat-form-field>
-            @if (
-            myForm.controls['email'] &&
-            (myForm.controls['email'].dirty || myForm.submitted) &&
-            myForm.controls['email'].hasError('required')
-            ) {
-            <mat-error>{{ 'This field is required' | transloco }}</mat-error>
-            }
-          </div>
+<!-- EMAIL -->
+<div class="sm:col-span-3">
+    <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+        <mat-label class="capitalize">{{ "email" | transloco }}</mat-label>
+        <input
+            [(ngModel)]="user.email"
+            matInput
+            name="email"
+            type="email"
+            required
+            email
+            #emailCtrl="ngModel"
+            [ngClass]="{'border-red-500': (emailCtrl.invalid && (emailCtrl.dirty || myForm.submitted))}"
+        />
+    </mat-form-field>
+    <div class="text-sm text-red-500 mt-1" *ngIf="(emailCtrl.dirty || myForm.submitted)">
+        <div *ngIf="emailCtrl.errors?.['required']">
+            {{ "This field is required" | transloco }}
+        </div>
+        <div *ngIf="emailCtrl.errors?.['email']">
+            Please enter a valid email address.
+        </div>
+    </div>
+</div>
 
-          <!-- Phone -->
-          <div class="sm:col-span-3">
-            <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
-              <mat-label class="capitalize">{{ 'phone' | transloco }}</mat-label>
-              <input [(ngModel)]="user.phone" matInput name="phone" type="tel" />
-            </mat-form-field>
-          </div>
-
+<!-- PHONE -->
+<div class="sm:col-span-3">
+    <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
+        <mat-label class="capitalize">{{ "phone" | transloco }}</mat-label>
+        <input
+            [(ngModel)]="user.phone"
+            matInput
+            name="phone"
+            type="text"
+            required
+            pattern="^[0-9]{8}$"
+            #phoneCtrl="ngModel"
+            [ngClass]="{'border-red-500': (phoneCtrl.invalid && (phoneCtrl.dirty || myForm.submitted))}"
+        />
+    </mat-form-field>
+    <div class="text-sm text-red-500 mt-1" *ngIf="(phoneCtrl.dirty || myForm.submitted)">
+        <div *ngIf="phoneCtrl.errors?.['required']">
+            Phone is required.
+        </div>
+        <div *ngIf="phoneCtrl.errors?.['pattern']">
+            Phone must be exactly 8 digits.
+        </div>
+    </div>
+</div>
           <!-- Group -->
           <div class="sm:col-span-3">
             <mat-form-field class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full">
