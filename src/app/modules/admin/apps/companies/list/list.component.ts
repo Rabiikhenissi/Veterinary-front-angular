@@ -41,7 +41,6 @@ import { FeatureActions } from 'app/shared/enums/feature-actions';
         CommonModule,
         MatSelect,
         MatOption,
-        FeaturesDirective
     ],
 })
 export class ListComponent implements OnInit {
