@@ -26,7 +26,7 @@ _loadingService = inject(LoadingService);
   currentSize = 10; // Default page size
   currentPage = 1;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
+filterArchived: boolean= false;
   ngOnInit(): void {
     this.getSpeciesList();
   }
