@@ -44,7 +44,7 @@ featureActions=FeatureActions;
   filterStatus: string[] = [];
   filterSearch: string;
   filterSpecies: PetSpecies[] = [];
-filterArchived:  boolean 
+filterArchived:  boolean=false ;
 availableSpecies: PetSpecies[] = [];
 companyId:string
   total = 0;
@@ -214,7 +214,7 @@ cancelRestoreRequest(petId: string): void {
   });
 }
 get isFiltering(): boolean {
-  return (this.filterSpecies && this.filterSpecies.length > 0) || this.filterArchived ==null;
+  return (this.filterSpecies && this.filterSpecies.length > 0) || this.filterArchived !=false;
 }
 getUser(){
   this._userService.getOne(this.connectedUser).subscribe({

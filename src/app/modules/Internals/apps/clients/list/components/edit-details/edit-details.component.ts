@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -42,6 +42,7 @@ export class EditDetailsComponent implements OnInit {
     _route= inject(ActivatedRoute);
     _fuseConfirmationService= inject(FuseConfirmationService);
     _loadingService= inject(LoadingService);
+    _location=inject(Location)
     //********* DECLARE CLASSES/ENUMS ***********//
     id = this._route.snapshot.paramMap.get('id') || undefined;
     user: User;
@@ -70,7 +71,7 @@ export class EditDetailsComponent implements OnInit {
     updateOne(myForm: NgForm) {
         if (myForm.valid) {
             this._userService.updateOne(this.user).subscribe(() => {
-               this._router.navigate(['../'], { relativeTo: this._route }).then();
+               this._location.back()
             });
         }
       }
@@ -95,7 +96,7 @@ export class EditDetailsComponent implements OnInit {
           confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-              this._router.navigate([`../`], { relativeTo: this._route }).then();
+              this._location.back()
             }
           });
         }
@@ -120,7 +121,33 @@ export class EditDetailsComponent implements OnInit {
           // If the confirm button pressed...
           if (result === 'confirmed') {
             this._userService.deleteOne(row._id).subscribe(() => {
-                this._router.navigate([`../`], { relativeTo: this._route }).then();
+                this._location.back()
+            });
+          }
+        });
+      }
+
+      archiveOne(row:User){
+        // Open the confirmation dialog
+        const confirmation = this._fuseConfirmationService.open({
+          title: 'Delete',
+          message: 'Would you like to confirm the archiving ?',
+          actions: {
+            confirm: {
+              label: 'yes',
+            },
+            cancel: {
+              label: 'no',
+            },
+          },
+        });
+
+        // Subscribe to the confirmation dialog closed action
+        confirmation.afterClosed().subscribe((result) => {
+          // If the confirm button pressed...
+          if (result === 'confirmed') {
+            this._userService.ArchiveOne(row._id).subscribe(() => {
+                this._location.back()
             });
           }
         });

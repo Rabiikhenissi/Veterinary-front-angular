@@ -62,7 +62,7 @@ export class DetailsComponent {
     filterStatus: string[] = [];
     filterSearch: string;
     filterSpecies: PetSpecies[] = [];
-filterArchived:  boolean 
+filterArchived:  boolean =false;
 availableSpecies: PetSpecies[] = [];
 isFiltering: boolean = false;
 companyId:string=''
@@ -176,6 +176,7 @@ pageChanged(event: PageEvent ): void {
   }
 
   approveArchiveRequest(pet: any, isRequestApproval: boolean) {
+    this._loadingService.show()
   this._petService.Archive(pet._id).subscribe({
     next: () => {
       this.getList();
@@ -221,8 +222,12 @@ pageChanged(event: PageEvent ): void {
         },
         error: err => console.error('Notification failed:', err)
       });
+      this._loadingService.hide()
     },
-    error: err => console.error('Archiving failed:', err),
+    error: err => {
+      console.error('Archiving failed:', err)
+      this._loadingService.hide()
+    }
   });
 }
 

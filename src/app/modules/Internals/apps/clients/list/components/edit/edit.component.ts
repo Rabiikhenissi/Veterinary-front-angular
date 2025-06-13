@@ -2,6 +2,7 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingService } from 'app/shared/services/loading.service';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({
@@ -15,9 +16,9 @@ export class EditComponent {
    _userService = inject(UserService);
    router = inject(Router);
    _location= inject(Location);
+   _loading=inject(LoadingService)
    route=inject(ActivatedRoute);
    avatars = [
- 
    { avatar: 'assets/images/avatars/av1.png'  },
    { avatar: 'assets/images/avatars/av2.png' },
    { avatar: 'assets/images/avatars/av3.png'  },
@@ -30,7 +31,6 @@ export class EditComponent {
    { avatar: 'assets/images/avatars/av10.png'  },
    { avatar: 'assets/images/avatars/av11.png' },
    { avatar: 'assets/images/avatars/av12.png'  },
- 
  ];
   constructor(private fb: FormBuilder) {
     this.profileForm = this.fb.group({
@@ -43,11 +43,16 @@ export class EditComponent {
   ngOnInit() {
      this.userId=this.route.snapshot.paramMap.get('id') || '';
     console.log(this.userId)
+    this._loading.show()
     this._userService.getOne(this.userId).subscribe({
       next: (results) => {
         this.profileForm.patchValue(results);
+        this._loading.hide()
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err)
+        this._loading.hide()
+      }
     });
   }
   
