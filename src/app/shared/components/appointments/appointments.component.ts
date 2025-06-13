@@ -587,24 +587,24 @@ windowResizeDelay: 150,
         this.currentEvents.set(events);
         this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
     }
-  loadPets(): void {
+loadPets(): void {
     const currentUserId = localStorage.getItem('connectedUserId');
-    // First, fetch pet species
     this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe(
         (speciesResponse) => {
             const petSpeciesNames = speciesResponse.data.map((s: any) => s.name);
-            // Now fetch pets
             this._petService.getList('10', '1', '', currentUserId, [], false).subscribe(
                 (petsResponse) => {
-                    this.pets = petsResponse.data;
-                    // Test each pet if its species is in the fetched species list
-                    this.pets.forEach((pet: any) => {
-                        if (petSpeciesNames.includes(pet.species)) {
-                            console.log(`Pet ${pet.name} has a valid species: ${pet.species}`);
-                        } else {
+                    // Only include pets with a valid species
+                    this.pets = petsResponse.data.filter((pet: any) =>
+                        petSpeciesNames.includes(pet.species)
+                    );
+                    // Optionally log excluded pets
+                    petsResponse.data.forEach((pet: any) => {
+                        if (!petSpeciesNames.includes(pet.species)) {
                             console.warn(`Pet ${pet.name} has an unknown species: ${pet.species}`);
                         }
                     });
+                    console.log('Valid pets loaded:', this.pets);
                 },
                 (error) => {
                     console.error('Error loading pets:', error);
