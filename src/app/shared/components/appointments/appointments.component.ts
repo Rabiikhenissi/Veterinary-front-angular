@@ -37,6 +37,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { BusinessHour } from 'app/shared/models/company';
+import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 
 @Component({
     selector: 'app-calendar',
@@ -54,7 +55,7 @@ export class CalendarComponent implements OnInit {
     _notificationService = inject(NotificationService);
     _fuseConfirmationService=inject(FuseConfirmationService)
     _loadingService=inject(LoadingService)
-    
+    _petSpeciesService = inject(PetSpeciesService);
 _companyService = inject(CompanyService);
 _route= inject(ActivatedRoute);
     pets: any[] = [];
@@ -586,26 +587,35 @@ windowResizeDelay: 150,
         this.currentEvents.set(events);
         this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
     }
-    loadPets(): void {
-
-        const currentUserId = localStorage.getItem('connectedUserId');
-        this._petService.getList('10', '1', '', currentUserId, [], false).subscribe(
-
-            (response) => {
-                this.pets = response.data;
-                console.log('Pets loaded:', this.pets);
-            },
-            (error) => {
-                console.error('Error loading pets:', error);
-                console.log(
-                    'Error!',
-                    'There was an error loading the pets.',
-                    'error'
-                );
-            }
-        );
-    }
-
+  loadPets(): void {
+    const currentUserId = localStorage.getItem('connectedUserId');
+    // First, fetch pet species
+    this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')).subscribe(
+        (speciesResponse) => {
+            const petSpeciesNames = speciesResponse.data.map((s: any) => s.name);
+            // Now fetch pets
+            this._petService.getList('10', '1', '', currentUserId, [], false).subscribe(
+                (petsResponse) => {
+                    this.pets = petsResponse.data;
+                    // Test each pet if its species is in the fetched species list
+                    this.pets.forEach((pet: any) => {
+                        if (petSpeciesNames.includes(pet.species)) {
+                            console.log(`Pet ${pet.name} has a valid species: ${pet.species}`);
+                        } else {
+                            console.warn(`Pet ${pet.name} has an unknown species: ${pet.species}`);
+                        }
+                    });
+                },
+                (error) => {
+                    console.error('Error loading pets:', error);
+                }
+            );
+        },
+        (error) => {
+            console.error('Error loading pet species:', error);
+        }
+    );
+}
 ////// Business hours
     businessHours(date: Date): boolean {
         const day = date.getDay(); 
