@@ -39,7 +39,15 @@ body fuse-splash-screen .spinner > div ,.fuse-splash-screen .spinner > div{
     -webkit-animation: fuse-bouncedelay 1s infinite ease-in-out both;
     animation: fuse-bouncedelay 1s infinite ease-in-out both;
 }
-
+body fuse-splash-screen .spinner2 > div ,.fuse-splash-screen .spinner2 > div{
+    width: 12px;
+    height: 12px;
+    background-color: #000000;
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: fuse-bouncedelay 1s infinite ease-in-out both;
+    animation: fuse-bouncedelay 1s infinite ease-in-out both;
+}
 
 body fuse-splash-screen .spinner .bounce1,.fuse-splash-screen .spinner .bounce1 {
     -webkit-animation-delay: -0.32s;
@@ -69,6 +77,10 @@ body fuse-splash-screen .spinner .bounce2 ,.fuse-splash-screen .spinner .bounce2
         -webkit-transform: scale(1.0);
         transform: scale(1.0);
     }
+}
+.fuse-splash-screen {
+  pointer-events: all;
+  backdrop-filter: blur(2px); /* Optional: adds visual clarity that it's blocking */
 }
 
 body:not(.fuse-splash-screen-hidden) {
