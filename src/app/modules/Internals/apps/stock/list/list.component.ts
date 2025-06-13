@@ -40,6 +40,7 @@ _route = inject(ActivatedRoute);
   typingTimer;
   doneTypingInterval = 500;
   filterSearch: string;
+  showArchived: boolean = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 _loadingService = inject(LoadingService);
   ngOnInit(): void {
@@ -54,7 +55,8 @@ _loadingService = inject(LoadingService);
         this.currentPage.toString(),
         this.searchQuery,
         this.selectedCategories.join(','),
-        ''
+        '',
+        this.showArchived.toString()
       )
       .subscribe({
         next: results => {
@@ -124,6 +126,40 @@ getProductImageUrl(imagePath: string): string {
             }
           });
         }
+    });
+  }
+  deleteProduct(product: Product): void {
+    const confirmation = this._fuseConfirmationService.open({
+      title: 'Delete Product',
+      message: `Are you sure you want to delete ${product.name}? This action cannot be undone.`,
+      actions: {
+        confirm: {
+          label: 'Delete',
+          color: 'warn'
+        },
+        cancel: {
+          label: 'Cancel'
+        }
+      }
+    });
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this._productService.deleteOne(product._id).subscribe({
+          next: () => {
+            console.log(`Product deleted: ${product.name}`);
+            this.fetchProducts();
+          },
+          error: (error) => {
+            console.error('Delete Error:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error deleting product',
+              text: 'Please try again later',
+              confirmButtonColor: '#ef4444',
+            });
+          }
+        });
+      }
     });
   }
 
