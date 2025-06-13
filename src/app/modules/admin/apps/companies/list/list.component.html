@@ -11,21 +11,11 @@
           placeholder="{{ 'Search' | transloco }}" />
       </mat-form-field>
       <div class="flex gap-2">
-        <button *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.create]
-                    }
-                ]" class="text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+        <button  class="text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
           mat-stroked-button (click)="addOne()">
           <span class="mx-1.5 block">{{ "Add" | transloco }}</span>
         </button>
-        <button *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.read]
-                    }
-                ]" class="text-green-500 hover:bg-green-500 hover:text-white transition-all duration-400"
+        <button  class="text-green-500 hover:bg-green-500 hover:text-white transition-all duration-400"
           mat-stroked-button (click)="toggleMap()" aria-label="Toggle map/list view">
           <mat-icon [svgIcon]="
                             showMap
@@ -69,12 +59,7 @@
   <div class="flex-1 sm:grid sm:flex-0">
     <ng-container *ngIf="displayedList?.data?.length > 0; else noData">
       @for (row of displayedList?.data; track row) {
-      <div *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.list]
-                    }
-                ]"
+      <div 
         class="row-grid grid items-center gap-4 py-1 px-4 md:px-6 border-b"
         [ngClass]="{
           'bg-red-100 hover:bg-red-200': row.archived,
@@ -98,44 +83,25 @@
               <span class="ml-2 mr-1">{{ 'Show' | transloco }}</span>
               <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
             </button>
-            <button *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.update]
-                    }
-                ]" mat-menu-item (click)="openEdit(row)">
+            <button 
+               mat-menu-item (click)="openEdit(row)">
               <span class="ml-2 mr-1">{{ 'Edit' | transloco }}</span>
               <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
             </button>
             <!-- If NOT archived, show Archive -->
             <ng-container *ngIf="!row.archived">
-              <button *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.delete]
-                    }
-                ]" mat-menu-item (click)="archiveOne(row)">
+              <button  mat-menu-item (click)="archiveOne(row)">
                 <span class="ml-2 mr-1">{{ 'Archive' | transloco }}</span>
                 <mat-icon [svgIcon]="'heroicons_outline:folder'"></mat-icon>
               </button>
             </ng-container>
             <!-- If archived, show Restore & Delete -->
             <ng-container  *ngIf="row.archived">
-              <button *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.update]
-                    }
-                ]" mat-menu-item (click)="restoreOne(row)">
+              <button  mat-menu-item (click)="restoreOne(row)">
                 <span class="ml-2 mr-1">{{ 'Restore' | transloco }}</span>
                 <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
               </button>
-              <button *appFeatures="[
-                    {
-                        code: featureCodes.company,
-                        actions: [featureActions.delete]
-                    }
-                ]" mat-menu-item (click)="deleteOne(row)">
+              <button  mat-menu-item (click)="deleteOne(row)">
                 <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
                 <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
               </button>
