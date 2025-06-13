@@ -20,6 +20,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 import { UserService } from '../../../shared/services/user.service';
 import { User } from '../../../shared/models/user';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MenuService } from 'app/shared/services/menu.service';
 
 @Component({
     selector: 'auth-sign-in',
@@ -59,7 +60,9 @@ export class AuthSignInComponent implements OnInit {
         private _authService: AuthService,
         private _userService: UserService,
         private _formBuilder: UntypedFormBuilder,
+        private _menuService: MenuService,
         private _router: Router
+        
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -85,80 +88,67 @@ export class AuthSignInComponent implements OnInit {
     /**
      * Sign in
      */
-    signIn(): void {
-        // Return if the form is invalid
+     signIn(): void {
         if (this.signInForm.invalid) {
             return;
         }
 
-        // Disable the form
         this.signInForm.disable();
-
-        // Hide the alert
         this.showAlert = false;
 
-        // Sign in
-        this._authService.signIn(this.signInForm?.value).subscribe(
-            () => {
-                // Set the redirect url.
-                // The '/signed-in-redirect' is a dummy url to catch the internationalization and redirect the user
-                // to the correct page after a successful sign in. This way, that url can be set via
-                // routing file and we don't have to touch here.
-               
+        this._authService.signIn(this.signInForm.value).subscribe({
+            next: () => {
                 const redirectURL =
-                    this._activatedRoute.snapshot.queryParamMap.get(
-                        'redirectURL'
-                    ) ||
+                    this._activatedRoute.snapshot.queryParamMap.get('redirectURL') ||
                     this._userService._defaultLink.getValue() ||
                     '/signed-in-redirect';
-                localStorage.setItem(
-                    'email',
-                    this.signInForm?.get('email')?.value
-                );
-                // Navigate to the redirect url
-                 this._router.navigateByUrl(redirectURL)
 
+                localStorage.setItem('email', this.signInForm.get('email')?.value);
+
+                // Clear features before fetching new ones
+                this._userService._features.next(null);
+
+                // Fetch updated menu/features then navigate
+                this._menuService.getMenu().subscribe({
+                    next: (data) => {
+                        this._userService._features.next(data.features);
+                        this._router.navigateByUrl(redirectURL);
+                    },
+                    error: () => {
+                        // Navigate even if fetching features fails
+                        this._router.navigateByUrl(redirectURL);
+                    }
+                });
             },
-            (error: HttpErrorResponse) => {
-                // Re-enable the form
-                this.signInForm?.enable();
+            error: (error: HttpErrorResponse) => {
+                this.signInForm.enable();
 
-                // Handle account lock due to failed attempts
-                if (error.status === 403 ){
-
-                  if(error.error.msg ==='Your account is pending approval . We thank you for your patience.') {
-                  this.showAlert = true;
-                  this.alert = {
-                      type: 'info',
-                      message:
-                          'Your account is pending approval . We thank you for your patience.',
-                  };
-              } 
-                // Handle account pending approval
-                else if (
-                  error.error.msg ===
-                      'Your account is locked due to multiple failed login attempts. Please contact an Administrator.'
-              ) {
-                  this.showAlert = true;
-                  this.alert = {
-                      type: 'error',
-                      message:
-                          'Your account is locked due to multiple failed login attempts. Please contact an Administrator.',
-                  };
-              }else if (
-                  error.error.msg ===
-                      'Your account is locked.Please contact an Administrator.'
-              ) {
-                  this.showAlert = true;
-                  this.alert = {
-                      type: 'error',
-                      message:
-                          'Your account is locked.Please contact an Administrator.',
-                  };
-              }}
-              
-                // Handle other authentication errors
-                else if (error.status === 400) {
+                if (error.status === 403) {
+                    if (error.error.msg === 'Your account is pending approval . We thank you for your patience.') {
+                        this.showAlert = true;
+                        this.alert = {
+                            type: 'info',
+                            message: 'Your account is pending approval. We thank you for your patience.',
+                        };
+                    } else if (
+                        error.error.msg ===
+                        'Your account is locked due to multiple failed login attempts. Please contact an Administrator.'
+                    ) {
+                        this.showAlert = true;
+                        this.alert = {
+                            type: 'error',
+                            message: 'Your account is locked due to multiple failed login attempts. Please contact an Administrator.',
+                        };
+                    } else if (
+                        error.error.msg === 'Your account is locked.Please contact an Administrator.'
+                    ) {
+                        this.showAlert = true;
+                        this.alert = {
+                            type: 'error',
+                            message: 'Your account is locked. Please contact an Administrator.',
+                        };
+                    }
+                } else if (error.status === 400) {
                     this.showAlert = true;
                     this.alert = {
                         type: 'error',
@@ -166,8 +156,9 @@ export class AuthSignInComponent implements OnInit {
                     };
                 }
             }
-        );
+        });
     }
+
     signInWithGoogle(): void {
         this._authService.signInWithGoogle().subscribe(
             (user) => {
