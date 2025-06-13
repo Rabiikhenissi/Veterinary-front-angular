@@ -148,7 +148,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Appointments',
                             feature: FeatureCodes.appointments,
                         },
-                        loadChildren: () => import('app/modules/client/apps/appointments/appointments.routing'),
+                        loadChildren: () => import('app/shared/components/appointments/appointments.routing'),
                     },
                     {
                         canActivate: [IsAuthorizedGuard],
@@ -158,7 +158,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Profile',
                             feature: FeatureCodes.profile,
                         },
-                        loadChildren: () => import('app/modules/client/apps/profile/profile.routes'),
+                        loadChildren: () => import('app/shared/components/profile/profile.routes'),
                     },
                     {
                         canActivate: [IsAuthorizedGuard],
@@ -168,7 +168,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Clients',
                             feature: FeatureCodes.clients,
                         },
-                        loadChildren: () => import('app/modules/client/apps/clients/clients.routes'),
+                        loadChildren: () => import('app/modules/Internals/apps/clients/clients.routes'),
                         
                     },
                     {
@@ -189,7 +189,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Stock',
                             feature: FeatureCodes.stock,
                         },
-                        loadChildren: () => import('app/modules/Veterinarian/apps/stock/stock.routing'),
+                        loadChildren: () => import('app/modules/Internals/apps/stock/stock.routing'),
                     },
                     {
                         canActivate: [IsAuthorizedGuard],
@@ -231,7 +231,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Pet Species',
                             feature: FeatureCodes.pet_species,
                     },
-                        loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/pets/pets.routing'),
+                        loadChildren: () => import('app/modules/Internals/apps/MyCompany/pets/pets.routing'),
                     },
 
                     {
@@ -242,7 +242,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Dashboard Veterinarian',
                             feature: FeatureCodes.dashboard_veterinarian,
                         },
-                        loadChildren: () => import('app/modules/Veterinarian/apps/dashboard/dashboard.routes'),
+                        loadChildren: () => import('app/modules/Internals/apps/Veterinarian/dashboard/dashboard.routes'),
                     },
 {
                         canActivate: [IsAuthorizedGuard],
@@ -253,7 +253,7 @@ export const appRoutes: Route[] = [
                             breadcrumb: 'Medical Services',
                             feature: FeatureCodes.medical_services,
                     },
-                        loadChildren: () => import('app/modules/Veterinarian/apps/MyCompany/medicalServices/medicalServices.routing'),
+                        loadChildren: () => import('app/modules/Internals/apps/MyCompany/medicalServices/medicalServices.routing'),
                     },
                      {
                         canActivate: [IsAuthorizedGuard],
