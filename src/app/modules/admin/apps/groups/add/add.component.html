@@ -227,7 +227,7 @@
                                             @if (featureId[index]) {
                                                 <div class="font-medium items-center flex flex-row">
                       <span class="">
-                        {{ featureId[index].title }}
+                        {{ featureId[index].code }}
                       </span>
                                                 </div>
                                             }
@@ -240,7 +240,7 @@
                                         @for (item of listFeature; track item) {
                                             <mat-option [value]="item" [disabled]="featureId.includes(item)">
                                                 <div class="font-medium items-center flex flex-row">
-                                                    <span class=""> {{ item.title }}</span>
+                                                    <span class=""> {{ item.code }}</span>
                                                 </div>
                                             </mat-option>
                                         }
