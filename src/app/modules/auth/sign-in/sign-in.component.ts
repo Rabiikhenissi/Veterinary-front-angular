@@ -116,9 +116,7 @@ export class AuthSignInComponent implements OnInit {
                     this.signInForm?.get('email')?.value
                 );
                 // Navigate to the redirect url
-                 this._router.navigateByUrl(redirectURL).then(() => {
-                window.location.reload();
-            });
+                 this._router.navigateByUrl(redirectURL)
 
             },
             (error: HttpErrorResponse) => {
