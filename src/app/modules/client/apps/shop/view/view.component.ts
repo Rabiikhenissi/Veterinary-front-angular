@@ -136,14 +136,14 @@ isAddingToCart = false;
         const products = response.data;
 
         this.recommendedProducts = products.filter(prod =>
-          prod._id !== this.product._id &&
-          (
-            prod.category === this.product.category ||
-            (Array.isArray(prod.species) &&
-              Array.isArray(this.product.species) &&
-              prod.species.some(s => this.product.species.includes(s)))
-          )
-        );
+  prod._id !== this.product._id &&
+  ["Accessories", "Food", "Hygiene"].includes(prod.category) && (
+    prod.category === this.product.category ||
+    (Array.isArray(prod.species) &&
+      Array.isArray(this.product.species) &&
+      prod.species.some(s => this.product.species.includes(s)))
+  )
+);
         this._loadingService.hide();
         
       },

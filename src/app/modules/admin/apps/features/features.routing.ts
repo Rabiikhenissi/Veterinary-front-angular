@@ -3,6 +3,8 @@ import { ListComponent } from 'app/modules/admin/apps/features/list/list.compone
 import { DetailsComponent } from './list/components/details/details.component';
 import { AddComponent } from './add/add.component';
 import { EditComponent } from './list/components/edit/edit.component';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
 
 export default [
   {
@@ -13,6 +15,7 @@ export default [
         component: ListComponent,
         data: {
           breadcrumb: 'Features',
+          
         },
       },
       {
@@ -20,6 +23,8 @@ export default [
         component: AddComponent,
         data: {
           breadcrumb: 'Add',
+          feature: FeatureCodes.features,
+          action: FeatureActions.create,
         },
       },
       {
@@ -31,6 +36,8 @@ export default [
             component: DetailsComponent,
             data: {
               breadcrumb: 'Details',
+              feature: FeatureCodes.features,
+                              action: FeatureActions.read,
             },
           },
           {
@@ -38,6 +45,8 @@ export default [
             component: EditComponent,
             data: {
               breadcrumb: 'Edit',
+              feature: FeatureCodes.features,
+                              action: FeatureActions.update,
             },
           },
         ],

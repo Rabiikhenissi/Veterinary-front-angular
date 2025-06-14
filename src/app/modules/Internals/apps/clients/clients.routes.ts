@@ -16,6 +16,7 @@ export default [
         component: ListComponent,
         data: {
           breadcrumb: 'Clients',
+          
         },
       },
       {
