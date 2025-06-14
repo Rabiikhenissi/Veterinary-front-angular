@@ -7,6 +7,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-list',
@@ -75,6 +76,10 @@ _loadingService = inject(LoadingService);
   }   
 
  
+ getProductImageUrl(imagePath: string): string {
+         const url = getImageUrl(imagePath);
+         return url;
+       }
 archiveSpecies(species: PetSpecies): void {
   const confirmation = this._fuseConfirmationService.open({
 title: 'Archive Species',

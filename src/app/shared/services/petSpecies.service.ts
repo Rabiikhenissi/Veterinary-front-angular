@@ -41,5 +41,9 @@ export class PetSpeciesService {
   archiveOne(id: string): Observable<PetSpecies> {
     return this.http.patch<PetSpecies>(`${this.endpoint}/archive/${id}`, {});
   }
- 
+ uploadImage(file: File): Observable<{ imageUrl: string }> {
+    const formData = new FormData();
+    formData.append('image', file);
+    return this.http.post<{ imageUrl: string }>(`${this.endpoint}/upload-image`, formData);
+  }
 }
