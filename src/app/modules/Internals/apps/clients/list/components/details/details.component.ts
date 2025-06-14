@@ -176,7 +176,8 @@ pageChanged(event: PageEvent ): void {
   }
 
   approveArchiveRequest(pet: any, isRequestApproval: boolean) {
-    this._loadingService.show()
+  this._loadingService.show();
+
   this._petService.Archive(pet._id).subscribe({
     next: () => {
       this.getList();
@@ -208,10 +209,9 @@ pageChanged(event: PageEvent ): void {
 
       this._notificationService.createNotification(notification).subscribe({
         next: () => {
-          
-          // Then send email
+          // Send Email
           this._notificationService.sendEmailNotification(
-            pet.ownerId.email,  // Make sure you have this info
+            pet.ownerId.email,
             subject,
             message
           ).subscribe({
@@ -219,14 +219,23 @@ pageChanged(event: PageEvent ): void {
             error: err => console.error('Email failed:', err)
           });
 
+          // Send SMS
+          /*this._notificationService.sendSMSNotification(
+            pet.ownerId.phone,
+            message
+          ).subscribe({
+            next: () => console.log('SMS sent'),
+            error: err => console.error('SMS failed:', err)
+          });*/
         },
         error: err => console.error('Notification failed:', err)
       });
-      this._loadingService.hide()
+
+      this._loadingService.hide();
     },
     error: err => {
-      console.error('Archiving failed:', err)
-      this._loadingService.hide()
+      console.error('Archiving failed:', err);
+      this._loadingService.hide();
     }
   });
 }

@@ -101,16 +101,16 @@ this.ws = new WebSocket(`${environment.websocketUrl}?userId=${userId}`);
   }
 
   // Send Email notification
-  sendEmailNotification(
-    to: string,
-    subject: string,
-    text: string,
-    pdfBuffer: any = null,
-    filename: string = 'attachment.pdf'
-  ): Observable<any> {
-    const body = { to, subject, text, pdfBuffer, filename };
-    return this.http.post<any>(`${this.endpoint}/email`, body);
-  }
+ sendEmailNotification(
+  to: string,
+  subject: string,
+  message: string,  
+  pdfBuffer: any = null,
+  filename: string = 'attachment.pdf'
+): Observable<any> {
+  const body = { to, subject, message, pdfBuffer, filename };  // changed text to html
+  return this.http.post<any>(`${this.endpoint}/email`, body);
+}
 
   // Create Notification
   createNotification(notification: {

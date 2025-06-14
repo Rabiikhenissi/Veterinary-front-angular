@@ -14,6 +14,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { MedicalServicesService } from 'app/shared/services/medicalServices.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { UserService } from 'app/shared/services/user.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import mapboxgl from 'mapbox-gl';
 
 @Component({
@@ -80,6 +81,10 @@ daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 
         }
     }
+     getProductImageUrl(imagePath: string): string {
+             const url = getImageUrl(imagePath);
+             return url;
+           }
     fetchMedicalServices(companyId: string) {
   this._medicalServicesService.getAll(companyId).subscribe({
     next: (res) => {

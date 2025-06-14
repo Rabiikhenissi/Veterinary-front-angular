@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -22,12 +23,34 @@ export class AddComponent {
   _route = inject(ActivatedRoute);
   constructor() {
     this.speciesForm = this._fb.group({
-      name: ['', Validators.required],
-      icon: ['', [Validators.required, Validators.pattern(/https?:\/\/.+\.(jpg|jpeg|png|webp|svg)/)]],
+      name: ['',  [Validators.required, Validators.minLength(2)]],
+       icon: [null, Validators.required]
     });
   }
   
-  
+  onFileSelected(event: Event): void {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+
+  this._petSpeciesService.uploadImage(file).subscribe({
+    next: (res) => {
+      this.speciesForm.patchValue({ icon: res.imageUrl });
+    },
+    error: (err) => {
+      console.error('Image upload failed', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Image Upload Failed',
+        text: 'Please try again.',
+      });
+    }
+  });
+}
+
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
   submit() {
     if (this.speciesForm.invalid) return;
     this._loadingSerivice.show();

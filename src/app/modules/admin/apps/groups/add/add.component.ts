@@ -109,6 +109,12 @@ forkJoin([
                         confirmButtonColor: '#f87171',
                     });
                 } else {
+                    this.groupFeature.forEach((feature) => {
+    if (!feature.list) {
+        feature.status = false;
+        feature.defaultFeature = false;
+    }
+});
                     this._loadingService.show()
                     this._groupService.createOne(this.group, this.groupFeature).subscribe({
                         next:() => {

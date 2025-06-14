@@ -115,6 +115,12 @@ export class EditComponent implements OnInit {
                             });
                         }
             else{            
+                 this.groupFeature.forEach((feature) => {
+    if (!feature.list) {
+        feature.status = false;
+        feature.defaultFeature = false;
+    }
+});
             this._loadingService.show()
             this._groupService.updateOne(this.group, this.groupFeature).subscribe(
                 {

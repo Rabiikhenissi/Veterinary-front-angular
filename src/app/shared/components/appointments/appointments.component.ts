@@ -85,15 +85,9 @@ ngOnInit(): void {
   this.getBusinessHours(connectedUserCompany);
 this._companyService.getOne(connectedUserCompany).subscribe({
     next: (company) => {
-        console.log('Company:', company);
         this.companyDate = company.firstCalendarDay;
-        console.log('companyDate', this.companyDate);
-        console.log('type of companyDate', typeof this.companyDate);
         if (this.userType !== 'external') {
-            console.log(this.userType);
             this.calendarFirstDate = this.companyDate;
-            console.log("date", this.calendarFirstDate);
-            
             
         }
         else {
@@ -122,8 +116,7 @@ this.initializeCalendarOptions();
   
     calendarVisible = signal(true);
     initializeCalendarOptions(): void {
-      console.log("tesssssssssssss",typeof(this.businessHoursList))
-        console.log('calendarFirstDate in initializeCalendarOptions:', this.calendarFirstDate); // Log here to check if it's set
+    
     const formattedBusinessHours = this.convertToBusinessHoursFormat(this.businessHoursList);
         this.CalendarOptions = {
         plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
@@ -238,13 +231,11 @@ windowResizeDelay: 150,
         
             if (container && calendarApi) {
                 const height = container.clientHeight;
-                console.log('Container Height:', height);
                 
                 // Set the calendar's height to match the container's height
                 calendarApi.setOption('height', height); 
                 calendarApi.updateSize(); // Update calendar size
                 
-                console.log('Updated Calendar Height:', calendarApi.getOption('height'));
             }
         }, 300); // Ensure that this happens after the calendar has been rendered
     }
@@ -307,7 +298,6 @@ windowResizeDelay: 150,
             companyId,
             appointmentId
         )       .subscribe((res) => {
-        console.log('Availability response:', res);
         if (!res.available) {
           Swal.fire({
             icon: 'warning',
@@ -457,6 +447,7 @@ windowResizeDelay: 150,
               title: title,
               message: message,
               type: type
+              
               }).subscribe(() => {
                this._notificationService.sendEmailNotification(
                 user.email,
@@ -471,6 +462,14 @@ windowResizeDelay: 150,
               console.error('Error sending notification to internal user:', error);
               });
             });
+             // Send SMS
+          /*this._notificationService.sendSMSNotification(
+            pet.ownerId.phone,
+            message
+          ).subscribe({
+            next: () => console.log('SMS sent'),
+            error: err => console.error('SMS failed:', err)
+          });*/
             } else {
             console.error('Expected an array but got:', internalUsers);
             }
@@ -511,8 +510,6 @@ windowResizeDelay: 150,
         /////for internal users
         else if (this.userType === 'internal') {
             const [selectedDate, selectedTime] = startDate.split('T');
-            console.log('Selected date:', selectedDate);
-            console.log('Selected time:', selectedTime);
             //to save in which date before navigating
             const calendarApi = this.calendarComponent.getApi(); 
             const currentDate = calendarApi.getDate();
@@ -604,7 +601,6 @@ loadPets(): void {
                             console.warn(`Pet ${pet.name} has an unknown species: ${pet.species}`);
                         }
                     });
-                    console.log('Valid pets loaded:', this.pets);
                 },
                 (error) => {
                     console.error('Error loading pets:', error);
@@ -651,10 +647,8 @@ loadPets(): void {
         this._loadingService.show()
         this._appointmentService.getAppointments('100', '1', '', connectedUserCompany).subscribe(
           (response) => {
-            console.log('Appointments fetched successfully:', response);
       
             const appointments = response.data;
-            console.log('Appointments:', appointments);
       
             const events: EventInput[] = appointments
               .map((appointment: Appointment) => {
@@ -688,7 +682,6 @@ loadPets(): void {
         
                 // Secretary or internal user view
                 let title = `${appointment.userId?.name || 'Deleted User'} with ${appointment.petId?.name || 'Deleted Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
-                console.log('Appointment Title:', title);
         if (connectedUserType === 'external') {
                     title = `${appointment.petId?.name || 'Unknown Pet'} (${appointment.petId?.species || 'Unknown Species'})`;
                   }
