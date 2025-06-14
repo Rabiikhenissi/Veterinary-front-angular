@@ -1,4 +1,4 @@
-<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+<div class="min-h-full sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
     <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white ">{{ 'Features' | transloco
@@ -21,20 +21,20 @@
     </div>
   </div>
   <!-- Main -->
-  <div class="flex flex-auto overflow-hidden">
+  <div class="flex flex-auto ">
     <!-- features list -->
-    <div class="flex flex-col flex-auto sm:mb-18">
+    <div class="flex flex-col flex-auto ">
       <!-- Header -->
       <div
-        class="feature-grid grid grid-cols-8 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+        class="feature-grid grid md:grid-cols-8 sm:grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
 
-        <div class="hidden sm:flex">N°</div>
-        <div class="hidden sm:flex">{{ 'code' | transloco }}</div>
+        <div class=" sm:flex">N°</div>
+        <div class=" hidden md:block">{{ 'code' | transloco }}</div>
         <div class="flex">{{ 'title' | transloco }}</div>
-        <div class="hidden md:flex">{{ 'type' | transloco }}</div>
-        <div class="hidden sm:flex">{{ 'parent' | transloco }}</div>
-        <div class="flex">{{ 'link' | transloco }}</div>
-        <div class="hidden md:flex">{{ 'status' | transloco }}</div>
+        <div class=" md:flex">{{ 'type' | transloco }}</div>
+        <div class=" sm:flex">{{ 'parent' | transloco }}</div>
+        <div class="hidden md:block">{{ 'link' | transloco }}</div>
+        <div class=" md:flex">{{ 'status' | transloco }}</div>
 
         <!-- Filter Button aligned to the right -->
         <div class="flex justify-end col-span-1">
@@ -44,71 +44,92 @@
         </div>
       </div>
       @if (displayedList?.data?.length > 0) {
-      <div class="flex-1 overflow-hidden sm:overflow-y-auto">
-        <div class="flex-1 sm:grid sm:flex-0">
-          <!-- Rows -->
-          <ng-container>
-            @for (feature of displayedList?.data; track feature) {
-            <div class="feature-grid grid grid-cols-8 items-center gap-4 py-1 hover:bg-gray-100  px-4 md:px-6 border-b"
-              (click)="isScreenSmall ? openShow(feature) : null">
-              <div class="hidden sm:flex">{{ $index + 1 }}</div>
-              <div class="hidden sm:flex truncate">{{ feature.code }}</div>
-              <div class="flex truncate">{{ feature.title }}</div>
-              <div class="hidden md:flex truncate">{{ feature.type }}</div>
-              <div class="hidden sm:flex truncate">
-                @if (feature.featuresIdParent) {
-                <span class="truncate">
-                  {{ feature.featuresIdParent.title }}
-                </span>
-                }
-              </div>
-              <div class="flex truncate">
-                @if (feature.link) {
-                <span class="truncate">
-                  {{ feature.link }}
-                </span>
-                }
-              </div>
-              <div class="hidden md:flex truncate">
-                <span>{{ feature.status }}</span>
-              </div>
-              <div class="flex justify-end col-span-1">
-                <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
-                  <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
+      <div class="flex-1 sm:overflow-y-auto">
+  <div class="flex-1 sm:grid sm:flex-0">
+    <ng-container>
+      @for (feature of displayedList?.data; track feature) {
+        <div
+          class="feature-grid grid md:grid-cols-8 sm:grid-cols-6  items-center gap-4 py-1 hover:bg-gray-100 px-4 md:px-6 border-b"
+          (click)="isScreenSmall ? openShow(feature) : null"
+        >
+          <!-- Always show: index -->
+          <div class="sm:flex">{{ $index + 1 }}</div>
 
-                </button>
-                <mat-menu #budgetMenu="matMenu">
-                  <button mat-menu-item class="flex justify-between" (click)="openShow(feature)">
-                    <span class="ml-2 mr-1  block">{{ 'Show' | transloco }}</span>
-                    <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
-                  </button>
-                  <button *appFeatures="[
+          <!-- Only on small screens -->
+          <div class="hidden md:block truncate">{{ feature.code }}</div>
+
+          <!-- Always show: title -->
+          <div class="flex truncate">{{ feature.title }}</div>
+
+          <!-- Only on medium and up -->
+          <div class=" truncate">{{ feature.type }}</div>
+
+          <!-- Optional: Parent title -->
+          <div class="hidden sm:flex truncate">
+            @if (feature.featuresIdParent) {
+              <span class="truncate">
+                {{ feature.featuresIdParent.title }}
+              </span>
+            }
+          </div>
+
+          <!-- Optional: Link -->
+          <div class="hidden md:block truncate">
+            @if (feature.link) {
+              <span class="truncate">
+                {{ feature.link }}
+              </span>
+            }
+          </div>
+
+          <!-- Only on medium and up -->
+          <div class=" truncate">
+            <span>{{ feature.status }}</span>
+          </div>
+
+          <!-- Always show: action menu -->
+          <div class="flex justify-end col-span-1">
+            <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
+            </button>
+
+            <mat-menu #budgetMenu="matMenu">
+              <button mat-menu-item class="flex justify-between" (click)="openShow(feature)">
+                <span class="ml-2 mr-1 block">{{ 'Show' | transloco }}</span>
+                <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
+              </button>
+
+              <button *appFeatures="[
                         {
                           code: featureCodes.features,
                           actions: [featureActions.update]
                         }
-                      ]" mat-menu-item class="flex justify-between" (click)="openEdit(feature)">
-                    <span class="ml-2 mr-1  block">{{ 'Edit' | transloco }}</span>
-                    <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
-                  </button>
-                  <button mat-menu-item class="flex justify-between" (click)="deleteFeature(feature)">
-                    <span *appFeatures="[
+                      ]"
+                mat-menu-item class="flex justify-between"
+                (click)="openEdit(feature)">
+                <span class="ml-2 mr-1 block">{{ 'Edit' | transloco }}</span>
+                <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+              </button>
+
+              <button mat-menu-item class="flex justify-between" (click)="deleteFeature(feature)">
+                <span *appFeatures="[
                           {
                             code: featureCodes.features,
                             actions: [featureActions.delete]
                           }
                         ]" class="ml-2 mr-1 block">{{ 'Delete' | transloco }}</span>
-                    <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-                  </button>
-                </mat-menu>
-              </div>
-            </div>
-            }
-          </ng-container>
+                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+              </button>
+            </mat-menu>
+          </div>
         </div>
-      </div>
+      }
+    </ng-container>
+  </div>
+</div>
+
       <mat-paginator
-        class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+        class=" sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
         [showFirstLastButtons]="true" (page)="pageChanged($event)" [length]="displayedList?.total"
         [pageSize]="currentSize" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
       }

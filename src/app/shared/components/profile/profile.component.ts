@@ -12,7 +12,7 @@ import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
@@ -28,6 +28,7 @@ export class ProfileComponent {
   userPets: Pet[] = [];
   selectedAvatar = '';
   connectedUser: any;
+  connectedUserType:string;
 featureCodes=FeatureCodes;
 featureActions=FeatureActions;
   _authService= inject(AuthService);
@@ -53,32 +54,42 @@ companyId:string
   ngOnInit(): void {
   this.connectedUser = localStorage.getItem("connectedUserId");
   this.companyId = localStorage.getItem("connectedUserCompany");
+  console.log(this.companyId);
 
-  this._loadingService.show(); // Start loading
+  this._loadingService.show();
 
-  forkJoin({
-    user: this._userService.getOne(this.connectedUser),
-    species: this._petSpecies.getList(this.companyId)
-  }).subscribe({
-    next: ({ user, species }) => {
+  this._userService.getOne(this.connectedUser).subscribe({
+    next: (user) => {
       this.user.name = user.name;
       this.user.email = user.email;
       this.user.phone = user.phone;
       this.user.id = user._id;
       this.user.type = user.type;
       this.selectedAvatar = user.avatar;
-      this.availableSpecies = species.data;
-      this.getList();
+
+      if (this.companyId) {
+        // Only fetch species and call getList if companyId exists
+        this._petSpecies.getList(this.companyId).subscribe({
+          next: (speciesResponse) => {
+            this.availableSpecies = speciesResponse.data;
+            this.getList(); // call only after species loaded
+            this._loadingService.hide();
+          },
+          error: (err) => {
+            console.error('Error loading species:', err);
+            this._loadingService.hide();
+          }
+        });
+      } else {
+        this.availableSpecies = [];
+        this._loadingService.hide();
+      }
     },
     error: (err) => {
-      console.error(err);
-      this._loadingService.hide(); // Stop loading on error
-    },
-    complete: () => {
-      this._loadingService.hide(); // Stop loading when done
+      console.error('Error loading user:', err);
+      this._loadingService.hide();
     }
   });
-  
 }
 
   // saveProfile(): void {

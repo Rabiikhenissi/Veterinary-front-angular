@@ -1,5 +1,5 @@
 <div
-    class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+    class="  min-h-full sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
 >
     <!-- Header -->
     <div
@@ -49,13 +49,12 @@
     <div class="flex flex-auto overflow-hidden">
         <div class="flex flex-col flex-auto sm:mb-18">
             <div
-                class="grid grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                class="grid grid-cols-5 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
             >
                 <div class="w-full">{{ "N°" }}</div>
                 <div class="w-full">{{ "code" | transloco }}</div>
                 <div class="w-full">{{ "label" | transloco }}</div>
                 <div class="w-full">{{ "Company" | transloco }}</div>
-                <div class="w-full"></div>
                 <div class="w-full flex justify-end">
                     <button mat-icon-button (click)="openFilter = true">
                         <mat-icon
@@ -72,7 +71,7 @@
                     <ng-container>
                         @for (row of displayedList?.data; track row) {
                         <div
-                            class="grid grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b"
+                            class="grid grid-cols-5 items-center gap-4 py-1 px-4 md:px-6 border-b"
                             [ngClass]="{
                                 'bg-red-100 hover:bg-red-200': row.archived,
                                 'hover:bg-gray-100': !row.archived
@@ -85,7 +84,6 @@
                             <div class="w-full truncate">
                                 {{ row.companyName }}
                             </div>
-                            <div class="w-full"></div>
                             <div class="w-full flex justify-end">
                                 <button
                                     class="mr-4"
@@ -215,7 +213,7 @@
                 </div>
             </div>
             <mat-paginator
-                class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                class="sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
                 [showFirstLastButtons]="true"
                 (page)="pageChanged($event)"
                 [length]="displayedList?.total"

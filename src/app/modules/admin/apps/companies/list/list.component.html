@@ -1,189 +1,331 @@
-<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
-  <!-- Header (hidden when map is shown) -->
-  <div *ngIf="!showMap" class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900">
-    <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white">
-      {{ "Companies" | transloco }}
-    </div>
-    <div class="flex w-full md:w-3/4 items-start md:items-center justify-between">
-      <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript md:mt-5 w-3/4">
-        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:search'"></mat-icon>
-        <input matInput [(ngModel)]="filterSearch" (ngModelChange)="updateSearch()" [autocomplete]="'off'"
-          placeholder="{{ 'Search' | transloco }}" />
-      </mat-form-field>
-      <div class="flex gap-2">
-        <button  class="text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
-          mat-stroked-button (click)="addOne()">
-          <span class="mx-1.5 block">{{ "Add" | transloco }}</span>
-        </button>
-        <button  class="text-green-500 hover:bg-green-500 hover:text-white transition-all duration-400"
-          mat-stroked-button (click)="toggleMap()" aria-label="Toggle map/list view">
-          <mat-icon [svgIcon]="
+<div
+    class=" sm:min-h-full md:min-h-full  sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent"
+>
+    <!-- Header (hidden when map is shown) -->
+    <div
+        *ngIf="!showMap"
+        class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900"
+    >
+        <div
+            class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white"
+        >
+            {{ "Companies" | transloco }}
+        </div>
+        <div
+            class="flex w-full md:w-3/4 items-start md:items-center justify-between"
+        >
+            <mat-form-field
+                class="fuse-mat-dense mr-2 fuse-mat-no-subscript md:mt-5 w-3/4"
+            >
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'feather:search'"
+                ></mat-icon>
+                <input
+                    matInput
+                    [(ngModel)]="filterSearch"
+                    (ngModelChange)="updateSearch()"
+                    [autocomplete]="'off'"
+                    placeholder="{{ 'Search' | transloco }}"
+                />
+            </mat-form-field>
+            <div class="flex gap-2">
+                <button
+                    class="text-blue-500 hover:bg-blue-500 hover:text-gray-900 transition-all duration-400"
+                    mat-stroked-button
+                    (click)="addOne()"
+                >
+                    <span class="mx-1.5 block">{{ "Add" | transloco }}</span>
+                </button>
+                <button
+                    class="text-green-500 hover:bg-green-500 hover:text-white transition-all duration-400"
+                    mat-stroked-button
+                    (click)="toggleMap()"
+                    aria-label="Toggle map/list view"
+                >
+                    <mat-icon
+                        [svgIcon]="
                             showMap
                                 ? 'heroicons_outline:list-bullet'
                                 : 'heroicons_outline:map'
-                        "></mat-icon>
-          <span class="mx-1.5">{{
-            showMap
-            ? ("Show List" | transloco)
-            : ("Show Map" | transloco)
-            }}</span>
-        </button>
-      </div>
+                        "
+                    ></mat-icon>
+                    <span class="mx-1.5">{{
+                        showMap
+                            ? ("Show List" | transloco)
+                            : ("Show Map" | transloco)
+                    }}</span>
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Main -->
-  <div class="flex flex-auto overflow-hidden">
-    <div class="flex flex-col flex-auto sm:mb-18">
-      <!-- List content (only if map is hidden) -->
-      <ng-container *ngIf="!showMap && displayedList?.data?.length > 0">
-        <!-- List Header: always visible -->
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto">
+            <!-- List content (only if map is hidden) -->
+            <ng-container *ngIf="!showMap && displayedList?.data?.length > 0">
+                <!-- List Header: always visible -->
+                <div
+                    class="row-grid grid-cols-4 grid z-10 top-0 shadow items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                >
+                    <div class="hidden sm:flex">N°</div>
+                    <div class="hidden sm:flex">{{ "code" | transloco }}</div>
+                    <div class="flex">{{ "name" | transloco }}</div>
+
+                    <div class="flex justify-end">
+                        <button
+                            mat-icon-button
+                            (click)="openFilter = true"
+                            aria-label="Open filter panel"
+                        >
+                            <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'feather:filter'"
+                            ></mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- List Rows: show message if no data -->
+                <div class="flex-1 overflow-hidden sm:overflow-y-auto">
+                    <div class="flex-1 sm:grid sm:flex-0">
+                        <ng-container
+                            *ngIf="displayedList?.data?.length > 0; else noData"
+                        >
+                            @for (row of displayedList?.data; track row) {
+                            <div
+                                class="row-grid grid grid-cols-4 items-center gap-4 py-1 px-4 md:px-6 border-b"
+                                [ngClass]="{
+                                    'bg-red-100 hover:bg-red-200': row.archived,
+                                    'hover:bg-gray-100': !row.archived
+                                }"
+                                (click)="isScreenSmall ? openShow(row) : null"
+                            >
+                                <div class="hidden sm:flex">
+                                    {{ $index + 1 }}
+                                </div>
+                                <div class="hidden sm:flex truncate">
+                                    {{ row.code }}
+                                </div>
+                                <div class="flex truncate">{{ row.name }}</div>
+                                <div class="flex justify-end">
+                                    <button
+                                        class="mr-4"
+                                        mat-icon-button
+                                        [matMenuTriggerFor]="budgetMenu"
+                                        aria-label="More options"
+                                    >
+                                        <mat-icon
+                                            class="icon-size-5"
+                                            [svgIcon]="
+                                                'heroicons_solid:ellipsis-vertical'
+                                            "
+                                        ></mat-icon>
+                                    </button>
+                                    <mat-menu #budgetMenu="matMenu">
+                                        <button
+                                            mat-menu-item
+                                            (click)="openShow(row)"
+                                        >
+                                            <span class="ml-2 mr-1">{{
+                                                "Show" | transloco
+                                            }}</span>
+                                            <mat-icon
+                                                [svgIcon]="
+                                                    'heroicons_outline:eye'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                        <button
+                                            mat-menu-item
+                                            (click)="openEdit(row)"
+                                        >
+                                            <span class="ml-2 mr-1">{{
+                                                "Edit" | transloco
+                                            }}</span>
+                                            <mat-icon
+                                                [svgIcon]="
+                                                    'heroicons_outline:pencil'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                        <!-- If NOT archived, show Archive -->
+                                        <ng-container *ngIf="!row.archived">
+                                            <button
+                                                mat-menu-item
+                                                (click)="archiveOne(row)"
+                                            >
+                                                <span class="ml-2 mr-1">{{
+                                                    "Archive" | transloco
+                                                }}</span>
+                                                <mat-icon
+                                                    [svgIcon]="
+                                                        'heroicons_outline:folder'
+                                                    "
+                                                ></mat-icon>
+                                            </button>
+                                        </ng-container>
+                                        <!-- If archived, show Restore & Delete -->
+                                        <ng-container *ngIf="row.archived">
+                                            <button
+                                                mat-menu-item
+                                                (click)="restoreOne(row)"
+                                            >
+                                                <span class="ml-2 mr-1">{{
+                                                    "Restore" | transloco
+                                                }}</span>
+                                                <mat-icon
+                                                    [svgIcon]="
+                                                        'heroicons_outline:arrow-path'
+                                                    "
+                                                ></mat-icon>
+                                            </button>
+                                            <button
+                                                mat-menu-item
+                                                (click)="deleteOne(row)"
+                                            >
+                                                <span class="ml-2 mr-1">{{
+                                                    "Delete" | transloco
+                                                }}</span>
+                                                <mat-icon
+                                                    [svgIcon]="
+                                                        'heroicons_outline:trash'
+                                                    "
+                                                ></mat-icon>
+                                            </button>
+                                        </ng-container>
+                                    </mat-menu>
+                                </div>
+                            </div>
+                            }
+                        </ng-container>
+                        <ng-template #noData>
+                            <div
+                                class="flex items-center justify-center py-10 text-gray-400 text-lg"
+                            >
+                                {{ "No companies found" | transloco }}
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <mat-paginator
+                    class="sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                    [showFirstLastButtons]="true"
+                    (page)="pageChanged($event)"
+                    [length]="displayedList?.total"
+                    [pageSize]="currentSize"
+                    [pageSizeOptions]="[5, 10, 20, 50, 100]"
+                ></mat-paginator>
+            </ng-container>
+
+            <!-- Map display (only if map is visible) -->
+            <div
+                *ngIf="showMap"
+                class="relative w-full h-[calc(100vh-4rem)] mt-2"
+            >
+                <!-- The Map itself -->
+
+                <div
+                    id="map"
+                    class="absolute inset-0 w-full h-full bg-gray-200 z-0"
+                ></div>
+
+                <!-- Return to List Button on top-right -->
+                <button
+                    (click)="toggleMap()"
+                    class="absolute top-4 right-4 z-10 bg-white text-gray-800 hover:bg-blue-600 hover:text-white shadow-md rounded-md px-4 py-2 flex items-center gap-2 transition-all duration-300"
+                >
+                    <mat-icon
+                        svgIcon="heroicons_outline:list-bullet"
+                    ></mat-icon>
+                    <span>{{ "Show List" | transloco }}</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Sidebar -->
         <div
-          class="row-grid grid z-10 top-0 shadow items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
-          <div class="hidden sm:flex">N°</div>
-          <div class="hidden sm:flex">{{ "code" | transloco }}</div>
-          <div class="flex">{{ "name" | transloco }}</div>
-          <div class="hidden md:flex"></div>
-          <div class="hidden sm:flex"></div>
-          <div class="flex"></div>
-          <div class="hidden md:flex"></div>
-          <div class="flex">
-            <button mat-icon-button (click)="openFilter = true" aria-label="Open filter panel">
-              <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
-            </button>
-          </div>
+            class="sidebar-filter fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white dark:bg-gray-900 shadow-2xl transition-transform duration-300"
+            [class.translate-x-0]="openFilter"
+            [class.translate-x-full]="!openFilter"
+            style="transform: translateX(100%)"
+        >
+            <div
+                class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900"
+            >
+                <span
+                    class="text-lg font-bold text-gray-700 dark:text-gray-100"
+                    >{{ "Filters" | transloco }}</span
+                >
+                <button mat-icon-button (click)="openFilter = false">
+                    <mat-icon
+                        [svgIcon]="'heroicons_outline:x-circle'"
+                    ></mat-icon>
+                </button>
+            </div>
+            <div
+                class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]"
+            >
+                <!-- Archive Filter -->
+                <div>
+                    <div
+                        class="flex items-center gap-2 font-semibold text-base mb-2"
+                    >
+                        <mat-icon [svgIcon]="'feather:archive'"></mat-icon>
+                        {{ "Filter by Archive Status" | transloco }}
+                    </div>
+                    <mat-form-field
+                        class="fuse-mat-no-subscript w-full"
+                        appearance="fill"
+                    >
+                        <mat-select
+                            [(ngModel)]="filterArchived"
+                            name="archived"
+                            placeholder="Select archived or active"
+                        >
+                            <mat-option value="">{{
+                                "All" | transloco
+                            }}</mat-option>
+                            <mat-option [value]="false">{{
+                                "Active" | transloco
+                            }}</mat-option>
+                            <mat-option [value]="true">{{
+                                "Archived" | transloco
+                            }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <!-- Actions -->
+                <div class="flex gap-2 mt-4">
+                    <button
+                        mat-stroked-button
+                        color="primary"
+                        class="flex-1"
+                        (click)="getList()"
+                    >
+                        <mat-icon
+                            class="mr-1"
+                            [svgIcon]="'feather:filter'"
+                        ></mat-icon>
+                        <span>Apply</span>
+                    </button>
+                    <button
+                        mat-stroked-button
+                        color="warn"
+                        class="flex-1"
+                        (click)="resetFilters()"
+                    >
+                        <mat-icon
+                            class="mr-1"
+                            [svgIcon]="'feather:rotate-ccw'"
+                        ></mat-icon>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <!-- List Rows: show message if no data -->
-<div class="flex-1 overflow-hidden sm:overflow-y-auto">
-  <div class="flex-1 sm:grid sm:flex-0">
-    <ng-container *ngIf="displayedList?.data?.length > 0; else noData">
-      @for (row of displayedList?.data; track row) {
-      <div 
-        class="row-grid grid items-center gap-4 py-1 px-4 md:px-6 border-b"
-        [ngClass]="{
-          'bg-red-100 hover:bg-red-200': row.archived,
-          'hover:bg-gray-100': !row.archived
-        }"
-        (click)="isScreenSmall ? openShow(row) : null"
-      >
-        <div class="hidden sm:flex">{{ $index + 1 }}</div>
-        <div class="hidden sm:flex truncate">{{ row.code }}</div>
-        <div class="flex truncate">{{ row.name }}</div>
-        <div class="hidden md:flex truncate"></div>
-        <div class="hidden sm:flex truncate"></div>
-        <div class="flex truncate"></div>
-        <div class="hidden md:flex truncate"></div>
-        <div class="flex">
-          <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu" aria-label="More options">
-            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:ellipsis-vertical'"></mat-icon>
-          </button>
-          <mat-menu #budgetMenu="matMenu">
-            <button mat-menu-item (click)="openShow(row)">
-              <span class="ml-2 mr-1">{{ 'Show' | transloco }}</span>
-              <mat-icon [svgIcon]="'heroicons_outline:eye'"></mat-icon>
-            </button>
-            <button 
-               mat-menu-item (click)="openEdit(row)">
-              <span class="ml-2 mr-1">{{ 'Edit' | transloco }}</span>
-              <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
-            </button>
-            <!-- If NOT archived, show Archive -->
-            <ng-container *ngIf="!row.archived">
-              <button  mat-menu-item (click)="archiveOne(row)">
-                <span class="ml-2 mr-1">{{ 'Archive' | transloco }}</span>
-                <mat-icon [svgIcon]="'heroicons_outline:folder'"></mat-icon>
-              </button>
-            </ng-container>
-            <!-- If archived, show Restore & Delete -->
-            <ng-container  *ngIf="row.archived">
-              <button  mat-menu-item (click)="restoreOne(row)">
-                <span class="ml-2 mr-1">{{ 'Restore' | transloco }}</span>
-                <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
-              </button>
-              <button  mat-menu-item (click)="deleteOne(row)">
-                <span class="ml-2 mr-1">{{ 'Delete' | transloco }}</span>
-                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
-              </button>
-            </ng-container>
-          </mat-menu>
-        </div>
-      </div>
-      }
-    </ng-container>
-    <ng-template #noData>
-      <div class="flex items-center justify-center py-10 text-gray-400 text-lg">
-        {{ 'No companies found' | transloco }}
-      </div>
-    </ng-template>
-  </div>
-</div>
-
-        <mat-paginator
-          class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-          [showFirstLastButtons]="true" (page)="pageChanged($event)" [length]="displayedList?.total"
-          [pageSize]="currentSize" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
-      </ng-container>
-
-      <!-- Map display (only if map is visible) -->
-      <div *ngIf="showMap" class="relative w-full h-[calc(100vh-4rem)] mt-2">
-        <!-- The Map itself -->
-         
-        <div  id="map" class="absolute inset-0 w-full h-full bg-gray-200 z-0"></div>
-         
-        <!-- Return to List Button on top-right -->
-        <button (click)="toggleMap()"
-          class="absolute top-4 right-4 z-10 bg-white text-gray-800 hover:bg-blue-600 hover:text-white shadow-md rounded-md px-4 py-2 flex items-center gap-2 transition-all duration-300">
-          <mat-icon svgIcon="heroicons_outline:list-bullet"></mat-icon>
-          <span>{{ "Show List" | transloco }}</span>
-        </button>
-      </div>
     </div>
-
-    <!-- Filter Sidebar -->
-    <div
-      class="sidebar-filter fixed top-0 right-0 h-full w-80 max-w-full z-50 bg-white dark:bg-gray-900 shadow-2xl transition-transform duration-300"
-      [class.translate-x-0]="openFilter" [class.translate-x-full]="!openFilter" style="transform: translateX(100%)">
-      <div
-        class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-        <span class="text-lg font-bold text-gray-700 dark:text-gray-100">{{ "Filters" | transloco }}</span>
-        <button mat-icon-button (click)="openFilter = false">
-          <mat-icon [svgIcon]="'heroicons_outline:x-circle'"></mat-icon>
-        </button>
-      </div>
-      <div class="flex flex-col gap-6 p-6 overflow-y-auto h-[calc(100%-4rem)]">
-        <!-- Archive Filter -->
-        <div>
-          <div class="flex items-center gap-2 font-semibold text-base mb-2">
-            <mat-icon [svgIcon]="'feather:archive'"></mat-icon>
-            {{ "Filter by Archive Status" | transloco }}
-          </div>
-          <mat-form-field class="fuse-mat-no-subscript w-full" appearance="fill">
-            <mat-select [(ngModel)]="filterArchived" name="archived" placeholder="Select archived or active">
-              <mat-option value="">{{
-                "All" | transloco
-                }}</mat-option>
-              <mat-option [value]="false">{{
-                "Active" | transloco
-                }}</mat-option>
-              <mat-option [value]="true">{{
-                "Archived" | transloco
-                }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <!-- Actions -->
-        <div class="flex gap-2 mt-4">
-          <button mat-stroked-button color="primary" class="flex-1" (click)="getList()">
-            <mat-icon class="mr-1" [svgIcon]="'feather:filter'"></mat-icon>
-            <span>Apply</span>
-          </button>
-          <button mat-stroked-button color="warn" class="flex-1" (click)="resetFilters()">
-            <mat-icon class="mr-1" [svgIcon]="'feather:rotate-ccw'"></mat-icon>
-            <span>Reset</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

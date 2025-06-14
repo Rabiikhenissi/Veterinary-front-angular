@@ -1,4 +1,4 @@
-<div class="md:absolute md:inset-0 flex flex-col flex-auto min-w-0 md:overflow-hidden bg-card dark:bg-transparent">
+<div class=" min-h-full  flex flex-col  min-w-0 md:overflow-hidden bg-card dark:bg-transparent">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900">
         <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white">
@@ -28,41 +28,42 @@
         <div class="flex flex-col flex-auto md:mb-18">
             <!-- Table Header -->
             <div
-                class="grid grid-cols-7 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
-                <div class="md:block">N°</div>
+                class="grid md:grid-cols-7 sm:grid-cols-6  items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                <div class="">N°</div>
                 <div class="truncate">{{ "name" | transloco }}</div>
-                <div class="truncate">{{ "email" | transloco }}</div>
+                <div class="hidden md:block  truncate">{{ "email" | transloco }}</div>
                 <div class="truncate">{{ "group" | transloco }}</div>
                 <div class="truncate">{{ "company" | transloco }}</div>
-                <div class="md:block">{{ "status" | transloco }}</div>
+                <div class="">{{ "status" | transloco }}</div>
                 <div class="flex justify-end">
                     <button mat-icon-button (click)="openFilter = true">
                         <mat-icon class="icon-size-5" [svgIcon]="'feather:filter'"></mat-icon>
                     </button>
                 </div>
+
             </div>
             @if (displayedList?.data?.length > 0) {
 
             <!-- Table Rows -->
-            <div class="flex-1 overflow-hidden md:overflow-y-auto">
+            <div class="flex-1 overflow-hidden  md:overflow-y-auto">
                 <div class="flex-1 md:grid md:flex-0">
                     <ng-container>
                         @for (row of displayedList?.data; track row) {
                         <div [ngClass]="{
                                 'bg-red-100 hover:bg-red-200': row.archived,
                                 'hover:bg-gray-100': !row.archived
-                            }" class="grid grid-cols-7 items-center gap-4 py-1 px-4 md:px-6 border-b"
+                            }" class="grid md:grid-cols-7 sm:grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b"
                             (click)="isScreenSmall ? openShow(row) : null">
-                            <div class="md:block">{{ $index + 1 }}</div>
+                            <div class="">{{ $index + 1 }}</div>
                             <div class="truncate text-xl">{{ row.name }}</div>
-                            <div class="truncate text-xl">{{ row.email }}</div>
-                            <div class="md:block truncate text-xl">
+                            <div class=" hidden md:block  truncate text-xl">{{ row.email }}</div>
+                            <div class=" truncate text-xl">
                                 {{ row.groupsId?.code }}
                             </div>
-                            <div class="md:block truncate text-xl">
+                            <div class=" truncate text-xl">
                                 {{ getCompany(row.companyId) }}
                             </div>
-                            <div class="md:block">
+                            <div class="">
                                 <span class="px-2 py-1 rounded-full text-md font-semibold" [ngClass]="{
                                         'bg-green-100 text-green-800':
                                             row.status === 'verified',
@@ -74,6 +75,7 @@
                                     {{ row.status | titlecase }}
                                 </span>
                             </div>
+                            
                             <div class="flex justify-end">
                                 <button class="mr-4" mat-icon-button [matMenuTriggerFor]="budgetMenu">
                                     <mat-icon class="icon-size-5" [svgIcon]="
@@ -170,7 +172,7 @@
             </div>
 
             <mat-paginator
-                class="md:absolute md:inset-x-0 md:bottom-0 border-b md:border-t md:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                class=" md:inset-x-0 md:bottom-0 border-b md:border-t md:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
                 [showFirstLastButtons]="true" (page)="pageChanged($event)" [length]="displayedList?.total"
                 [pageSize]="currentSize" [pageSizeOptions]="[5, 10, 20, 50, 100]"></mat-paginator>
             }
