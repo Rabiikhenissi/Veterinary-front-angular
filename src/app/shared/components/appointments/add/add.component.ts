@@ -10,7 +10,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -110,89 +110,85 @@ selectedTime: string = '';
  
   
   submit(): void {
-    if (this.appointmentForm.invalid || this.isSubmitted ) return;
-    const { date, time } = this.appointmentForm.value;
-if(this.checkAvailableSlot(date, time,null)){  
-  return;
-} 
-  if (!this.isTimeWithinBusinessHours(date, time)) {
-     this.outsideBusinessHours = true;
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid Time',
-      text: 'The selected time is outside of business hours.',
-      confirmButtonColor: '#000'
-    });
-    return;
-  }
-    this.isSubmitted = true; // Prevent multiple submissions
-    console.log('Form values:', this.appointmentForm.value);
+  if (this.appointmentForm.invalid || this.isSubmitted) return;
+
+  const { date, time } = this.appointmentForm.value;
+
+  this.checkAvailableSlot(date, time, null).subscribe((isAvailable) => {
+    if (!isAvailable) {
+      return; // Stop here if not available
+    }
+
+    if (!this.isTimeWithinBusinessHours(date, time)) {
+      this.outsideBusinessHours = true;
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Time',
+        text: 'The selected time is outside of business hours.',
+        confirmButtonColor: '#000'
+      });
+      return;
+    }
+
+    this.isSubmitted = true;
 
     const petId = this.appointmentForm.value.petId;
     const pet = this.pets.find(p => p._id === petId); 
-    const petName = pet?.name 
-    const petSpecies = pet?.species 
-          console.log('Selected pet ID:', petId);
+    const petName = pet?.name;
+    const petSpecies = pet?.species;
 
     const companyId = localStorage.getItem('connectedUserCompany');
-    
     const userId = this.selectedClient ? this.selectedClient._id : null;  
 
     const payload = {
       userId,
       petId,
       companyId,
-      date: this.appointmentForm.value.date,
-      time: this.appointmentForm.value.time,
+      date,
+      time,
       status: 'confirmed',
     };
 
-    console.log('Payload:', payload);
-
     this._appointmentService.createAppointment(payload).subscribe(() => {
       const title = 'Appointment Created';
-      const message = `Your appointment for  ${petName} (${petSpecies}) has been successfully scheduled.`;
+      const message = `Your appointment for ${petName} (${petSpecies}) has been successfully scheduled.`;
       const type = 'Appointment Created';
-      console.log('Notification Payload:', { userId, title, message, type });
-  
+
       this._notificationService.createNotification({ userId, title, message, type }).subscribe(() => {
-        console.log('userId:', userId);
-        console.log('title:', title);
-        console.log('message:', message);
-        console.log('type:', type);
-        // const smsMessage = `Your appointment for ${this.selectedPetId} is confirmed for ${this.appointmentForm.value.date} at ${this.appointmentForm.value.time}.`;
-        // this._notificationService.sendSMSNotification(this.selectedClient.phone, smsMessage).subscribe(() => {
-  
-          //  Email Notification
-          const emailMessage = `A new appointment is scheduled for your pet ${petName} (${petSpecies}) for ${this.appointmentForm.value.date} at ${this.appointmentForm.value.time}.`;
-          this._notificationService.sendEmailNotification(
-            this.selectedClient.email,
-            'Appointment Confirmation',
-            emailMessage
-          ).subscribe(() => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Success!',
-              text: 'Appointment added successfully.',
-              timer: 1500,
-            }).then(() => {
-              this._router.navigate([`../`], { relativeTo: this._route }).then();
-            });
-          }, (error) => {
-            console.error('Error sending email:', error);
+        const emailMessage = `A new appointment is scheduled for your pet ${petName} (${petSpecies}) for ${date} at ${time}.`;
+
+        this._notificationService.sendEmailNotification(
+          this.selectedClient.email,
+          'Appointment Confirmation',
+          emailMessage
+        ).subscribe(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Appointment added successfully.',
+            timer: 1500,
+          }).then(() => {
+            this._router.navigate([`../`], { relativeTo: this._route }).then();
           });
-  
-        // }, (error) => {
-        //   console.error('Error sending SMS:', error);
-        // });
-  
+        }, (error) => {
+          console.error('Error sending email:', error);
+        });
       });
-  
-    },(error) => {
-      
+       // Send SMS
+          /*this._notificationService.sendSMSNotification(
+            pet.ownerId.phone,
+            message
+          ).subscribe({
+            next: () => console.log('SMS sent'),
+            error: err => console.error('SMS failed:', err)
+          });*/
+    }, (error) => {
       console.error(error);
     });
-  }
+
+  });
+}
+
 
   getCompanyBusinessHours(companyId: string): void {
   this._companyService.getOne(companyId).subscribe({
@@ -283,11 +279,9 @@ onDateChange(date: string): void {
     this.appointmentForm.patchValue({ time: '' });
   }
 }
- checkAvailableSlot(date: string, time: string, appointmentId: string ): boolean {
-
-    this._appointmentService.isAvailable(date, time, this.companyId, appointmentId).subscribe((res) => {
-      console.log('Availability response:', res);
-
+ checkAvailableSlot(date: string, time: string, appointmentId: string | null): Observable<boolean> {
+  return this._appointmentService.isAvailable(date, time, this.companyId, appointmentId).pipe(
+    map(res => {
       if (!res.available) {
         Swal.fire({
           icon: 'warning',
@@ -295,11 +289,10 @@ onDateChange(date: string): void {
           text: 'This time is not available for appointments.',
           confirmButtonColor: '#f87171',
         });
-
-        return false
       }
-    });
-    return true;
-  }
+      return res.available;
+    })
+  );
+}
 
 }

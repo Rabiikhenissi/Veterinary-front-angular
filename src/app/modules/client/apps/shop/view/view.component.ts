@@ -125,7 +125,11 @@ isAddingToCart = false;
     this._productService.getList(
       this.currentSize.toString(),
       this.currentPage.toString(),
-      this.searchQuery).subscribe({
+      this.searchQuery,
+    'Food,Accessories,Hygiene', 
+    undefined,
+    'false'
+    ).subscribe({
       next: (response) => {
         this._loadingService.show();
       

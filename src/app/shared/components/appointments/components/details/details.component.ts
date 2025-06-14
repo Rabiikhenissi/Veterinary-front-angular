@@ -126,7 +126,7 @@ export class DetailsComponent implements OnInit {
                             .subscribe(
                                 () => {
                                     // Send Email Notification
-                                    const emailMessage = `A new appointment is scheduled for your pet ${this.appointment.petId.name} (${this.appointment.petId.species}) for ${this.appointment.date} at ${this.appointment.time}.`;
+                                    const emailMessage = `Your appointment for ${this.appointment.petId.name} (${this.appointment.petId.species}) has been successfully scheduled for ${this.appointment.date} at ${this.appointment.time}.`;
 
                                     this._notificationService
                                         .sendEmailNotification(
@@ -149,6 +149,14 @@ export class DetailsComponent implements OnInit {
                                                 });
                                             },
                                         });
+                                         // Send SMS
+          /*this._notificationService.sendSMSNotification(
+            pet.ownerId.phone,
+            message
+          ).subscribe({
+            next: () => console.log('SMS sent'),
+            error: err => console.error('SMS failed:', err)
+          });*/
                                 },
                                 (error) => {
                                     

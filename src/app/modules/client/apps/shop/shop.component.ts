@@ -64,7 +64,8 @@ export class ShopComponent implements OnInit{
         this.currentPage.toString(),
         this.searchQuery,
         this.selectedCategories.join(','),
-        this.selectedSpecies.join(',')
+        this.selectedSpecies.join(','),
+        'false'
       ),
       species: this._petSpeciesService.getList(localStorage.getItem('connectedCompanyId')),
       

@@ -16,8 +16,8 @@ endpoint = `${environment.api}/products`; // API endpoint for pets
       page: string,
       search: string,
       category?: string,
-      species?: string
-  
+      species?: string,
+      archive?:string 
     ): Observable<Pagination<Product>> {
       let searchParams = new HttpParams();
       searchParams = searchParams.append('limit', limit);
@@ -32,11 +32,17 @@ endpoint = `${environment.api}/products`; // API endpoint for pets
       if (search) {
         searchParams = searchParams.append('search', search);
       }
+      if (archive) {
+        searchParams = searchParams.append('archive', archive);
+      }
       return this.http.get<Pagination<Product>>(`${this.endpoint}`, { params: searchParams });
     }
 
 archiveOne(id: string): Observable<Product> {
     return this.http.patch<Product>(`${this.endpoint}/archive/${id}`,{});
+  }
+  deleteOne(id: string): Observable<null> {
+    return this.http.delete<null>(`${this.endpoint}/${id}`);
   }
 
   // Get a product 
