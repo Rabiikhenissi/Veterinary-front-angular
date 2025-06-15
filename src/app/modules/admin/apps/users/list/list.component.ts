@@ -250,4 +250,9 @@ resetFilters() {
   this.filterCompany=[]
   this.filterarchived = false;
 }
+
+applyFilter(){
+  this.currentPage=1
+  this.getList()
+}
 }

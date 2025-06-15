@@ -1,4 +1,4 @@
-<div class="min-h-full sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+<div class="min-h-full min-w-full sm:inset-0 flex flex-col flex-auto  sm:overflow-hidden bg-card dark:bg-transparent">
   <!-- Header -->
   <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14  border-b bg-gray-900">
     <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white ">{{ 'Features' | transloco
@@ -26,15 +26,15 @@
     <div class="flex flex-col flex-auto ">
       <!-- Header -->
       <div
-        class="feature-grid grid md:grid-cols-8 sm:grid-cols-6 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+        class="feature-grid grid md:grid-cols-8 grid-cols-5 items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
 
-        <div class=" sm:flex">N°</div>
+        <div class=" ">N°</div>
         <div class=" hidden md:block">{{ 'code' | transloco }}</div>
         <div class="flex">{{ 'title' | transloco }}</div>
-        <div class=" md:flex">{{ 'type' | transloco }}</div>
-        <div class=" sm:flex">{{ 'parent' | transloco }}</div>
+        <div class=" ">{{ 'type' | transloco }}</div>
+        <div class=" hidden md:block">{{ 'parent' | transloco }}</div>
         <div class="hidden md:block">{{ 'link' | transloco }}</div>
-        <div class=" md:flex">{{ 'status' | transloco }}</div>
+        <div class=" ">{{ 'status' | transloco }}</div>
 
         <!-- Filter Button aligned to the right -->
         <div class="flex justify-end col-span-1">
@@ -49,11 +49,11 @@
     <ng-container>
       @for (feature of displayedList?.data; track feature) {
         <div
-          class="feature-grid grid md:grid-cols-8 sm:grid-cols-6  items-center gap-4 py-1 hover:bg-gray-100 px-4 md:px-6 border-b"
+          class="feature-grid grid md:grid-cols-8 grid-cols-5  items-center gap-4 py-1 hover:bg-gray-100 px-4 md:px-6 border-b"
           (click)="isScreenSmall ? openShow(feature) : null"
         >
           <!-- Always show: index -->
-          <div class="sm:flex">{{ $index + 1 }}</div>
+          <div class="">{{ $index + 1 }}</div>
 
           <!-- Only on small screens -->
           <div class="hidden md:block truncate">{{ feature.code }}</div>
@@ -65,7 +65,7 @@
           <div class=" truncate">{{ feature.type }}</div>
 
           <!-- Optional: Parent title -->
-          <div class="hidden sm:flex truncate">
+          <div class="hidden md:block truncate">
             @if (feature.featuresIdParent) {
               <span class="truncate">
                 {{ feature.featuresIdParent.title }}

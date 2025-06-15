@@ -93,7 +93,7 @@
                                 "label" | transloco
                             }}</mat-label>
                             <input
-                                [(ngModel)]="group.code"
+                                [(ngModel)]="group.label"
                                 matInput
                                 name="label"
                                 type="text"
@@ -313,7 +313,7 @@
                                             <span class="">
                                                 {{
                                                     groupFeature[index]
-                                                        .featuresId.title
+                                                        .featuresId.code
                                                 }}
                                             </span>
                                         </div>
@@ -340,7 +340,7 @@
                                             class="font-medium items-center flex flex-row"
                                         >
                                             <span class="">
-                                                {{ item.title }}</span
+                                                {{ item.code }}</span
                                             >
                                         </div>
                                     </mat-option>

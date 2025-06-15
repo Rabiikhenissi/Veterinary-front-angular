@@ -70,8 +70,8 @@
                 <div
                     class="row-grid grid-cols-4 grid z-10 top-0 shadow items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
                 >
-                    <div class="hidden sm:flex">N°</div>
-                    <div class="hidden sm:flex">{{ "code" | transloco }}</div>
+                    <div class="">N°</div>
+                    <div class="">{{ "code" | transloco }}</div>
                     <div class="flex">{{ "name" | transloco }}</div>
 
                     <div class="flex justify-end">
@@ -103,10 +103,10 @@
                                 }"
                                 (click)="isScreenSmall ? openShow(row) : null"
                             >
-                                <div class="hidden sm:flex">
+                                <div class="">
                                     {{ $index + 1 }}
                                 </div>
-                                <div class="hidden sm:flex truncate">
+                                <div class="truncate">
                                     {{ row.code }}
                                 </div>
                                 <div class="flex truncate">{{ row.name }}</div>
