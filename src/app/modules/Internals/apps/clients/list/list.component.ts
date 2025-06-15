@@ -25,6 +25,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { GroupService } from 'app/shared/services/group.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { UserService } from 'app/shared/services/user.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -265,6 +266,9 @@ restoreOne(row: User) {
   this.filterStatus = [];
   this.filterArchived = false;
 }
-
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 
 }

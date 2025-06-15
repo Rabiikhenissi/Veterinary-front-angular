@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { User } from 'app/shared/models/user';
 import { forkJoin, of } from 'rxjs';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 @Component({
     selector: 'app-details',
     imports: [CommonModule, DatePipe, FeaturesDirective],
@@ -304,4 +305,8 @@ export class DetailsComponent implements OnInit {
         return false;
     }
     
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

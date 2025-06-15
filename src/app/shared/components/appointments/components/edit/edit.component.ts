@@ -11,6 +11,7 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -265,4 +266,9 @@ updateAllowedTimes() {
     this.selectedTime = '';
   }
 }
+
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

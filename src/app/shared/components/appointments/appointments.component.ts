@@ -38,6 +38,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { BusinessHour } from 'app/shared/models/company';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
     selector: 'app-calendar',
@@ -349,7 +350,7 @@ windowResizeDelay: 150,
               max-width: 140px;
               flex: 0 0 auto;
             ">
-              <img src="${pet.icon || pet.image || 'https://cdn-icons-png.flaticon.com/512/616/616408.png'}"
+              <img src="${this.getProductImageUrl(pet.icon)}"
               alt="${pet.name}" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid #a5b4fc;">
               <div style="font-weight: 500; color: #3730a3; font-size: 1.05rem;">${pet.name}</div>
               <div style="font-size: 0.95rem; color: #6366f1; opacity: 0.85;">${pet.species}</div>
@@ -861,4 +862,8 @@ getBusinessHours(companyId) {
     }
   });
 }
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

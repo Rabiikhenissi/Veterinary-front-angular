@@ -17,6 +17,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FeatureActions } from 'app/shared/enums/feature-actions';
 import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-profile',
@@ -91,6 +92,11 @@ companyId:string
     }
   });
 }
+
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 
   // saveProfile(): void {
     

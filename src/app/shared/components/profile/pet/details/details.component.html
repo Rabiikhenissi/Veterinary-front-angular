@@ -4,7 +4,7 @@
     <div class="flex flex-col items-center mb-8">
       <div class="relative">
         <img
-          [src]="pet.icon || 'assets/images/pet-placeholder.png'"
+        [src]="getProductImageUrl(pet.icon )"
           alt="Pet icon"
           class="w-40 h-40 rounded-full border-4 border-green-400 object-cover shadow-lg bg-white"
         />

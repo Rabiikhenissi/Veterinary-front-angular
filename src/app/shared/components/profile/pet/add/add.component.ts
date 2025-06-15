@@ -9,6 +9,7 @@ import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -60,6 +61,12 @@ today: string = new Date().toISOString().split('T')[0];
 
 
     }
+
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
+
   selectIcon(iconData: { icon: string; name: string }) {
     this.petForm.patchValue({
       icon: iconData.icon,

@@ -12,7 +12,7 @@
         <!-- Pet Info -->
         <div class="flex items-center gap-5">
             <ng-container *ngIf="appt.petId; else deletedPet">
-            <img [src]="appt.petId.icon"
+            <img [src]="getProductImageUrl(appt.petId.icon)"
                alt="{{ appt.petId.name }}"
                class="w-16 h-16 rounded-full border-4 border-green-200 bg-white shadow-sm group-hover:scale-105 transition-transform">
             <div>

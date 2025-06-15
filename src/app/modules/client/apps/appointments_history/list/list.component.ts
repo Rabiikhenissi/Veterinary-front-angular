@@ -7,6 +7,7 @@ import { Pagination } from 'app/shared/models/pagination';
 import { AppointmentService } from 'app/shared/services/appointment.service';
 import { AuthService } from 'app/shared/services/auth.service';
 import { LoadingService } from 'app/shared/services/loading.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-list',
@@ -69,4 +70,9 @@ export class ListComponent implements OnInit {
   navigateToDetails(appointmentId: string): void {
     this.router.navigate([ appointmentId], { relativeTo: this.route }); 
   }
+
+  getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

@@ -9,6 +9,7 @@ import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import { forkJoin } from 'rxjs';
 
 export const MY_DATE_FORMATS = {
@@ -98,4 +99,9 @@ export class EditComponent {
   onCancel() {
     this.router.navigate(['../../..'], { relativeTo: this.route });
   }
+  getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
+     
 }
