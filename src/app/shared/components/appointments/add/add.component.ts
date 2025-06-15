@@ -10,6 +10,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { UserService } from 'app/shared/services/user.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import { forkJoin, map, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -294,5 +295,8 @@ onDateChange(date: string): void {
     })
   );
 }
-
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

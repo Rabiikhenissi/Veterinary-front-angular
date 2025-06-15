@@ -62,7 +62,7 @@
                 [class.border-green-500]="petForm.value.icon === item.icon"
                 (click)="selectIcon(item)"
               >
-                <img [src]="item.icon" [alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
+                <img [src]="getProductImageUrl(item.icon)"[alt]="item.label" class="w-16 h-16 mb-1 object-cover" />
                 <span class="text-sm font-medium text-green-700">{{ item.name }}</span>
               </div>
             }

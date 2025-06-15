@@ -9,6 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { forkJoin } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 @Component({
   selector: 'app-details',
   imports: [DatePipe,MatPaginator,RouterLink,CommonModule],
@@ -62,6 +63,10 @@ petId: string;
     }
   }
 
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
   pageChanged(event: any): void {
     let { pageIndex } = event;
     const { pageSize } = event;

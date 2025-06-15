@@ -14,6 +14,7 @@ import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { Browser } from '@capacitor/browser'; // For web fallback
+import { getImageUrl } from 'app/shared/utils/image-utils';
 @Component({
   selector: 'app-details',
   imports: [DatePipe,CommonModule,FormsModule],
@@ -250,4 +251,10 @@ const confirmation = this._fuseConfirmationService.open({
 
   
 }
+
+
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

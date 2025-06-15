@@ -8,6 +8,7 @@ import { AppointmentService } from 'app/shared/services/appointment.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { forkJoin } from 'rxjs';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 @Component({
   selector: 'app-details',
   imports: [DatePipe,MatPaginator,CommonModule],
@@ -91,4 +92,8 @@ export class DetailsComponent {
       else{
       this.router.navigate(['/home/appointments', id]);}
     }
+    getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

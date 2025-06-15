@@ -21,7 +21,7 @@
         <!-- Pet Image -->
         <div class="flex-shrink-0">
             <img
-                [src]="pet.icon"
+               [src]="getProductImageUrl(pet.icon)"
                 alt="{{ pet.name }}"
                 class="w-44 h-44 rounded-2xl object-cover shadow-xl border-4 border-green-300 bg-white"
             />

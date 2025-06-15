@@ -59,7 +59,8 @@ export class EditDetailsComponent implements OnInit {
                 next: (result: [User, Pagination<Group>]) => {
                     this.user = result[0];
                     this.listGroups = result[1].data;
-                    this.user.groupsId = this.listGroups.filter((el)=>el._id === this.user.groupsId._id)[0];
+                    if (this.user.groupsId) {
+                    this.user.groupsId = this.listGroups.filter((el)=>el._id === this.user.groupsId._id)[0];}
                     this._loadingService.hide()
                 },
                 error: () => {

@@ -10,6 +10,7 @@ import { LoadingService } from 'app/shared/services/loading.service';
 import { PetService } from 'app/shared/services/pet.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { UserService } from 'app/shared/services/user.service';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -88,4 +89,9 @@ today: string = new Date().toISOString().split('T')[0];
 onCancel() {
   this.router.navigate(['../..'], { relativeTo: this.route });
 }
+
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 }

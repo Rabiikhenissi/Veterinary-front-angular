@@ -21,6 +21,7 @@ import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { forkJoin, switchMap } from 'rxjs';
+import { getImageUrl } from 'app/shared/utils/image-utils';
 @Component({
   selector: 'app-details',
   imports: [CommonModule,
@@ -281,7 +282,10 @@ cancelRestoreRequest(petId: string) {
     error: err => console.error('Cancel restore failed', err)
   });
 }
-
+getProductImageUrl(imagePath: string): string {
+        const url = getImageUrl(imagePath);
+        return url;
+      }
 
 
 deletePet(petId: string) {
