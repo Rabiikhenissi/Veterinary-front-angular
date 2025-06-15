@@ -9,6 +9,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { FilterOptions } from 'app/shared/models/filter-options';
 import { CompanyService } from 'app/shared/services/company.service';
 import { LoadingService } from 'app/shared/services/loading.service';
@@ -17,7 +20,7 @@ import { MedicalServicesService } from 'app/shared/services/medicalServices.serv
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [FormsModule, CommonModule,MatIconButton,MatButton,MatPaginator,MatInputModule,MatSelect,MatOption,MatLabel,MatFormField,MatIcon,MatLabel],
+  imports: [FormsModule,FeaturesDirective, CommonModule,MatIconButton,MatButton,MatPaginator,MatInputModule,MatSelect,MatOption,MatLabel,MatFormField,MatIcon,MatLabel],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -30,7 +33,8 @@ export class ListComponent implements OnInit {
   services: any[] = [];
   companyName: string;
   searchQuery: string = '';
-
+featureCodes=FeatureCodes
+featureActions=FeatureActions
 currentPage = 1;
   total = 0;
   currentSize = 10;

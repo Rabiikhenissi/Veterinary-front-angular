@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { FeaturesDirective } from 'app/shared/directives/features.directive';
+import { FeatureActions } from 'app/shared/enums/feature-actions';
+import { FeatureCodes } from 'app/shared/enums/feature-codes';
 import { PetSpecies } from 'app/shared/models/petSpecies';
 import { LoadingService } from 'app/shared/services/loading.service';
 import { PetSpeciesService } from 'app/shared/services/petSpecies.service';
@@ -11,7 +14,7 @@ import { getImageUrl } from 'app/shared/utils/image-utils';
 
 @Component({
   selector: 'app-list',
-  imports: [CommonModule,FormsModule,MatPaginator],
+  imports: [CommonModule,FormsModule,MatPaginator,FeaturesDirective],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -28,6 +31,8 @@ _loadingService = inject(LoadingService);
   currentPage = 1;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 filterArchived: boolean= false;
+featureCodes=FeatureCodes
+featureActions=FeatureActions
   ngOnInit(): void {
     this.getSpeciesList();
   }

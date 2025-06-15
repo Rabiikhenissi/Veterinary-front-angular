@@ -26,6 +26,10 @@
                 Filter
             </button>
             <button
+             *appFeatures="[
+        { code: featureCodes.medical_services, actions: [featureActions.create] }
+        ]"
+            
                 (click)="add()"
                 class="bg-gradient-to-r from-green-700 to-green-500 hover:from-green-800 hover:to-green-600 text-white py-2 px-6 rounded-2xl text-lg font-extrabold shadow-xl focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-200 flex items-center gap-2"
             >
@@ -81,8 +85,13 @@
     class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
 >
     <!-- If NOT archived, show Archive button -->
+     @if (!service.archived) {
     <button
-        *ngIf="!service.archived"
+    
+        
+        *appFeatures="[
+        { code: featureCodes.medical_services, actions: [featureActions.delete] }
+        ]"
         (click)="archiveService(service)"
         class="text-red-600 hover:text-red-800 bg-white rounded-full p-1 shadow-lg focus:outline-none border border-red-100 hover:bg-red-50 transition"
         title="Archive"
@@ -90,10 +99,13 @@
         <span class="sr-only">Archive</span>
         <mat-icon [svgIcon]="'feather:archive'" style="font-size: 18px; width: 18px; height: 18px"></mat-icon>
     </button>
-
+     }
     <!-- If archived, show Restore and Delete buttons -->
     <ng-container *ngIf="service.archived">
         <button
+        *appFeatures="[
+        { code: featureCodes.medical_services, actions: [featureActions.create]}
+        ]"
             (click)="restoreService(service)"
             class="text-green-600 hover:text-green-800 bg-white rounded-full p-1 shadow-lg focus:outline-none border border-green-100 hover:bg-green-50 transition"
             title="Restore"
@@ -102,6 +114,9 @@
             <mat-icon [svgIcon]="'feather:rotate-ccw'" style="font-size: 18px; width: 18px; height: 18px"></mat-icon>
         </button>
         <button
+        *appFeatures="[
+        { code: featureCodes.medical_services, actions: [featureActions.delete] }
+        ]"
             (click)="deleteService(service)"
             class="text-red-600 hover:text-red-800 bg-white rounded-full p-1 shadow-lg focus:outline-none border border-red-100 hover:bg-red-50 transition"
             title="Delete"
@@ -113,6 +128,9 @@
 
     <!-- Edit button always visible -->
     <button
+    *appFeatures="[
+        { code: featureCodes.medical_services, actions: [featureActions.update] }
+        ]"
         (click)="editService(service)"
         class="text-green-700 hover:text-green-900 bg-white rounded-full p-1 shadow-lg focus:outline-none border border-green-100 hover:bg-green-50 transition"
         title="Edit"
