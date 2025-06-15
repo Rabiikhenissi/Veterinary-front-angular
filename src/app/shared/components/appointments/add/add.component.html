@@ -84,17 +84,23 @@
             </div>
         </ng-container>
 <ng-template #noPets>
-    <div *ngIf="appointmentForm.get('clientId')?.value" class="text-center p-6 bg-red-50 border border-red-200 rounded-lg">
-        <p class="text-lg text-red-600 font-semibold mb-4">
-            Client has no pets.
-        </p>
-        <button
-            class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded"
-            [routerLink]="['home/clients', clientId, 'pet/add']"
-        >
-            Add a Pet
-        </button>
+  <div
+    *ngIf="appointmentForm.get('clientId')?.value"
+    class="text-center p-8 bg-red-100 border border-red-300 rounded-2xl shadow-md"
+  >
+    <div class="flex flex-col items-center space-y-4">
+      
+      <p class="text-xl font-bold text-red-700">This client has no registered pets.</p>
+      <p class="text-md text-gray-700">To continue with the appointment, please add a pet to their profile.</p>
+      <button
+      (click)="console.log('id:',selectedClient._id);console.log('id:',selectedClient._id)"
+        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-xl shadow transition-all"
+        [routerLink]="['/home/clients', selectedClient._id,'pet','add']"
+      >
+        ➕ Add a Pet
+      </button>
     </div>
+  </div>
 </ng-template>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
