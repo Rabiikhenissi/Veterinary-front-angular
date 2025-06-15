@@ -1,4 +1,4 @@
-<div class=" min-h-full  flex flex-col  min-w-0 md:overflow-hidden bg-card dark:bg-transparent">
+<div class=" min-h-full min-w-full sm:inset-0 flex flex-col flex-auto  sm:overflow-hidden bg-card dark:bg-transparent">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:gap-4 items-center px-4 h-fit md:h-14 border-b bg-gray-900">
         <div class="w-full text-center md:text-left md:w-1/4 text-4xl font-extrabold text-white">
@@ -28,7 +28,7 @@
         <div class="flex flex-col flex-auto md:mb-18">
             <!-- Table Header -->
             <div
-                class="grid md:grid-cols-7 sm:grid-cols-6  items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                class="grid md:grid-cols-7 grid-cols-6  items-center gap-4 py-2 px-4 md:px-6 text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
                 <div class="">N°</div>
                 <div class="truncate">{{ "name" | transloco }}</div>
                 <div class="hidden md:block  truncate">{{ "email" | transloco }}</div>
@@ -52,13 +52,13 @@
                         <div [ngClass]="{
                                 'bg-red-100 hover:bg-red-200': row.archived,
                                 'hover:bg-gray-100': !row.archived
-                            }" class="grid md:grid-cols-7 sm:grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b"
+                            }" class="grid md:grid-cols-7 grid-cols-6 items-center gap-4 py-1 px-4 md:px-6 border-b"
                             (click)="isScreenSmall ? openShow(row) : null">
                             <div class="">{{ $index + 1 }}</div>
                             <div class="truncate text-xl">{{ row.name }}</div>
                             <div class=" hidden md:block  truncate text-xl">{{ row.email }}</div>
                             <div class=" truncate text-xl">
-                                {{ row.groupsId?.code }}
+                                {{ row.groupsId?.label }}
                             </div>
                             <div class=" truncate text-xl">
                                 {{ getCompany(row.companyId) }}
@@ -202,7 +202,7 @@
                     <mat-select [(ngModel)]="filtergroups" multiple placeholder="Select group(s)" name="filtergroups">
                         @for(group of groups ;track group){
                         <mat-option [value]="group._id">
-                            {{ group.label }}
+                            {{ group.code }}
                         </mat-option>
                         }
                     </mat-select>

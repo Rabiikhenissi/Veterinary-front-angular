@@ -433,7 +433,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     getCartList(): void {
         this._loadingService.show();
-        this.disabledCartList.set(true);
         this._cartService
             .getList(this.currentPage, this.currentSize, this.companyId)
             .subscribe({
@@ -442,12 +441,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     console.log('Cart list:', this.cartList);
                     this.total = res.total; // total number of items for pagination
                     this._loadingService.hide();
-                    this.disabledCartList.set(false);
+                    
                 },
                 error: () => {
                     // Redirect to the 404 page
                     this._loadingService.hide();
-                    this.disabledCartList.set(false);
+                    
                     this._router.navigate(['/pages/errors/404']);
                 },
             });
@@ -497,7 +496,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             pageIndex = 1;
             this.paginator.firstPage();
         }
-
+        this._loadingService.show()
         this.currentSize = pageSize;
         this.currentPage = pageIndex;
         this.getCartList();
