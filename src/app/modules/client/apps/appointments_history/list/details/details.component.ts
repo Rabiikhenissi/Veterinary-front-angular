@@ -51,7 +51,7 @@ constructor(private fileOpener: FileOpener) {}
           return of(null);
         }
       }),
-      finalize(() => this._loadingService.hide())
+      finalize(() => "")
     ).subscribe({
       next: (prescriptionData) => {
         if (prescriptionData) {
@@ -65,10 +65,13 @@ constructor(private fileOpener: FileOpener) {}
             this.confirmedInvoiceType = 'invoiceNoMeds';
           }
         }
+        this._loadingService.hide()
       },
       error: (err) => {
         console.error('Error loading appointment or prescription:', err);
+        this._loadingService.hide()
       }
+      
     });
   } else {
     this._loadingService.hide();

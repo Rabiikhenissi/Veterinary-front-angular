@@ -96,7 +96,8 @@ getProductImageUrl(imagePath: string): string {
         this.currentPage.toString(),
         this.searchQuery,
         this.selectedCategories.join(','),
-        this.selectedSpecies.join(',')
+        this.selectedSpecies.join(','),
+        "false"
       )
       .subscribe(({
         next: results => {
