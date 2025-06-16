@@ -46,11 +46,10 @@ export class AddComponent {
     }
   });
 }
-
 getProductImageUrl(imagePath: string): string {
-        const url = getImageUrl(imagePath);
-        return url;
-      }
+  return getImageUrl(imagePath);
+}
+
   submit() {
     if (this.speciesForm.invalid) return;
     this._loadingSerivice.show();
