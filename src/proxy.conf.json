@@ -2,11 +2,11 @@
   "/api": {
 
 
-    "target": "http://192.168.1.33:8080",
+    "target": "http://192.168.23.96:8080",
     "secure": false
   },
    "/uploads": {
-    "target": "http://192.168.1.33:8080",
+    "target": "http://192.168.23.96:8080",
 
 
     "secure": false,
